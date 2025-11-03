@@ -22,14 +22,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class ExcelWriterService {
 
-    @Value("${excel.output.path}")
+    @Value("${app.excel.output-folder}")
     private String outputFolder;
 
-    @Value("${excel.filename-prefix}")
+    @Value("${app.excel.filename-prefix}")
     private String prefix;
 
-    @Value("${excel.max-files-per-day}")
+    @Value("${app.excel.max-files-per-day}")
     private int maxFilesPerDay;
+
+    @Value("${app.excel.sheet-name}")
+    private String sheetName;
+
+    @Value("${app.excel.initial-index}")
+    private int initialIndex;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yy");
     private final DateTimeFormatter fileDateFormatter = DateTimeFormatter.ofPattern("MMdd");
@@ -45,6 +51,9 @@ public class ExcelWriterService {
         new File(outputFolder).mkdirs();
     }
 
+
+
+
     public synchronized void writeOrders(List<PdfOrderData> orders) throws IOException {
         LocalDate now = LocalDate.now();
         String dateStr = now.format(fileDateFormatter);
@@ -55,7 +64,7 @@ public class ExcelWriterService {
         boolean isNewFile = !new File(currentFilePath).exists();
         if (isNewFile) {
             workbook = new XSSFWorkbook();
-            sheet = workbook.createSheet("订单");
+            sheet = workbook.createSheet(sheetName);
             createHeader();
         } else {
             workbook = WorkbookFactory.create(new File(currentFilePath));
@@ -79,14 +88,22 @@ public class ExcelWriterService {
                                 data.setOrderType(type.trim());
                                 data.setQuantity(String.valueOf(detail.getItemQuantity()));
                                 data.setInformation(detail.getDynamicAttributes());
+                                int quantity = detail.getItemQuantity();
+                                for (int i = 0; i < quantity; i++) {
+                                    ExcelData rowData = new ExcelData();
+                                    BeanUtils.copyProperties(data, rowData);
+                                    rowData.setQuantity("1");
+                                    rowData.setSerialNumber(String.valueOf(initialIndex));
+                                    Row row = sheet.createRow(rowIdx.getAndIncrement());
+                                    fillRow(row, rowData);
+                                    currentData.add(rowData);
+                                }
 
-                                Row row = sheet.createRow(rowIdx.getAndIncrement());
-                                fillRow(row, data);
-                                currentData.add(data);
                             });
                         }
                     });
                 }
+                initialIndex++;
             });
         }
 
@@ -99,7 +116,8 @@ public class ExcelWriterService {
 
     private void createHeader() {
         headerRow = sheet.createRow(0);
-        String[] headers = {"日期","序号","用户名","订单编号","信息","订单类型","袖扣风格","字体","领带风格","设计师","尺寸","颜色","数量（袖扣单位：对；领带夹单位：个）","包装盒","盒数量"};
+        String[] headers = {"日期","序号","用户名","订单编号","信息","订单类型","袖扣风格","字体","领带风格","设计师","尺寸","颜色"
+                ,"数量（袖扣单位：对；领带夹单位：个）","包装盒","盒数量","Personalization","订购完全信息","商品标题"};
         for (int i = 0; i < headers.length; i++) {
             headerRow.createCell(i).setCellValue(headers[i]);
         }
@@ -107,20 +125,31 @@ public class ExcelWriterService {
 
     private void fillRow(Row row, ExcelData data) {
         row.createCell(0).setCellValue(data.getDate());
-        row.createCell(1).setCellValue(currentData.size() + 1);
+        // 序号列从1开始递增
+        row.createCell(1).setCellValue(data.getSerialNumber());
         row.createCell(2).setCellValue(data.getUsername());
         row.createCell(3).setCellValue(data.getOrderNumber());
         row.createCell(4).setCellValue(data.getInfo() != null ? data.getInfo() : "");
         row.createCell(5).setCellValue(data.getOrderType());
-        row.createCell(6).setCellValue(data.getCufflinkStyle() != null ? data.getCufflinkStyle() : "—");
-        row.createCell(7).setCellValue(data.getFont() != null ? data.getFont() : "—");
-        row.createCell(8).setCellValue(data.getTieStyle() != null ? data.getTieStyle() : "—");
-        row.createCell(9).setCellValue(data.getDesigner() != null ? data.getDesigner() : "小如");
-        row.createCell(10).setCellValue(data.getSize() != null ? data.getSize() : "—");
-        row.createCell(11).setCellValue(data.getColor() != null ? data.getColor() : "—");
+        // 根据订单类型设置特定列的值
+        if ("宠物头像".equals(data.getOrderType())) {
+            row.createCell(6).setCellValue("见附图");
+            row.createCell(8).setCellValue("—");
+            row.createCell(9).setCellValue("小如");
+        } else {
+            row.createCell(6).setCellValue(data.getCufflinkStyle() != null ? data.getCufflinkStyle() : "");
+            row.createCell(8).setCellValue(data.getTieStyle() != null ? data.getTieStyle() : "");
+            row.createCell(9).setCellValue(data.getDesigner() != null ? data.getDesigner() : "");
+        }
+        row.createCell(7).setCellValue(data.getFont() != null ? data.getFont() : "");
+        row.createCell(10).setCellValue(data.getSize() != null ? data.getSize() : "");
+        row.createCell(11).setCellValue(data.getColor() != null ? data.getColor() : "");
         row.createCell(12).setCellValue(data.getQuantity());
-        row.createCell(13).setCellValue(data.getPackagingBox() != null ? data.getPackagingBox() : "—");
+        row.createCell(13).setCellValue(data.getPackagingBox() != null ? data.getPackagingBox() : "");
         row.createCell(14).setCellValue("1");
+        row.createCell(15).setCellValue(data.getPersonalization() != null ? data.getPersonalization() : "");
+        row.createCell(16).setCellValue(data.getInformation() != null ? data.getInformation() : "");
+        row.createCell(17).setCellValue(data.getItemTitle() != null ? data.getItemTitle() : "");
     }
 
     private void autoMergeCells() {
@@ -131,6 +160,8 @@ public class ExcelWriterService {
         mergeColumn(2, lastRow);
         // 合并订单编号
         mergeColumn(3, lastRow);
+        // 合并序号（与订单编号同步合并）
+        mergeColumn(1, lastRow);
     }
 
     private void mergeColumn(int col, int lastRow) {
@@ -140,7 +171,19 @@ public class ExcelWriterService {
             Row row = sheet.getRow(r);
             if (row == null) continue;
             Cell cell = row.getCell(col);
-            String val = cell != null ? cell.getStringCellValue() : "";
+            String val = "";
+            if (cell != null) {
+                switch (cell.getCellType()) {
+                    case STRING:
+                        val = cell.getStringCellValue();
+                        break;
+                    case NUMERIC:
+                        val = String.valueOf(cell.getNumericCellValue());
+                        break;
+                    default:
+                        val = "";
+                }
+            }
             if (!val.equals(prev)) {
                 if (start != -1 && r - 1 > start) {
                     sheet.addMergedRegion(new CellRangeAddress(start, r - 1, col, col));

@@ -39,6 +39,8 @@ public class PdfProcessingScheduler {
 
         File[] pdfs = dir.listFiles(f -> f.getName().endsWith(".pdf"));
         if (pdfs == null) return;
+        String logString = "PDF文件数量: " + pdfs.length;
+        System.out.println(logString);
 
         for (File pdf : pdfs) {
             try {
@@ -46,6 +48,9 @@ public class PdfProcessingScheduler {
                 excelWriter.writeOrders(orders);
                 String bakPath = bakFolder + "/" + pdf.getName();
                 fileService.moveToBackup(pdf.getAbsolutePath(), bakPath);
+                logString= "处理文件名："+pdf.getName();
+                System.out.println(logString); // 调试输出
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

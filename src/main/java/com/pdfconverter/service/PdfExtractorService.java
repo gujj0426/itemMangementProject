@@ -4,25 +4,36 @@ import com.pdfconverter.model.PdfOrderData;
 import com.pdfconverter.model.PdfOrderData.ItemDetail;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class PdfExtractorService {
+    private static final Logger log = LoggerFactory.getLogger(PdfExtractorService.class);
 
     public List<PdfOrderData> extractFromPdf(String pdfPath) throws IOException {
         List<PdfOrderData> orders = new ArrayList<>();
         try (PDDocument document = PDDocument.load(new File(pdfPath))) {
             PDFTextStripper stripper = new PDFTextStripper();
             String text = stripper.getText(document);
-            orders.add(parseOrder(text));
+            
+            // 分割多个订单块（适配 Order 和 # 之间的任意空格数量）
+            String[] orderBlocks = text.split("(?=Order\\s{0,}#)");
+            for (String block : orderBlocks) {
+                if (!block.trim().isEmpty()) {
+                    orders.add(parseOrder(block));
+                }
+            }
         }
         return orders;
     }
@@ -32,30 +43,42 @@ public class PdfExtractorService {
         List<ItemDetail> items = new ArrayList<>();
 
         // 提取订单编号
-        order.setOrderNumber(extractBetween(text, "Order#", "\\s").trim());
+        Pattern orderNumberPattern = Pattern.compile("Order\\s*#\\s*(\\S+)");
+        Matcher orderMatcher = orderNumberPattern.matcher(text);
+        if (orderMatcher.find()) {
+            order.setOrderNumber(orderMatcher.group(1).trim());
+        } else {
+            throw new IllegalArgumentException("No valid order number found in text.");
+        }
 
-        // 客户姓名 (括号前)
-        String customerLine = extractBetween(text, "Order#[^\\n]+", "Ship to");
-        order.setCustomerName(customerLine.split("\\(")[0].trim());
-
-        // 用户名 (Ship to 第一行)
+      // 用户名 (Ship to 第一行)
         String shipTo = extractBetween(text, "Ship to", "Scheduled to ship by");
         String[] shipLines = shipTo.trim().split("\n");
         order.setUsername(shipLines[0].trim());
         order.setShippingAddress(String.join("\n", Arrays.copyOfRange(shipLines, 1, shipLines.length)).trim());
 
         // 计划发货日期
-        order.setScheduledShippingDate(LocalDate.parse(
-                extractBetween(text, "Scheduled to ship by", "Shop").trim(),
-                DateTimeFormatter.ofPattern("MMM d, yyyy")));
+        try {
+            order.setScheduledShippingDate(LocalDate.parse(
+                    extractBetween(text, "Scheduled to ship by", "Shop").trim(),
+                    DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH)));
+        } catch (DateTimeParseException e) {
+            log.error("Failed to parse scheduled shipping date: {}", e.getMessage());
+            order.setScheduledShippingDate(null);
+        }
 
         // 店铺名
         order.setShopName(extractBetween(text, "Shop", "Order date").trim());
 
         // 下单日期
-        order.setOrderDate(LocalDate.parse(
-                extractBetween(text, "Order date", "Payment method").trim(),
-                DateTimeFormatter.ofPattern("MMM d, yyyy")));
+        try {
+            order.setOrderDate(LocalDate.parse(
+                    extractBetween(text, "Order date", "Payment method").trim(),
+                    DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH)));
+        } catch (DateTimeParseException e) {
+            log.error("Failed to parse order date: {}", e.getMessage());
+            order.setOrderDate(null);
+        }
 
         // 支付方式
         order.setPaymentMethod(extractBetween(text, "Payment method", "Shipping method").trim());
@@ -74,16 +97,42 @@ public class PdfExtractorService {
         order.setCourierCompany(trackParts.length > 1 ? trackParts[1].trim() : "");
 
         // 商品数量
-        String itemLine = extractBetween(text, "Tracking.*?\\n", "\\d+\\s+items").trim();
-        int itemCount = Integer.parseInt(itemLine.replaceAll("\\D+", ""));
-        order.setTotalItemQuantity(itemCount);
+        Pattern itemCountPattern = Pattern.compile("\\d+\\s*item(s)?\\b");
+        Matcher matcher = itemCountPattern.matcher(text);// 调试输出
+        int itemCount = 0;
 
-        // 商品块提取
-        String[] itemBlocks = text.split("(?=Custom Engraved Initials)");
-        for (int i = 1; i < itemBlocks.length && i <= itemCount; i++) {
-            items.add(parseItemDetail(itemBlocks[i]));
+        if (matcher.find()) {
+            String itemLine = matcher.group().trim();
+            itemCount = Integer.parseInt(itemLine.split("\\s+")[0]);
+            order.setTotalItemQuantity(itemCount);
+            // 商品块提取
+            int startIndex = matcher.end(); // "X items" 的结束位置
+            String remainingText = text.substring(startIndex);
+            // 2. 提取商品标题的第一行作为分割标志
+            String[] lines = remainingText.split("\\n");
+            if (lines.length > 0) {
+                String firstItemTitle = lines[1].trim();
+                String[] itemBlocks = new String[0];
+                // 3. 分割商品块
+                itemBlocks = remainingText.split("(?=" + Pattern.quote(firstItemTitle) + ")");
+                for (int i = 1; i < itemBlocks.length && i <= itemCount; i++) {
+                    // 判断是否为最后一笔商品
+                    if (i == itemCount) {
+                        // 删除 "Do the green thing" 及其之后的内容
+                        int endIndex = itemBlocks[i].indexOf("Do the green thing");
+                        if (endIndex != -1) {
+                            itemBlocks[i] = itemBlocks[i].substring(0, endIndex);
+                        }
+                    }
+                    items.add(parseItemDetail(itemBlocks[i]));
+                }
+            } else {
+                throw new IllegalArgumentException("No valid item count found in text.");
+            }
+        } else {
+            System.out.println("Debug: No match found for item count."); // 调试输出
+            throw new IllegalArgumentException("No valid item count found in text.");
         }
-
         order.setItemDetails(items);
         order.setAdditionalNote(extractAfter(text, "Do the green thing"));
 
@@ -119,11 +168,10 @@ public class PdfExtractorService {
             int end = (nextItemStart == -1) ? block.length() : nextItemStart;
             personalization = block.substring(personalizationStart, end).trim();
         }
-        item.setItemPersonalization(personalization);
+        item.setPersonalization(personalization);
 
         // 4. 提取 Quantity 到 Personalization 之间的“动态属性”部分
-        String dynamicSection = block.substring(qtyIndex + "Quantity:".length(), block.indexOf("Personalization:")).trim();
-
+        String dynamicSection = extractBetween(block,"Quantity:","Personalization:").trim();
         // 5. 按行分割动态属性（保留换行）
         String[] dynamicLines = dynamicSection.split("\n");
         Map<String, String> dynamicAttrsMap = new LinkedHashMap<>(); // 保持顺序
@@ -134,7 +182,9 @@ public class PdfExtractorService {
             if (line.isEmpty()) continue;
 
             // 拼接“商品信息栏完全信息”（保留原始格式）
-            if (fullDynamicInfo.length() > 0) fullDynamicInfo.append("\n");
+            if (fullDynamicInfo.length() > 0) {
+                fullDynamicInfo.append("|");
+            }
             fullDynamicInfo.append(line);
 
             // 尝试解析 key: value
@@ -198,7 +248,7 @@ public class PdfExtractorService {
         if (dynamicAttrsMap.values().stream().anyMatch(v -> v.contains("Cufflink"))) {
             types.add("袖扣");
         }
-        if (dynamicAttrsMap.values().stream().anyMatch(v -> v.contains("TieClip"))) {
+        if (dynamicAttrsMap.values().stream().anyMatch(v -> v.matches(".*Tie\\s{0,}Clip.*"))) {
             types.add("领带夹");
         }
         item.setOrderType(String.join(",", types));
@@ -239,6 +289,7 @@ public class PdfExtractorService {
         value = value.toUpperCase();
         if (value.contains("L")) return "L";
         if (value.contains("S")) return "S";
+        if (value.contains("M")) return "M";
         return null;
     }
 

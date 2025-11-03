@@ -40,9 +40,12 @@ public class PdfOrderData {
     private List<ItemDetail> itemDetails;
     // 附加备注（对应PDF底部"Do the green thing Reuse this paper..."）
     private String additionalNote;
+    // 初始序号（用于Excel文件中的序号起始值）
+    private int initialIndex;
 
     // 无参构造器
     public PdfOrderData() {
+        this.initialIndex = 1; // 默认值为1
     }
 
     // 全参构造器
@@ -50,6 +53,14 @@ public class PdfOrderData {
                         LocalDate scheduledShippingDate, String shopName, LocalDate orderDate, String paymentMethod,
                         String shippingMethod, String packagingInfo, String trackingInfo, String trackingNumber,
                         String courierCompany, int totalItemQuantity, List<ItemDetail> itemDetails, String additionalNote) {
+        this(orderNumber, customerName, username, shippingAddress, scheduledShippingDate, shopName, orderDate, paymentMethod,
+                shippingMethod, packagingInfo, trackingInfo, trackingNumber, courierCompany, totalItemQuantity, itemDetails, additionalNote, 1);
+    }
+
+    public PdfOrderData(String orderNumber, String customerName, String username, String shippingAddress,
+                        LocalDate scheduledShippingDate, String shopName, LocalDate orderDate, String paymentMethod,
+                        String shippingMethod, String packagingInfo, String trackingInfo, String trackingNumber,
+                        String courierCompany, int totalItemQuantity, List<ItemDetail> itemDetails, String additionalNote, int initialIndex) {
         this.orderNumber = orderNumber;
         this.customerName = customerName;
         this.username = username;
@@ -66,6 +77,7 @@ public class PdfOrderData {
         this.totalItemQuantity = totalItemQuantity;
         this.itemDetails = itemDetails;
         this.additionalNote = additionalNote;
+        this.initialIndex = initialIndex;
     }
 
     // Getter和Setter方法（所有字段）
@@ -197,6 +209,14 @@ public class PdfOrderData {
         this.additionalNote = additionalNote;
     }
 
+    public int getInitialIndex() {
+        return initialIndex;
+    }
+
+    public void setInitialIndex(int initialIndex) {
+        this.initialIndex = initialIndex;
+    }
+
     /**
      * 商品详情内部类（仅适配3837329233-download-2025-10-23.pdf）
      * 补充Size、Color字段，从动态属性中拆分；保留动态属性原始内容用于追溯
@@ -215,7 +235,7 @@ public class PdfOrderData {
         // 商品动态属性原始内容（非固定字段，如"Size and Color: Gold_L | Item: Cufflink+TieClip+Box"）{insert\_element\_18\_}、{insert\_element\_19\_}
         private String dynamicAttributes;
         // 商品定制信息（固定字段，对应"Personalization:"后的值）{insert\_element\_20\_}
-        private String itemPersonalization;
+        private String personalization;
         // 新增字段：微调2-订单类型（袖扣/领带夹/宠物头像）
         private String orderType;
         // 新增字段：微调4-包装盒（存储含Box的词组）
@@ -231,14 +251,14 @@ public class PdfOrderData {
         }
         // 全参构造器（补充新增字段）
         public ItemDetail(String itemTitle, int itemQuantity, String size, String color,
-                          String dynamicAttributes, String itemPersonalization,
+                          String dynamicAttributes, String personalization,
                           String orderType, String packagingBox, String font, String information){
             this.itemTitle = itemTitle;
             this.itemQuantity = itemQuantity;
             this.size = size;
             this.color = color;
             this.dynamicAttributes = dynamicAttributes;
-            this.itemPersonalization = itemPersonalization;
+            this.personalization = personalization;
             this.orderType = orderType;
             this.packagingBox = packagingBox;
             this.font = font;
@@ -286,12 +306,12 @@ public class PdfOrderData {
             this.dynamicAttributes = dynamicAttributes;
         }
 
-        public String getItemPersonalization() {
-            return itemPersonalization;
+        public String getPersonalization() {
+            return personalization;
         }
 
-        public void setItemPersonalization(String itemPersonalization) {
-            this.itemPersonalization = itemPersonalization;
+        public void setPersonalization(String personalization) {
+            this.personalization = personalization;
         }
         // 新增字段的Getter和Setter（原有字段的Getter/Setter不变）
         public String getOrderType() {
