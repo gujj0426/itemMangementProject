@@ -244,8 +244,6 @@ public class PdfOrderData {
         private String productName;
         // 新增字段：微调4-包装盒（存储含Box的词组）
         private String packagingBox;
-        // 新增字段：信息（与ExcelData的information匹配）
-        private String information;
         // 新增字段：产品变量（用于存储产品的完整描述，如"Oval Box-椭圆形开窗木盒"）
         private String productVariable;
         // 新增字段：样式（从Personalization中提取的设计风格）
@@ -255,7 +253,6 @@ public class PdfOrderData {
             this.orderType = ""; // 默认空字符串
             this.packagingBox = ""; // 默认空字符串
             this.font = "";
-            this.information = "";
             this.productVariable = "";
             this.style = "";
         }
@@ -273,7 +270,6 @@ public class PdfOrderData {
             this.orderType = orderType;
             this.packagingBox = packagingBox;
             this.font = font;
-            this.information = information;
             this.productVariable = productVariable;
             this.style = style;
         }
@@ -349,14 +345,6 @@ public class PdfOrderData {
 
         public void setFont(String font) {
             this.font = font;
-        }
-
-        public String getInformation() {
-            return information;
-        }
-
-        public void setInformation(String information) {
-            this.information = information;
         }
 
         public String getProductName() {

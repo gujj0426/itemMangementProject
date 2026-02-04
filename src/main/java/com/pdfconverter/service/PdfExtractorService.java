@@ -156,7 +156,7 @@ public class PdfExtractorService {
                             itemBlocks[i] = itemBlocks[i].substring(0, endIndex);
                         }
                     }
-                    items.addAll (parseItemDetail(itemBlocks[i]));
+                    items.addAll (parseItemDetail(itemBlocks[i], order.getShopName()));
                 }
             } else {
                 throw new IllegalArgumentException("No valid item count found in text.");
@@ -170,7 +170,10 @@ public class PdfExtractorService {
 
         return order;
     }
-    /**解析单个 items 商品信息 样例：
+    /**
+     * 根据店铺名称的同，使用不同的商品解析方法，
+     * 已知店铺名称 1、TheVoro 2、hululuca
+     * 解析单个 items 商品信息 样例：
     //Silent Slide-On Dog Tag: Personalized Stainless Steel Pet
     //ID
     //Quantity: 1
@@ -179,30 +182,34 @@ public class PdfExtractorService {
     //Personalization: Chloe
     //145 S. Del Rancho Mesa, AZ
     //(480) 238-6227
-    //
     // 支持多种产品组合，如 "Item: Cufflinks + Oval Box"
     // 会在 itemDetailList 中为每种产品创建一个独立的 ItemDetail
-    **/
-    private List<ItemDetail> parseItemDetail(String block) {
-
-        List<ItemDetail> itemDetailList = new ArrayList<>();
-
-        // 1. 提取商品标题：从块开头到 "Quantity:" 之前
-        int qtyIndex = block.indexOf("Quantity:");
-        if (qtyIndex == -1) {
-            throw new IllegalArgumentException("Invalid block: missing 'Quantity:'");
+     * */
+    private List<ItemDetail> parseItemDetail(String block, String shopName) {
+        // VORO店铺商品解析
+        if (shopName.equals("TheVoro")) {
+            return parseItemTheVoro(block);
+        //hululu店铺商品解析
+        } else if (shopName.equals("hululuca")) {
+            return parseItemHululuca(block);
+        } else {
+            return null;
         }
-        String itemTitle = block.substring(0, qtyIndex).trim();
-
-        // 2. 提取 Quantity
+    }
+    /**
+     *  解析hululuca的商品信息
+     * */
+    private List<ItemDetail> parseItemHululuca(String block) {
+        List<ItemDetail> itemDetailList = new ArrayList<>();
+        //1. 提取商品标题
+        String itemTitle = getitemTitle(block);
+        // 2. 提取订购数量 Quantity
         int quantity = extractLineAfter(block, "Quantity:");
-
+        //调用解析商品函数，根据店铺名称shopname的不用，使用不同的方法解析商品属性等信息，返回解析后的商品信息
         // 3. 提取 Personalization 内容：从 "Personalization:" 开始，直到下一个商品块或文件结束
         String personalization = gePpersonalization(block);
-
-        // 4. 提取 Quantity 到 Personalization 之间的"动态属性"部分
+        // 4. 提取动态属性：从 Quantity 到 Personalization 之间的"动态属性"部分
         String dynamicSection = extractBetween(block,"Quantity:","Personalization:").trim();
-
         // 5. 按行分割动态属性（保留换行）
         String[] dynamicLines = dynamicSection.split("\n");
         Map<String, String> dynamicAttrsMap = new LinkedHashMap<>(); // 保持顺序
@@ -242,8 +249,6 @@ public class PdfExtractorService {
             productTypes.add("硅胶绑带");
         }else if (titleLower.contains("dog tag")) {
             productTypes.add("狗牌");
-        }else if (titleLower.contains("birth flower")) {
-            productTypes.add("花卉心形相盒吊坠");
         }
         // 6. 从所有动态属性中提取 Size 和 Color
         String size = null, color = null ,productVariable="";
@@ -263,7 +268,7 @@ public class PdfExtractorService {
             if (key.contains("size") && key.contains("color") && value.contains("_")) {
                 String[] parts = value.split("_");
                 if (parts.length >= 2) {
-                    color = parts[0].trim();
+                    color = extractColorFromValue(parts[0].trim());
                     size = parts[1].trim();
                 }
             }
@@ -273,27 +278,92 @@ public class PdfExtractorService {
             }
 
         }
+        // 10.2 如果是狗牌，则补充硅胶绑带
+        if (productTypes.contains("狗牌")) {
+            ItemDetail siliconeBandItem = new ItemDetail();
+            siliconeBandItem.setItemTitle("");
+            siliconeBandItem.setItemQuantity(quantity * 2); // 数量是狗牌数量的2倍
+            siliconeBandItem.setDynamicAttributes("");
+            siliconeBandItem.setPersonalization("");
+            siliconeBandItem.setOrderType("硅胶绑带");
+            siliconeBandItem.setSize(size); // 型号同狗牌
+            siliconeBandItem.setColor(color);
+            siliconeBandItem.setFont(""); // 硅胶绑带没有字体
+            siliconeBandItem.setStyle(""); // 硅胶绑带保留设计风格
 
-        // 7. 拼装"动态属性完全信息"用于"商品信息栏完全信息"
-        StringBuilder dynamicAttrsFull = new StringBuilder();
-        for (Map.Entry<String, String> entry : dynamicAttrsMap.entrySet()) {
-            if (dynamicAttrsFull.length() > 0) dynamicAttrsFull.append("\n");
-            dynamicAttrsFull.append(entry.getKey()).append(": ").append(entry.getValue());
+            itemDetailList.add(siliconeBandItem);
         }
-        String fullDynamicInfoStr = dynamicAttrsFull.toString();
+        return itemDetailList;
+    }
+    /**
+     *  解析TheVoro的商品信息
+     * */
+    private List<ItemDetail> parseItemTheVoro(String block) {
+        //1. 提取商品标题
+        String itemTitle = getitemTitle(block);
+        // 2. 提取订购数量 Quantity
+        int quantity = extractLineAfter(block, "Quantity:");
+        //调用解析商品函数，根据店铺名称shopname的不用，使用不同的方法解析商品属性等信息，返回解析后的商品信息
+        List<ItemDetail> itemDetailList = new ArrayList<>();
+        // 3. 提取 Personalization 内容：从 "Personalization:" 开始，直到下一个商品块或文件结束
+        String personalization = gePpersonalization(block);
+        // 4. 提取动态属性：从 Quantity 到 Personalization 之间的"动态属性"部分
+        String dynamicSection = extractBetween(block,"Quantity:","Personalization:").trim();
+        // 5. 按行分割动态属性（保留换行）
+        Map<String, String> dynamicAttrsMap = getDynamicInfo(dynamicSection.split("\n"));
+        // 8. 识别商品块中的所有产品类型
+        Set<String> productTypes = new LinkedHashSet<>(); // 保持顺序
 
+        // 8.1 从商品标题判断商品类型
+        String titleLower = itemTitle.toLowerCase();
+        if (titleLower.contains("birth flower")) {
+            productTypes.add("花卉心形相盒吊坠");
+        }else if (titleLower.contains("cufflink") || titleLower.contains("cufflinks")) {
+            productTypes.add("袖扣");
+        }else if (titleLower.matches(".*Tie\\s{0,}Clip.*")) {
+            productTypes.add("领带夹");
+        }
+        // 6. 从所有动态属性中提取 Size 和 Color
+        String size = null, color = null ,productVariable="";
+        for (Map.Entry<String, String> entry : dynamicAttrsMap.entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            String value = entry.getValue();
+            //解析商品型号
+            if (key.contains("size") && size == null) {
+                size = extractSizeFromValue(value);
+            }
+            //解析商品颜色
+            if ((key.contains("color") || key.contains("colour")|| key.contains("locket finish")) && color == null) {
+                color = extractColorFromValue(value);
+            }
 
+            // 如果 Size 和 Color 都在同一个字段（如 "Size and Color: Gold_L"）
+            if (key.contains("size") && key.contains("color") && value.contains("_")) {
+                String[] parts = value.split("_");
+                if (parts.length >= 2) {
+                    color = extractColorFromValue(parts[0].trim());
+                    size = parts[1].trim();
+                }
+            }
+            //如果productTypes中包含"花卉心形相盒吊坠"，解析月份“Birth Flower Style”，调用函数getmonthFromValue实现
+            if (productTypes.contains("花卉心形相盒吊坠")&& key.contains("birth flower style")) {
+                productVariable = getMonthFromValue(value);
+            }
 
+        }
         // 8.2 从动态属性中识别产品类型（袖扣、领带夹、包装盒）
         boolean hasCufflink = false;
         boolean hasTieClip = false;
-        String boxType = null; // Oval Box, Square Box, Box
+        // Oval Box, Square Box, Box
+        String boxType = null;
 
         for (String value : dynamicAttrsMap.values()) {
-            if (value.toLowerCase().contains("cufflink") || value.toLowerCase().contains("cufflinks")) {
+            if (!productTypes.contains("袖扣") &&
+                    ((value.toLowerCase().contains("cufflink") || value.toLowerCase().contains("cufflinks")))) {
                 hasCufflink = true;
             }
-            if (value.matches(".*Tie\\s{0,}Clip.*")) {
+            if (!productTypes.contains("领带夹") &&
+                    (value.matches(".*Tie\\s{0,}Clip.*"))) {
                 hasTieClip = true;
             }
             if (value.toLowerCase().contains("oval box")) {
@@ -319,7 +389,7 @@ public class PdfExtractorService {
         }
 
         // 9. 为每个产品类型创建独立的 ItemDetail
-        String information = "Quantity: " + quantity + "\n" + fullDynamicInfo.toString();
+        String information = "Quantity: " + quantity + "\n" + dynamicSection.toString();
         // 分别提取设计风格和字体
         String style = PersonalizationParser.extractStyle(personalization);
         String font = PersonalizationParser.extractFont(personalization);
@@ -328,9 +398,8 @@ public class PdfExtractorService {
             ItemDetail item = new ItemDetail();
             item.setItemTitle(itemTitle);
             item.setItemQuantity(quantity);
-            item.setDynamicAttributes(fullDynamicInfoStr);
+            item.setDynamicAttributes(information);
             item.setPersonalization(personalization);
-            item.setInformation(information);
             item.setOrderType(productType);
             item.setStyle(style); // 设置设计风格字段
             item.setFont(font); // 设置字体字段
@@ -350,7 +419,6 @@ public class PdfExtractorService {
                 item.setItemTitle("");
                 item.setDynamicAttributes("");
                 item.setPersonalization("");
-                item.setInformation("");
             } else {
                 // 其他产品类型（袖扣、领带夹、狗牌、相盒）保留原有字段
                 item.setSize(size);
@@ -365,65 +433,81 @@ public class PdfExtractorService {
 
         // 10.1 如果是袖扣或领带夹，且没有包装盒，则补充默认包装盒
         if ((hasCufflink || hasTieClip) && boxType == null) {
-            ItemDetail defaultBoxItem = new ItemDetail();
-            defaultBoxItem.setItemTitle("");
-            defaultBoxItem.setItemQuantity(quantity);
-            defaultBoxItem.setDynamicAttributes("");
-            defaultBoxItem.setPersonalization("");
-            defaultBoxItem.setInformation("");
-            defaultBoxItem.setOrderType("包装盒");
-            // 包装盒不设置型号、颜色、设计风格、字体
-            defaultBoxItem.setSize(null);
-            defaultBoxItem.setColor(null);
-            defaultBoxItem.setFont(null);
-            defaultBoxItem.setStyle(null);
-
-            // 根据产品类型设置产品变量
-            if (hasCufflink) {
-                defaultBoxItem.setProductVariable("小方形礼盒");
-            } else if (hasTieClip) {
-                defaultBoxItem.setProductVariable("长方形礼盒");
-            }
-
-            itemDetailList.add(defaultBoxItem);
+            itemDetailList.add(addDefaultBoxItem(quantity,hasCufflink,hasTieClip));
         }
-
-        // 10.2 如果是狗牌，则补充硅胶绑带
-        if (productTypes.contains("狗牌")) {
-            ItemDetail siliconeBandItem = new ItemDetail();
-            siliconeBandItem.setItemTitle("");
-            siliconeBandItem.setItemQuantity(quantity * 2); // 数量是狗牌数量的2倍
-            siliconeBandItem.setDynamicAttributes("");
-            siliconeBandItem.setPersonalization("");
-            siliconeBandItem.setInformation("");
-            siliconeBandItem.setOrderType("硅胶绑带");
-            siliconeBandItem.setSize(size); // 型号同狗牌
-            siliconeBandItem.setColor(color);
-            siliconeBandItem.setFont(""); // 硅胶绑带没有字体
-            siliconeBandItem.setStyle(""); // 硅胶绑带保留设计风格
-
-            itemDetailList.add(siliconeBandItem);
-        }
-
-        // 10.3 如果是花卉心形相盒吊坠，则补充基础链
+        // 10.2 如果是花卉心形相盒吊坠，则补充基础链
         if (titleLower.contains("birth flower") || titleLower.contains("花卉心形相盒吊坠")) {
-            ItemDetail baseChainItem = new ItemDetail();
-            baseChainItem.setItemTitle(itemTitle);
-            baseChainItem.setItemQuantity(quantity); // 数量同原商品
-            baseChainItem.setDynamicAttributes("");
-            baseChainItem.setPersonalization("");
-            baseChainItem.setInformation("");
-            baseChainItem.setOrderType("基础链"); // 产品名称为基础链
-            baseChainItem.setProductVariable("全链"); // 产品变量为全链
-            baseChainItem.setSize(""); // 继承型号
-            baseChainItem.setColor(color); // 继承颜色
-            baseChainItem.setFont(""); // 继承字体
-            baseChainItem.setStyle(""); // 继承设计风格
-
-            itemDetailList.add(baseChainItem);
+            itemDetailList.add(addBaseChainItem(itemTitle,quantity,color));
         }
-
         return itemDetailList;
+    }
+
+    private ItemDetail addDefaultBoxItem(int quantity, boolean hasCufflink, boolean hasTieClip) {
+        ItemDetail defaultBoxItem = new ItemDetail();
+        defaultBoxItem.setItemTitle("");
+        defaultBoxItem.setItemQuantity(quantity);
+        defaultBoxItem.setDynamicAttributes("");
+        defaultBoxItem.setPersonalization("");
+        defaultBoxItem.setOrderType("包装盒");
+        // 包装盒不设置型号、颜色、设计风格、字体
+        defaultBoxItem.setSize(null);
+        defaultBoxItem.setColor(null);
+        defaultBoxItem.setFont(null);
+        defaultBoxItem.setStyle(null);
+
+        // 根据产品类型设置产品变量
+        if (hasCufflink) {
+            defaultBoxItem.setProductVariable("小方形礼盒");
+        } else if (hasTieClip) {
+            defaultBoxItem.setProductVariable("长方形礼盒");
+        }
+        return defaultBoxItem;
+    }
+
+    private ItemDetail addBaseChainItem(String itemTitle, int quantity, String color) {
+        ItemDetail baseChainItem = new ItemDetail();
+        baseChainItem.setItemTitle(itemTitle);
+        baseChainItem.setItemQuantity(quantity); // 数量同原商品
+        baseChainItem.setDynamicAttributes("");
+        baseChainItem.setPersonalization("");
+        baseChainItem.setOrderType("基础链"); // 产品名称为基础链
+        baseChainItem.setProductVariable("全链"); // 产品变量为全链
+        baseChainItem.setSize(""); // 继承型号
+        baseChainItem.setColor(color); // 继承颜色
+        baseChainItem.setFont(""); // 继承字体
+        baseChainItem.setStyle(""); // 继承设计风格
+        return baseChainItem;
+    }
+
+    private Map<String, String> getDynamicInfo(String[] dynamicSectionInfo) {
+        Map<String, String> dynamicAttrsMap=new HashMap<>();
+        for (String line : dynamicSectionInfo) {
+            line = line.trim();
+            if (line.isEmpty()) continue;
+            // 尝试解析 key: value
+            int colon = line.indexOf(":");
+            if (colon != -1) {
+                String key = line.substring(0, colon).trim();
+                String value = line.substring(colon + 1).trim();
+                dynamicAttrsMap.put(key, value);
+            } else {
+                // 无冒号的行，作为上一个 key 的延续（罕见情况）
+                if (!dynamicAttrsMap.isEmpty()) {
+                    String lastKey = new ArrayList<>(dynamicAttrsMap.keySet()).get(dynamicAttrsMap.size() - 1);
+                    dynamicAttrsMap.put(lastKey, dynamicAttrsMap.get(lastKey) + " " + line);
+                }
+            }
+        }
+        return dynamicAttrsMap;
+    }
+
+    private String getitemTitle(String block) {
+        // 1. 提取商品标题：从块开头到 "Quantity:" 之前
+        int qtyIndex = block.indexOf("Quantity:");
+        if (qtyIndex == -1) {
+            throw new IllegalArgumentException("Invalid block: missing 'Quantity:'");
+        }
+        return block.substring(0, qtyIndex).trim();
     }
 
     /**解析个性化信息*/
