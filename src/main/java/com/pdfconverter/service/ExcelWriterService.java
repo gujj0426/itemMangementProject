@@ -5,11 +5,14 @@ import com.pdfconverter.model.PdfOrderData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,6 +24,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ExcelWriterService {
+    private static final Logger log = LoggerFactory.getLogger(ExcelWriterService.class);
+
+    @Resource
+    private ProductNameMapper productNameMapper;
 
     @Value("${app.excel.output-folder}")
     private String outputFolder;
@@ -37,8 +44,8 @@ public class ExcelWriterService {
     @Value("${app.excel.initial-index}")
     private int initialIndex;
 
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yy");
-    private final DateTimeFormatter fileDateFormatter = DateTimeFormatter.ofPattern("MMdd");
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
+    private final DateTimeFormatter fileDateFormatter = DateTimeFormatter.ofPattern("yyMMdd");
 
     private Workbook workbook;
     private Sheet sheet;
@@ -80,26 +87,25 @@ public class ExcelWriterService {
                 if (order.getItemDetails() != null) {
                     order.getItemDetails().forEach(detail -> {
                         if (detail.getOrderType() != null) {
-                            Arrays.stream(detail.getOrderType().split(",")).forEach(type -> {
-                                ExcelData data = new ExcelData();
-                                BeanUtils.copyProperties(order, data);
-                                BeanUtils.copyProperties(detail, data);
-                                data.setDate(now.format(dateFormatter));
-                                data.setOrderType(type.trim());
-                                data.setQuantity(String.valueOf(detail.getItemQuantity()));
-                                data.setInformation(detail.getDynamicAttributes());
-                                int quantity = detail.getItemQuantity();
-                                for (int i = 0; i < quantity; i++) {
-                                    ExcelData rowData = new ExcelData();
-                                    BeanUtils.copyProperties(data, rowData);
-                                    rowData.setQuantity("1");
-                                    rowData.setSerialNumber(String.valueOf(initialIndex));
-                                    Row row = sheet.createRow(rowIdx.getAndIncrement());
-                                    fillRow(row, rowData);
-                                    currentData.add(rowData);
-                                }
-
-                            });
+                            // 直接使用每个 ItemDetail，不再按逗号分割（已在 parseItemDetail 中拆分）
+                            ExcelData data = new ExcelData();
+                            BeanUtils.copyProperties(order, data);
+                            BeanUtils.copyProperties(detail, data);
+                            data.setDate(now.format(dateFormatter));
+                            data.setQuantity(String.valueOf(detail.getItemQuantity()));
+                            data.setInformation(detail.getDynamicAttributes());
+                            // 设置产品变量（用于包装盒等需要标准名称的情况）
+                            data.setDynamicAttributes(detail.getProductVariable());
+                            int quantity = detail.getItemQuantity();
+                            for (int i = 0; i < quantity; i++) {
+                                ExcelData rowData = new ExcelData();
+                                BeanUtils.copyProperties(data, rowData);
+                                rowData.setQuantity("1");
+                                rowData.setSerialNumber(String.valueOf(initialIndex));
+                                Row row = sheet.createRow(rowIdx.getAndIncrement());
+                                fillRow(row, rowData);
+                                currentData.add(rowData);
+                            }
                         }
                     });
                 }
@@ -107,7 +113,6 @@ public class ExcelWriterService {
             });
         }
 
-        autoMergeCells();
         try (FileOutputStream fos = new FileOutputStream(currentFilePath)) {
             workbook.write(fos);
         }
@@ -116,85 +121,81 @@ public class ExcelWriterService {
 
     private void createHeader() {
         headerRow = sheet.createRow(0);
-        String[] headers = {"日期","序号","用户名","订单编号","信息","订单类型","袖扣风格","字体","领带风格","设计师","尺寸","颜色"
-                ,"数量（袖扣单位：对；领带夹单位：个）","包装盒","盒数量","Personalization","订购完全信息","商品标题"};
+        String[] headers = {"产品编号","用户名","订单编号","产品名称","型号","颜色","产品变量","设计风格","刻录信息","字体","icon","是否派单","设计师","数量","出库日期","Personalization","订购完全信息","商品标题","商品图片"};
         for (int i = 0; i < headers.length; i++) {
             headerRow.createCell(i).setCellValue(headers[i]);
         }
     }
 
     private void fillRow(Row row, ExcelData data) {
-        row.createCell(0).setCellValue(data.getDate());
-        // 序号列从1开始递增
-        row.createCell(1).setCellValue(data.getSerialNumber());
-        row.createCell(2).setCellValue(data.getUsername());
-        row.createCell(3).setCellValue(data.getOrderNumber());
-        row.createCell(4).setCellValue(data.getInfo() != null ? data.getInfo() : "");
-        row.createCell(5).setCellValue(data.getOrderType());
-        // 根据订单类型设置特定列的值
-        if ("宠物头像".equals(data.getOrderType())) {
-            row.createCell(6).setCellValue("见附图");
-            row.createCell(8).setCellValue("—");
-            row.createCell(9).setCellValue("小如");
-        } else {
-            row.createCell(6).setCellValue(data.getCufflinkStyle() != null ? data.getCufflinkStyle() : "");
-            row.createCell(8).setCellValue(data.getTieStyle() != null ? data.getTieStyle() : "");
-            row.createCell(9).setCellValue(data.getDesigner() != null ? data.getDesigner() : "");
-        }
-        row.createCell(7).setCellValue(data.getFont() != null ? data.getFont() : "");
-        row.createCell(10).setCellValue(data.getSize() != null ? data.getSize() : "");
-        row.createCell(11).setCellValue(data.getColor() != null ? data.getColor() : "");
-        row.createCell(12).setCellValue(data.getQuantity());
-        row.createCell(13).setCellValue(data.getPackagingBox() != null ? data.getPackagingBox() : "");
-        row.createCell(14).setCellValue("1");
+        // 0: 产品编号 - 空
+        row.createCell(0).setCellValue("");
+        // 1: 用户名 = 用户名
+        row.createCell(1).setCellValue(data.getUsername() != null ? data.getUsername() : "");
+        // 2: 订单编号 = 订单编号
+        row.createCell(2).setCellValue(data.getOrderNumber() != null ? data.getOrderNumber() : "");
+        // 3: 产品名称 = 订单类型
+        row.createCell(3).setCellValue(data.getOrderType() != null ? data.getOrderType() : "");
+        // 4: 型号 = 尺寸
+        row.createCell(4).setCellValue(data.getSize() != null ? data.getSize() : "");
+        // 5: 颜色 = 颜色
+        row.createCell(5).setCellValue(data.getColor() != null ? data.getColor() : "");
+        // 6: 产品变量 = dynamicAttributes（如"Oval Box-椭圆形开窗木盒"）
+        row.createCell(6).setCellValue(data.getDynamicAttributes() != null ? data.getDynamicAttributes() : "");
+        // 7: 设计风格 = style（从Personalization中提取的设计风格）
+        row.createCell(7).setCellValue(convertStyle(data.getStyle()));
+        // 8: 刻录信息 = 空
+        row.createCell(8).setCellValue("");
+        // 9: 字体 = font（从Personalization中提取的字体）
+        row.createCell(9).setCellValue(convertFont(data.getFont()));
+        // 10: icon = 空
+        row.createCell(10).setCellValue("");
+        // 11: 是否派单 = 空
+        row.createCell(11).setCellValue("");
+        // 12: 设计师 - 保留原有逻辑（数量固定1）
+        row.createCell(12).setCellValue("");
+        // 13: 数量 = 数量
+        row.createCell(13).setCellValue(data.getQuantity() != null ? data.getQuantity() : "");
+        // 14: 出库日期 = 系统日期（yyyy年MM月dd日）
+        row.createCell(14).setCellValue(data.getDate());
+        // 15: Personalization - 保留原有逻辑
         row.createCell(15).setCellValue(data.getPersonalization() != null ? data.getPersonalization() : "");
+        // 16: 订购完全信息 - 保留原有逻辑
         row.createCell(16).setCellValue(data.getInformation() != null ? data.getInformation() : "");
+        // 17: 商品标题 - 保留原有逻辑
         row.createCell(17).setCellValue(data.getItemTitle() != null ? data.getItemTitle() : "");
+        // 18: 商品图片 - 插入图片
+        if (data.getImageBytes() != null && data.getImageBytes().length > 0) {
+            try {
+                int pictureIdx = workbook.addPicture(data.getImageBytes(), Workbook.PICTURE_TYPE_PNG);
+                Drawing<?> drawing = sheet.createDrawingPatriarch();
+                CreationHelper helper = workbook.getCreationHelper();
+                ClientAnchor anchor = helper.createClientAnchor();
+                anchor.setCol1(18); // 图片所在列（第19列，索引18）
+                anchor.setRow1(row.getRowNum()); // 图片所在行
+                anchor.setCol2(19); // 图片宽度
+                anchor.setRow2(row.getRowNum() + 1); // 图片高度
+                drawing.createPicture(anchor, pictureIdx);
+            } catch (Exception e) {
+                log.error("插入图片失败", e);
+            }
+        }
     }
 
-    private void autoMergeCells() {
-        int lastRow = sheet.getLastRowNum();
-        if (lastRow <= 1) return;
-
-        // 合并用户名
-        mergeColumn(2, lastRow);
-        // 合并订单编号
-        mergeColumn(3, lastRow);
-        // 合并序号（与订单编号同步合并）
-        mergeColumn(1, lastRow);
+    private String convertFont(String font) {
+        if (font == null || font.isEmpty()) {
+            return "";
+        }
+        // 通过映射表转换字体
+        return productNameMapper.getStandardName(font);
     }
 
-    private void mergeColumn(int col, int lastRow) {
-        String prev = null;
-        int start = -1;
-        for (int r = 1; r <= lastRow; r++) {
-            Row row = sheet.getRow(r);
-            if (row == null) continue;
-            Cell cell = row.getCell(col);
-            String val = "";
-            if (cell != null) {
-                switch (cell.getCellType()) {
-                    case STRING:
-                        val = cell.getStringCellValue();
-                        break;
-                    case NUMERIC:
-                        val = String.valueOf(cell.getNumericCellValue());
-                        break;
-                    default:
-                        val = "";
-                }
-            }
-            if (!val.equals(prev)) {
-                if (start != -1 && r - 1 > start) {
-                    sheet.addMergedRegion(new CellRangeAddress(start, r - 1, col, col));
-                }
-                start = r;
-            }
-            prev = val;
+    private String convertStyle(String style) {
+        if (style == null || style.isEmpty()) {
+            return "";
         }
-        if (start != -1 && lastRow > start) {
-            sheet.addMergedRegion(new CellRangeAddress(start, lastRow, col, col));
-        }
+        // 通过映射表转换设计风格
+        return productNameMapper.getStandardName(style);
     }
 
     private int findNextSequenceNumber(String dateStr) {

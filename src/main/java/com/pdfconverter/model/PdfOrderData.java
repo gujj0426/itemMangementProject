@@ -1,7 +1,9 @@
 package com.pdfconverter.model;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 订单数据模型类，仅适配3837329233-download-2025-10-23.pdf
@@ -218,7 +220,7 @@ public class PdfOrderData {
     }
 
     /**
-     * 商品详情内部类（仅适配3837329233-download-2025-10-23.pdf）
+     * 商品详情内部类
      * 补充Size、Color字段，从动态属性中拆分；保留动态属性原始内容用于追溯
      */
     public static class ItemDetail {
@@ -228,7 +230,7 @@ public class PdfOrderData {
         private int itemQuantity;
         // 商品尺寸（从动态属性中拆分，如PDF中"Gold_L"里的"L"、"Gold_S"里的"S"）{insert\_element\_16\_}
         private String size;
-        //字体（Personalization中拆分）
+       //字体（Personalization中拆分）
         private String font;
         // 商品颜色（从动态属性中拆分，如PDF中"Gold_L"里的"Gold"、"Gold_S"里的"Gold"）{insert\_element\_17\_}
         private String color;
@@ -238,21 +240,30 @@ public class PdfOrderData {
         private String personalization;
         // 新增字段：微调2-订单类型（袖扣/领带夹/宠物头像）
         private String orderType;
+        // 新增字段：产品名称（从商品标题中拆分）
+        private String productName;
         // 新增字段：微调4-包装盒（存储含Box的词组）
         private String packagingBox;
         // 新增字段：信息（与ExcelData的information匹配）
         private String information;
+        // 新增字段：产品变量（用于存储产品的完整描述，如"Oval Box-椭圆形开窗木盒"）
+        private String productVariable;
+        // 新增字段：样式（从Personalization中提取的设计风格）
+        private String style;
         // 无参构造器（新增字段初始化）
         public ItemDetail() {
             this.orderType = ""; // 默认空字符串
             this.packagingBox = ""; // 默认空字符串
             this.font = "";
             this.information = "";
+            this.productVariable = "";
+            this.style = "";
         }
         // 全参构造器（补充新增字段）
         public ItemDetail(String itemTitle, int itemQuantity, String size, String color,
                           String dynamicAttributes, String personalization,
-                          String orderType, String packagingBox, String font, String information){
+                          String orderType, String packagingBox, String font, String information,
+                          String productVariable, String style){
             this.itemTitle = itemTitle;
             this.itemQuantity = itemQuantity;
             this.size = size;
@@ -263,6 +274,8 @@ public class PdfOrderData {
             this.packagingBox = packagingBox;
             this.font = font;
             this.information = information;
+            this.productVariable = productVariable;
+            this.style = style;
         }
 
         // Getter和Setter方法
@@ -344,6 +357,30 @@ public class PdfOrderData {
 
         public void setInformation(String information) {
             this.information = information;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+
+        public String getProductVariable() {
+            return productVariable;
+        }
+
+        public void setProductVariable(String productVariable) {
+            this.productVariable = productVariable;
+        }
+
+        public String getStyle() {
+            return style;
+        }
+
+        public void setStyle(String style) {
+            this.style = style;
         }
     }
 

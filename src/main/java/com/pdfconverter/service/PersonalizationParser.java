@@ -5,49 +5,47 @@ import java.util.regex.Pattern;
 
 public class PersonalizationParser {
 
-    // 定义常见的字体关键词映射（可扩展）
-    private static final Pattern FONT_PATTERN = Pattern.compile(
-            "(?i)\\b(style|font|design|type)\\s*(?:[:\\s])?\\s*(\\d+|[A-Za-z][A-Za-z\\s]*(?=,|\\)|$))"
-    );
+    /**
+     * 从个性化文本中提取设计风格（Style）
+     * @param personalization 个性化内容（如 "Style 27, AB" 或 "Style 27, Font 23"）
+     * @return 提取到的设计风格，如 "Style 27"；未找到返回 null
+     */
+    public static String extractStyle(String personalization) {
+        if (personalization == null || personalization.trim().isEmpty()) {
+            return null;
+        }
 
-    // 更直接匹配如 "Script", "Block", "Roman" 等常见字体名
-    private static final Pattern DIRECT_FONT_PATTERN = Pattern.compile(
-            "(?i)(?:style|font|design)\\s*[:\\s]\\s*([A-Za-z][A-Za-z\\s]*?)(?=,|\\(|\\n|$)"
-    );
+        // 匹配 "Style XX" 或 "style XX" 格式（XX是1-2位数字）
+        Matcher styleMatcher = Pattern.compile("(?i)style\\s+(\\d{1,2})\\b").matcher(personalization);
+        if (styleMatcher.find()) {
+            return "Style " + styleMatcher.group(1);
+        }
+
+        return null; // 未找到设计风格
+    }
 
     /**
-     * 从个性化文本中提取字体名称
-     * @param personalization 个性化内容（如 "Cufflinks: style 27, style 15 ED"）
-     * @return 提取到的字体名称，如 "style 27" 或 "Script"；未找到返回 null
+     * 从个性化文本中提取字体（Font）
+     * @param personalization 个性化内容（如 "Font 23" 或 "Script"）
+     * @return 提取到的字体名称，如 "Font 23"、"Script"、"Block"；未找到返回 null
      */
     public static String extractFont(String personalization) {
         if (personalization == null || personalization.trim().isEmpty()) {
             return null;
         }
 
-        // 方法1：尝试匹配 "style XXX" 或 "font Block"
-        Matcher matcher = DIRECT_FONT_PATTERN.matcher(personalization);
-        if (matcher.find()) {
-            return matcher.group(1).trim();
+        // 方法1：匹配 "Font XX" 格式（XX是1-2位数字）
+        Matcher fontNumMatcher = Pattern.compile("(?i)font\\s*#?\\s*(\\d{1,2})\\b").matcher(personalization);
+        if (fontNumMatcher.find()) {
+            return "Font " + fontNumMatcher.group(1);
         }
 
-        // 方法2：备用规则：查找常见字体关键词
-        // 示例：我们也可以维护一个常见字体列表
-        String[] commonFonts = {"Script", "Block", "Roman", "Italic", "Gothic", "Serif", "Sans", "Monospace"};
-        String lower = personalization.toLowerCase();
-
-        for (String font : commonFonts) {
-            if (lower.contains(font.toLowerCase())) {
-                return font;
-            }
+        // 方法2：匹配常见字体名称（如 Script, Block, Roman 等）
+        Matcher fontNameMatcher = Pattern.compile("(?i)\\b(Script|Block|Roman|Times|Arial|Helvetica|Courier)\\b").matcher(personalization);
+        if (fontNameMatcher.find()) {
+            return fontNameMatcher.group(1);
         }
 
-        // 方法3：如果包含 "style XX" 数字形式
-        Matcher numMatcher = Pattern.compile("(?i)style\\s+(\\d+)").matcher(personalization);
-        if (numMatcher.find()) {
-            return "style " + numMatcher.group(1);
-        }
-
-        return null; // 未识别
+        return null; // 未找到字体
     }
 }

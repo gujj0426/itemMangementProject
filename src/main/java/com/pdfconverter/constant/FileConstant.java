@@ -35,5 +35,5 @@ public class FileConstant {
     public static final String OVAL_BOX_MARKER = "Oval Box";
     public static final String SQUARE_BOX_MARKER = "Square Box";
     // 字体关键字
-    public static final String FONT_MARKER = "Font";
+    public static final String FONT_MARKER = "Font ";
 }

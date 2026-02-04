@@ -9,7 +9,7 @@ public class ExcelData {
     private String username;
     /** 订单编号 */
     private String orderNumber;
-    /** 信息 */
+    /** 备用信息字段 */
     private String info;
     /** 订单类型 */
     private String orderType;
@@ -37,6 +37,12 @@ public class ExcelData {
     private String information;
     /** 商品标题 */
     private String itemTitle;
+    /** 产品变量（用于存储产品的完整描述，如"Oval Box-椭圆形开窗木盒"）*/
+    private String dynamicAttributes;
+    /** 样式（从Personalization中提取的样式/字体信息）*/
+    private String style;
+    /** 商品图片字节数组（PNG格式）*/
+    private byte[] imageBytes;
 
 
     // Getters and Setters
@@ -90,4 +96,13 @@ public class ExcelData {
 
     public String getPersonalization() { return personalization; }
     public void setPersonalization(String personalization) { this.personalization = personalization; }
+
+    public String getDynamicAttributes() { return dynamicAttributes; }
+    public void setDynamicAttributes(String dynamicAttributes) { this.dynamicAttributes = dynamicAttributes; }
+
+    public String getStyle() { return style; }
+    public void setStyle(String style) { this.style = style; }
+
+    public byte[] getImageBytes() { return imageBytes; }
+    public void setImageBytes(byte[] imageBytes) { this.imageBytes = imageBytes; }
 }
