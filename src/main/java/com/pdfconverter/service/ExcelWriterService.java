@@ -2,8 +2,10 @@ package com.pdfconverter.service;
 
 import com.pdfconverter.model.ExcelData;
 import com.pdfconverter.model.PdfOrderData;
+import com.pdfconverter.util.FontNameMapper;
+import com.pdfconverter.util.ProductNameMapper;
+import com.pdfconverter.util.StyleNameMapper;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,12 @@ public class ExcelWriterService {
 
     @Resource
     private ProductNameMapper productNameMapper;
+
+    @Resource
+    private StyleNameMapper styleNameMapper;
+
+    @Resource
+    private FontNameMapper fontNameMapper;
 
     @Value("${app.excel.output-folder}")
     private String outputFolder;
@@ -187,7 +195,7 @@ public class ExcelWriterService {
             return "";
         }
         // 通过映射表转换字体
-        return productNameMapper.getStandardName(font);
+        return fontNameMapper.getStandardName(font);
     }
 
     private String convertStyle(String style) {
@@ -195,7 +203,7 @@ public class ExcelWriterService {
             return "";
         }
         // 通过映射表转换设计风格
-        return productNameMapper.getStandardName(style);
+        return styleNameMapper.getStandardName(style);
     }
 
     private int findNextSequenceNumber(String dateStr) {

@@ -1,4 +1,4 @@
-package com.pdfconverter.service;
+package com.pdfconverter.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

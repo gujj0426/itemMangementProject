@@ -2,7 +2,9 @@ package com.pdfconverter.service;
 
 import com.pdfconverter.model.PdfOrderData;
 import com.pdfconverter.model.PdfOrderData.ItemDetail;
+import com.pdfconverter.model.ProductAttribute;
 import com.pdfconverter.util.MonthMapper;
+import com.pdfconverter.util.ProductNameMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
@@ -288,7 +290,6 @@ public class PdfExtractorService {
         // 2. 提取订购数量 Quantity
         int quantity = extractLineAfter(block, "Quantity:");
         //调用解析商品函数，根据店铺名称shopname的不用，使用不同的方法解析商品属性等信息，返回解析后的商品信息
-        List<ItemDetail> itemDetailList = new ArrayList<>();
         // 3. 提取 Personalization 内容：从 "Personalization:" 开始，直到下一个商品块或文件结束
         String personalization = gePpersonalization(block);
         // 4. 提取动态属性：从 Quantity 到 Personalization 之间的"动态属性"部分
@@ -296,88 +297,23 @@ public class PdfExtractorService {
         // 5. 按行分割动态属性（保留换行）
         Map<String, String> dynamicAttrsMap = getDynamicInfo(dynamicSection.split("\n"));
         // 8. 识别商品块中的所有产品类型
-        Set<String> productTypes = new LinkedHashSet<>(); // 保持顺序
-
-        // 8.1 从商品标题判断商品类型
-        String titleLower = itemTitle.toLowerCase();
-        if (titleLower.contains("birth flower")) {
-            productTypes.add("花卉心形相盒吊坠");
-        }else if (titleLower.contains("cufflink") || titleLower.contains("cufflinks")) {
-            productTypes.add("袖扣");
-        }else if (titleLower.matches(".*Tie\\s{0,}Clip.*")) {
-            productTypes.add("领带夹");
-        }
+        Set<String> productTypes = getVoroProductTypes(itemTitle,dynamicAttrsMap);
         // 6. 从所有动态属性中提取 Size 和 Color
-        String size = null, color = null ,productVariable="";
-        for (Map.Entry<String, String> entry : dynamicAttrsMap.entrySet()) {
-            String key = entry.getKey().toLowerCase();
-            String value = entry.getValue();
-            //解析商品型号
-            if (key.contains("size") && size == null) {
-                size = extractSizeFromValue(value);
-            }
-            //解析商品颜色
-            if ((key.contains("color") || key.contains("colour")|| key.contains("locket finish")) && color == null) {
-                color = extractColorFromValue(value);
-            }
-
-            // 如果 Size 和 Color 都在同一个字段（如 "Size and Color: Gold_L"）
-            if (key.contains("size") && key.contains("color") && value.contains("_")) {
-                String[] parts = value.split("_");
-                if (parts.length >= 2) {
-                    color = extractColorFromValue(parts[0].trim());
-                    size = parts[1].trim();
-                }
-            }
-            //如果productTypes中包含"花卉心形相盒吊坠"，解析月份“Birth Flower Style”，调用函数getmonthFromValue实现
-            if (productTypes.contains("花卉心形相盒吊坠")&& key.contains("birth flower style")) {
-                productVariable = getMonthFromValue(value);
-            }
-
-        }
-        // 8.2 从动态属性中识别产品类型（袖扣、领带夹、包装盒）
-        boolean hasCufflink = false;
-        boolean hasTieClip = false;
-        // Oval Box, Square Box, Box
-        String boxType = null;
-
-        for (String value : dynamicAttrsMap.values()) {
-            if (!productTypes.contains("袖扣") &&
-                    ((value.toLowerCase().contains("cufflink") || value.toLowerCase().contains("cufflinks")))) {
-                hasCufflink = true;
-            }
-            if (!productTypes.contains("领带夹") &&
-                    (value.matches(".*Tie\\s{0,}Clip.*"))) {
-                hasTieClip = true;
-            }
-            if (value.toLowerCase().contains("oval box")) {
-                boxType = "Oval Box";
-            } else if (value.toLowerCase().contains("square box")) {
-                boxType = "Square Box";
-            } else if (value.toLowerCase().contains("box")) {
-                if (boxType == null) {
-                    boxType = "Box";
-                }
-            }
-        }
-
-        // 添加识别到的产品类型
-        if (hasCufflink) {
-            productTypes.add("袖扣");
-        }
-        if (hasTieClip) {
-            productTypes.add("领带夹");
-        }
-        if (boxType != null) {
-            productTypes.add("包装盒");
-        }
-
+        ProductAttribute productAttribute = parseVoroDynamicInfo(dynamicAttrsMap,productTypes);
         // 9. 为每个产品类型创建独立的 ItemDetail
-        String information = "Quantity: " + quantity + "\n" + dynamicSection.toString();
+        String information = "Quantity: " + quantity + "\n" + dynamicSection;
         // 分别提取设计风格和字体
         String style = PersonalizationParser.extractStyle(personalization);
         String font = PersonalizationParser.extractFont(personalization);
+        //调用函数组装商品list
+        return assembleItemDetailListForVoro(itemTitle,quantity,information,
+                personalization,productTypes,style,font,productAttribute);
 
+    }
+
+    private List<ItemDetail> assembleItemDetailListForVoro(String itemTitle, int quantity, String information,
+                     String personalization, Set<String> productTypes, String style, String font, ProductAttribute productAttribute) {
+        List<ItemDetail> itemDetailList = new ArrayList<>();
         for (String productType : productTypes) {
             ItemDetail item = new ItemDetail();
             item.setItemTitle(itemTitle);
@@ -389,9 +325,9 @@ public class PdfExtractorService {
             item.setFont(font); // 设置字体字段
 
             // 根据产品类型设置特殊字段
-            if (productType.equals("包装盒") && boxType != null) {
+            if (productType.equals("Box")) {
                 // 包装盒的特殊处理：只有数量，没有型号、颜色、设计风格、字体
-                item.setPackagingBox(boxType); // 原始值，如 "Oval Box"
+                item.setPackagingBox("包装盒"); // 原始值，如 "Oval Box"
                 String standardName = productNameMapper.getStandardName(boxType); // 映射后的标准名称
                 item.setProductVariable(standardName); // 产品变量，如 "Oval Box-椭圆形开窗木盒"
                 item.setOrderType("包装盒");
@@ -423,7 +359,81 @@ public class PdfExtractorService {
         if (titleLower.contains("birth flower") || titleLower.contains("花卉心形相盒吊坠")) {
             itemDetailList.add(addBaseChainItem(itemTitle,quantity,color));
         }
-        return itemDetailList;
+    }
+
+    private ProductAttribute parseVoroDynamicInfo(Map<String, String> dynamicAttrsMap, Set<String> productTypes) {
+        ProductAttribute productAttribute = new ProductAttribute();
+        for (Map.Entry<String, String> entry : dynamicAttrsMap.entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            String value = entry.getValue();
+            //解析商品型号
+            if (key.contains("size")) {
+                productAttribute.setSize(extractSizeFromValue(value));
+            }
+            //解析商品颜色
+            if ((key.contains("color") || key.contains("colour")|| key.contains("locket finish"))) {
+                productAttribute.setColor(extractColorFromValue(value));
+            }
+
+            // 如果 Size 和 Color 都在同一个字段（如 "Size and Color: Gold_L"）
+            if (key.contains("size") && key.contains("color") && value.contains("_")) {
+                String[] parts = value.split("_");
+                if (parts.length >= 2) {
+                    productAttribute.setColor(extractColorFromValue(parts[0].trim()));
+                    productAttribute.setSize(parts[1].trim());
+                }
+            }
+            //如果productTypes中包含"花卉心形相盒吊坠"，解析月份“Birth Flower Style”，调用函数getmonthFromValue实现
+            if (productTypes.contains("花卉心形相盒吊坠")&& key.contains("birth flower style")) {
+                productAttribute.setProductVariable(getMonthFromValue(value));
+            }
+        }
+        return productAttribute;
+    }
+
+    private Set<String> getVoroProductTypes(String itemTitle, Map<String, String> dynamicAttrsMap) {
+        Set<String> productTypes =new LinkedHashSet<>();
+        // 8.1 从商品标题判断商品类型
+        String titleLower = itemTitle.toLowerCase();
+        if (titleLower.contains("birth flower")) {
+            productTypes.add("花卉心形相盒吊坠");
+        }else if (titleLower.contains("cufflink") || titleLower.contains("cufflinks")) {
+            productTypes.add("袖扣");
+        }else if (titleLower.matches(".*Tie\\s{0,}Clip.*")) {
+            productTypes.add("领带夹");
+        }
+        // 8.2 从动态属性中识别产品类型（袖扣、领带夹、包装盒）
+        boolean hasCufflink = false;
+        boolean hasTieClip = false;
+        // Oval Box, Square Box, Box
+        String boxType = null;
+
+        for (String value : dynamicAttrsMap.values()) {
+            if (!productTypes.contains("袖扣") &&
+                    ((value.toLowerCase().contains("cufflink") || value.toLowerCase().contains("cufflinks")))) {
+                hasCufflink = true;
+            }
+            if (!productTypes.contains("领带夹") &&
+                    (value.matches(".*Tie\\s{0,}Clip.*"))) {
+                hasTieClip = true;
+            }
+            if (value.toLowerCase().contains("oval box")) {
+                productTypes.add("Oval Box");
+            } else if (value.toLowerCase().contains("square box")) {
+                productTypes.add("Square Box");
+            } else if (value.toLowerCase().contains("box")) {
+                productTypes.add("Box");
+            }
+        }
+
+        // 添加识别到的产品类型
+        if (hasCufflink) {
+            productTypes.add("袖扣");
+        }
+        if (hasTieClip) {
+            productTypes.add("领带夹");
+        }
+        return productTypes;
     }
 
     private ItemDetail addDefaultBoxItem(int quantity, boolean hasCufflink, boolean hasTieClip) {

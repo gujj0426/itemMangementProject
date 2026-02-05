@@ -1,4 +1,4 @@
-package com.pdfconverter.service;
+package com.pdfconverter.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,31 +16,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 样式名称映射服务
- * 用于将从订单中提取的原始样式名称映射为标准的样式名称
+ * 字体名称映射服务
+ * 用于将从订单中提取的原始字体名称映射为标准的字体名称
  * 映射关系从配置文件中读取，便于后期维护
  */
 @Service
-public class StyleNameMapper {
+public class FontNameMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(StyleNameMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(FontNameMapper.class);
 
     /**
      * 映射配置文件路径（默认值）
      */
-    @Value("${app.mapping.style-name-file:style-name-mapping.properties}")
+    @Value("${app.mapping.font-name-file:font-name-mapping.properties}")
     private String mappingFilePath;
 
     /**
-     * 样式名称映射表
+     * 字体名称映射表
      * Key: 从订单中提取的原始名称
-     * Value: 对应的标准样式名称
+     * Value: 对应的标准字体名称
      */
-    private Map<String, String> styleNameMap;
+    private Map<String, String> fontNameMap;
 
     @PostConstruct
     public void init() {
-        styleNameMap = new HashMap<>();
+        fontNameMap = new HashMap<>();
         loadMappingFromFile();
     }
 
@@ -54,7 +54,7 @@ public class StyleNameMapper {
             Resource resource = resolver.getResource("classpath:" + mappingFilePath);
 
             if (!resource.exists()) {
-                log.warn("样式名称映射配置文件不存在: {}", mappingFilePath);
+                log.warn("字体名称映射配置文件不存在: {}", mappingFilePath);
                 return;
             }
 
@@ -79,7 +79,7 @@ public class StyleNameMapper {
                         String value = line.substring(equalIndex + 1).trim();
 
                         if (!key.isEmpty()) {
-                            styleNameMap.put(key, value);
+                            fontNameMap.put(key, value);
                             log.debug("加载映射: {} -> {}", key, value);
                         }
                     } else {
@@ -88,18 +88,18 @@ public class StyleNameMapper {
                 }
             }
 
-            log.info("成功加载样式名称映射，共 {} 条映射关系", styleNameMap.size());
+            log.info("成功加载字体名称映射，共 {} 条映射关系", fontNameMap.size());
 
         } catch (IOException e) {
-            log.error("加载样式名称映射配置文件失败: {}", mappingFilePath, e);
+            log.error("加载字体名称映射配置文件失败: {}", mappingFilePath, e);
         }
     }
 
     /**
-     * 根据原始名称查询对应的标准样式名称
+     * 根据原始名称查询对应的标准字体名称
      *
      * @param originalName 从订单中提取的原始名称
-     * @return 对应的标准样式名称，如果未找到映射则返回原始名称
+     * @return 对应的标准字体名称，如果未找到映射则返回原始名称
      */
     public String getStandardName(String originalName) {
         if (originalName == null || originalName.trim().isEmpty()) {
@@ -107,13 +107,13 @@ public class StyleNameMapper {
         }
 
         // 精确匹配
-        String standardName = styleNameMap.get(originalName.trim());
+        String standardName = fontNameMap.get(originalName.trim());
         if (standardName != null) {
             return standardName;
         }
 
         // 不区分大小写匹配
-        for (Map.Entry<String, String> entry : styleNameMap.entrySet()) {
+        for (Map.Entry<String, String> entry : fontNameMap.entrySet()) {
             if (entry.getKey().equalsIgnoreCase(originalName.trim())) {
                 return entry.getValue();
             }
@@ -127,9 +127,9 @@ public class StyleNameMapper {
      * 重新加载配置文件（用于动态更新映射关系）
      */
     public void reloadMapping() {
-        styleNameMap.clear();
+        fontNameMap.clear();
         loadMappingFromFile();
-        log.info("样式名称映射已重新加载");
+        log.info("字体名称映射已重新加载");
     }
 
     /**
@@ -144,8 +144,8 @@ public class StyleNameMapper {
         }
 
         String trimmedName = originalName.trim();
-        return styleNameMap.containsKey(trimmedName) ||
-               styleNameMap.entrySet().stream()
+        return fontNameMap.containsKey(trimmedName) ||
+               fontNameMap.entrySet().stream()
                        .anyMatch(entry -> entry.getKey().equalsIgnoreCase(trimmedName));
     }
 
@@ -155,6 +155,6 @@ public class StyleNameMapper {
      * @return 所有映射关系的副本
      */
     public Map<String, String> getAllMappings() {
-        return new HashMap<>(styleNameMap);
+        return new HashMap<>(fontNameMap);
     }
 }
