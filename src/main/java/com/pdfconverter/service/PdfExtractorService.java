@@ -26,24 +26,8 @@ public class PdfExtractorService {
     @Resource
     private ProductNameMapper productNameMapper;
 
-    /**
-     * 当前处理的PDF文件路径（用于OCR识别和图片提取）
-     */
-    private String currentPdfPath;
-
-    /**
-     * 当前PDF的所有图片（按页索引存储）
-     */
-    private List<byte[]> currentPdfImages;
-
-    /**
-     * 商品图片索引计数器（用于按顺序分配图片给商品）
-     */
-    private int itemImageIndex = 0;
 
     public List<PdfOrderData> extractFromPdf(String pdfPath) throws IOException {
-        currentPdfPath = pdfPath; // 保存当前PDF路径
-        itemImageIndex = 0; // 重置图片索引
         List<PdfOrderData> orders = new ArrayList<>();
         try (PDDocument document = PDDocument.load(new File(pdfPath))) {
             PDFTextStripper stripper = new PDFTextStripper();
