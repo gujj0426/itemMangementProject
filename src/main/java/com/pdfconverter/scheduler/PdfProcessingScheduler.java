@@ -40,7 +40,7 @@ public class PdfProcessingScheduler {
     @PostConstruct
     public void init() {
         log.info("========================================");
-        log.info("PDF处理调度器已启动");
+        log.info("开始处理PDF文件");
         log.info("输入目录: {}", inputFolder);
         log.info("备份目录: {}", bakFolder);
         log.info("扫描间隔: 60秒（每分钟执行一次）");
@@ -65,9 +65,12 @@ public class PdfProcessingScheduler {
         for (File pdf : pdfs) {
             try {
                 log.info("正在处理文件: {}", pdf.getName());
+                //解析单个pdf
                 List<PdfOrderData> orders = pdfExtractor.extractFromPdf(pdf.getAbsolutePath());
+                //写入Excel
                 excelWriter.writeOrders(orders);
                 String bakPath = bakFolder + File.separator + pdf.getName();
+                //处理完成的pdf移动到bak路径
                 fileService.moveToBackup(pdf.getAbsolutePath(), bakPath);
                 log.info("✓ 成功处理文件: {}", pdf.getName());
                 successCount++;

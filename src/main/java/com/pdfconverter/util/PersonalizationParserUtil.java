@@ -1,9 +1,9 @@
-package com.pdfconverter.service;
+package com.pdfconverter.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PersonalizationParser {
+public class PersonalizationParserUtil {
 
     /**
      * 从个性化文本中提取设计风格（Style）
