@@ -1,7 +1,14 @@
 package com.pdfconverter.model;
 
+import com.pdfconverter.constant.OrderType;
+import com.pdfconverter.constant.ProductName;
+import com.pdfconverter.constant.ProductSize;
+import com.pdfconverter.constant.ProductColor;
+import com.pdfconverter.constant.ProductVariable;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 订单数据模型类，仅适配3837329233-download-2025-10-23.pdf
@@ -193,14 +200,6 @@ public class PdfOrderData {
         this.totalItemQuantity = totalItemQuantity;
     }
 
-    public List<ItemDetail> getItemDetails() {
-        return itemDetails;
-    }
-
-    public void setItemDetails(List<ItemDetail> itemDetails) {
-        this.itemDetails = itemDetails;
-    }
-
     public String getAdditionalNote() {
         return additionalNote;
     }
@@ -216,55 +215,54 @@ public class PdfOrderData {
     public void setInitialIndex(int initialIndex) {
         this.initialIndex = initialIndex;
     }
-
+    public List<ItemDetail> getItemDetails() {
+        return itemDetails;
+    }
+    public void setItemDetails(List<ItemDetail> itemDetails) {
+        this.itemDetails = itemDetails;
+    }
     /**
-     * 商品详情内部类（仅适配3837329233-download-2025-10-23.pdf）
-     * 补充Size、Color字段，从动态属性中拆分；保留动态属性原始内容用于追溯
+     * 商品详情内部类
      */
     public static class ItemDetail {
-        // 商品标题（单个商品从开始到"Quantity:"前的所有字符，如PDF中"Custom Engraved Initials Cufflinks Set-4 colors Groomsman Cufflinks-Groom Gift for Wedding Day"）{insert\_element\_14\_}
+        // 主商品标识
+        private Boolean mainProductFlg;
+        // 是否组合产品标识
+        private Boolean isComposite;
+        // 商品标题
         private String itemTitle;
-        // 商品数量（固定字段，对应"Quantity:"后的值，PDF中均为1）{insert\_element\_15\_}
+        // 商品数量
         private int itemQuantity;
-        // 商品尺寸（从动态属性中拆分，如PDF中"Gold_L"里的"L"、"Gold_S"里的"S"）{insert\_element\_16\_}
-        private String size;
-        //字体（Personalization中拆分）
-        private String font;
-        // 商品颜色（从动态属性中拆分，如PDF中"Gold_L"里的"Gold"、"Gold_S"里的"Gold"）{insert\_element\_17\_}
-        private String color;
-        // 商品动态属性原始内容（非固定字段，如"Size and Color: Gold_L | Item: Cufflink+TieClip+Box"）{insert\_element\_18\_}、{insert\_element\_19\_}
+        // 订单类型
+        private OrderType orderType;
+        // 商品名称
+        private ProductName productName;
+        // 商品尺寸
+        private ProductSize productSize;
+        // 商品颜色（英文）
+        private ProductColor productColor;
+        // 产品变量
+        private ProductVariable productVariable;
+        // 动态属性原始内容
         private String dynamicAttributes;
-        // 商品定制信息（固定字段，对应"Personalization:"后的值）{insert\_element\_20\_}
+        // 个性化信息
         private String personalization;
-        // 新增字段：微调2-订单类型（袖扣/领带夹/宠物头像）
-        private String orderType;
-        // 新增字段：微调4-包装盒（存储含Box的词组）
-        private String packagingBox;
-        // 新增字段：信息（与ExcelData的information匹配）
-        private String information;
-        // 无参构造器（新增字段初始化）
+        // 字体
+        private String font;
+        // 样式
+        private String style;
+        // 无参构造器
         public ItemDetail() {
-            this.orderType = ""; // 默认空字符串
-            this.packagingBox = ""; // 默认空字符串
+            this.mainProductFlg = false;
+            this.isComposite = false;
+            this.orderType = OrderType.UNKNOWN;
+            this.productSize = ProductSize.UNKNOWN;
+            this.productColor = ProductColor.UNKNOWN;
+            this.productName = ProductName.UNKNOWN;
+            this.productVariable = ProductVariable.UNKNOWN;
             this.font = "";
-            this.information = "";
+            this.style = "";
         }
-        // 全参构造器（补充新增字段）
-        public ItemDetail(String itemTitle, int itemQuantity, String size, String color,
-                          String dynamicAttributes, String personalization,
-                          String orderType, String packagingBox, String font, String information){
-            this.itemTitle = itemTitle;
-            this.itemQuantity = itemQuantity;
-            this.size = size;
-            this.color = color;
-            this.dynamicAttributes = dynamicAttributes;
-            this.personalization = personalization;
-            this.orderType = orderType;
-            this.packagingBox = packagingBox;
-            this.font = font;
-            this.information = information;
-        }
-
         // Getter和Setter方法
         public String getItemTitle() {
             return itemTitle;
@@ -272,6 +270,22 @@ public class PdfOrderData {
 
         public void setItemTitle(String itemTitle) {
             this.itemTitle = itemTitle;
+        }
+
+        public Boolean getMainProductFlg() {
+            return mainProductFlg;
+        }
+
+        public void setMainProductFlg(Boolean mainProductFlg) {
+            this.mainProductFlg = mainProductFlg;
+        }
+
+        public Boolean getIsComposite() {
+            return isComposite;
+        }
+
+        public void setIsComposite(Boolean isComposite) {
+            this.isComposite = isComposite;
         }
 
         public int getItemQuantity() {
@@ -282,20 +296,20 @@ public class PdfOrderData {
             this.itemQuantity = itemQuantity;
         }
 
-        public String getSize() {
-            return size;
+        public ProductSize getProductSize() {
+            return productSize;
         }
 
-        public void setSize(String size) {
-            this.size = size;
+        public void setProductSize(ProductSize productSize) {
+            this.productSize = productSize;
         }
 
-        public String getColor() {
-            return color;
+        public ProductColor getProductColor() {
+            return productColor;
         }
 
-        public void setColor(String color) {
-            this.color = color;
+        public void setProductColor(ProductColor productColor) {
+            this.productColor = productColor;
         }
 
         public String getDynamicAttributes() {
@@ -314,20 +328,12 @@ public class PdfOrderData {
             this.personalization = personalization;
         }
         // 新增字段的Getter和Setter（原有字段的Getter/Setter不变）
-        public String getOrderType() {
+        public OrderType getOrderType() {
             return orderType;
         }
 
-        public void setOrderType(String orderType) {
+        public void setOrderType(OrderType orderType) {
             this.orderType = orderType;
-        }
-        // 新增字段的Getter和Setter
-        public String getPackagingBox() {
-            return packagingBox;
-        }
-
-        public void setPackagingBox(String packagingBox) {
-            this.packagingBox = packagingBox;
         }
 
         public String getFont() {
@@ -338,12 +344,28 @@ public class PdfOrderData {
             this.font = font;
         }
 
-        public String getInformation() {
-            return information;
+        public ProductName getProductName() {
+            return productName;
         }
 
-        public void setInformation(String information) {
-            this.information = information;
+        public void setProductName(ProductName productName) {
+            this.productName = productName;
+        }
+
+        public ProductVariable getProductVariable() {
+            return productVariable;
+        }
+
+        public void setProductVariable(ProductVariable productVariable) {
+            this.productVariable = productVariable;
+        }
+
+        public String getStyle() {
+            return style;
+        }
+
+        public void setStyle(String style) {
+            this.style = style;
         }
     }
 

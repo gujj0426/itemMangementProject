@@ -15,6 +15,7 @@
         <spring-boot.version>2.7.18</spring-boot.version>
         <pdfbox.version>2.0.32</pdfbox.version>
         <poi.version>5.2.5</poi.version>
+        <tess4j.version>5.7.0</tess4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -62,6 +63,13 @@
             <artifactId>lombok</artifactId>
             <version>1.18.30</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Tesseract OCR (图片识别) -->
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>${tess4j.version}</version>
         </dependency>
     </dependencies>
 
