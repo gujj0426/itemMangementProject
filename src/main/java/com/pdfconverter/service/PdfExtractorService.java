@@ -152,8 +152,8 @@ public class PdfExtractorService {
     }
 
     /**
-     * 根据店铺名称的同，使用不同的商品解析方法，
-     * 已知店铺名称 1、TheVoro 2、hululuca
+     * 解析方法
+     *
      * 解析单个 items 商品信息 样例：
      * //Silent Slide-On Dog Tag: Personalized Stainless Steel Pet
      * //ID

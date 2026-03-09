@@ -70,10 +70,22 @@
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
             <version>${tess4j.version}</version>
+            <exclusions>
+                <!-- 排除 SLF4J 2.x 依赖，使用 Spring Boot 管理的 1.x 版本 -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
     <build>
+        <finalName>itemMangementProject</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

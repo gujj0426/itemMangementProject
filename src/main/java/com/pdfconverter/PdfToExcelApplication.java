@@ -26,6 +26,6 @@ public class PdfToExcelApplication {
         log.info("========================================");
         log.info("✅  PDF 订单处理系统启动成功！");
         log.info("========================================");
-        System.out.println("✅ PDF 订单处理系统启动成功！");
+//        System.out.println("✅ PDF 订单处理系统启动成功！");
     }
 }
