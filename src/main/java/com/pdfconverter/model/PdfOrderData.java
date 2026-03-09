@@ -200,14 +200,6 @@ public class PdfOrderData {
         this.totalItemQuantity = totalItemQuantity;
     }
 
-    public List<ItemDetail> getItemDetails() {
-        return itemDetails;
-    }
-
-    public void setItemDetails(List<ItemDetail> itemDetails) {
-        this.itemDetails = itemDetails;
-    }
-
     public String getAdditionalNote() {
         return additionalNote;
     }
@@ -223,13 +215,20 @@ public class PdfOrderData {
     public void setInitialIndex(int initialIndex) {
         this.initialIndex = initialIndex;
     }
-
+    public List<ItemDetail> getItemDetails() {
+        return itemDetails;
+    }
+    public void setItemDetails(List<ItemDetail> itemDetails) {
+        this.itemDetails = itemDetails;
+    }
     /**
      * 商品详情内部类
      */
     public static class ItemDetail {
         // 主商品标识
-        private String mainProductFlg;
+        private Boolean mainProductFlg;
+        // 是否组合产品标识
+        private Boolean isComposite;
         // 商品标题
         private String itemTitle;
         // 商品数量
@@ -254,7 +253,8 @@ public class PdfOrderData {
         private String style;
         // 无参构造器
         public ItemDetail() {
-            this.mainProductFlg = "";
+            this.mainProductFlg = false;
+            this.isComposite = false;
             this.orderType = OrderType.UNKNOWN;
             this.productSize = ProductSize.UNKNOWN;
             this.productColor = ProductColor.UNKNOWN;
@@ -272,12 +272,20 @@ public class PdfOrderData {
             this.itemTitle = itemTitle;
         }
 
-        public String getMainProductFlg() {
+        public Boolean getMainProductFlg() {
             return mainProductFlg;
         }
 
-        public void setMainProductFlg(String mainProductFlg) {
+        public void setMainProductFlg(Boolean mainProductFlg) {
             this.mainProductFlg = mainProductFlg;
+        }
+
+        public Boolean getIsComposite() {
+            return isComposite;
+        }
+
+        public void setIsComposite(Boolean isComposite) {
+            this.isComposite = isComposite;
         }
 
         public int getItemQuantity() {

@@ -16,7 +16,7 @@ import java.util.*;
 
 /**
  * 商品映射配置类
- * 用于从 product-mapping-rules.properties 文件加载商品标题映射规则和附属商品补充规则
+ * 用于从 product-mapping-rules.properties 文件加载商品标题映射规则
  */
 @Component
 @ConfigurationProperties(prefix = "product.mapping")
@@ -27,11 +27,8 @@ public class ProductMappingConfig {
     // 商品标题映射规则列表
     private List<ProductTitleMappingRule> titleMappingRules = new ArrayList<>();
 
-    // 附属商品补充规则列表
-    private List<AccessoryMappingRule> accessoryRules = new ArrayList<>();
-
     // 配置文件路径
-    private static final String CONFIG_FILE = "product-mapping-rules.properties";
+    private static final String CONFIG_FILE = "title-product-mapping-rules.properties";
 
     @PostConstruct
     public void init() {
@@ -44,7 +41,6 @@ public class ProductMappingConfig {
     public void loadConfig() {
         try {
             titleMappingRules.clear();
-            accessoryRules.clear();
 
             ClassPathResource resource = new ClassPathResource(CONFIG_FILE);
             BufferedReader reader = new BufferedReader(
@@ -69,25 +65,15 @@ public class ProductMappingConfig {
                 String key = parts[0].trim();
                 String value = parts[1].trim();
 
-                // 根据键前缀判断规则类型
-                if (key.startsWith("accessory.rule.")) {
-                    // 附属商品规则
-                    AccessoryMappingRule rule = parseAccessoryRule(key, value);
-                    if (rule != null) {
-                        accessoryRules.add(rule);
-                    }
-                } else {
-                    // 商品标题映射规则
-                    ProductTitleMappingRule rule = parseTitleMappingRule(key, value);
-                    if (rule != null) {
-                        titleMappingRules.add(rule);
-                    }
+                // 解析商品标题映射规则
+                ProductTitleMappingRule rule = parseTitleMappingRule(key, value);
+                if (rule != null) {
+                    titleMappingRules.add(rule);
                 }
             }
 
             reader.close();
-            log.info("成功加载商品映射配置: 标题映射规则 {} 条，附属商品规则 {} 条",
-                titleMappingRules.size(), accessoryRules.size());
+            log.info("成功加载商品映射配置: 标题映射规则 {} 条", titleMappingRules.size());
 
         } catch (Exception e) {
             log.error("加载商品映射配置文件失败", e);
@@ -109,36 +95,10 @@ public class ProductMappingConfig {
             rule.setRuleKey(key);
             rule.setProductTitle(parts[0].trim());
             rule.setMainProductType(parts[1].trim());
-            rule.setAccessoryRule(parts.length > 2 ? parts[2].trim() : "");
             return rule;
 
         } catch (Exception e) {
             log.error("解析商品标题映射规则失败: {}", value, e);
-            return null;
-        }
-    }
-
-    /**
-     * 解析附属商品规则
-     */
-    private AccessoryMappingRule parseAccessoryRule(String key, String value) {
-        try {
-            String[] parts = value.split("\\|");
-            if (parts.length < 4) {
-                log.warn("附属商品规则格式错误: {}", value);
-                return null;
-            }
-
-            AccessoryMappingRule rule = new AccessoryMappingRule();
-            rule.setRuleKey(key);
-            rule.setMainProductType(parts[0].trim());
-            rule.setCondition(parts[1].trim());
-            rule.setAccessoryProductType(parts[2].trim());
-            rule.setAccessoryChineseName(parts[3].trim());
-            return rule;
-
-        } catch (Exception e) {
-            log.error("解析附属商品规则失败: {}", value, e);
             return null;
         }
     }
@@ -164,21 +124,6 @@ public class ProductMappingConfig {
         return null;
     }
 
-    /**
-     * 根据主商品类型查找附属商品规则
-     */
-    public List<AccessoryMappingRule> findAccessoryRules(String mainProductType) {
-        List<AccessoryMappingRule> matchedRules = new ArrayList<>();
-
-        for (AccessoryMappingRule rule : accessoryRules) {
-            if (rule.getMainProductType().equals(mainProductType)) {
-                matchedRules.add(rule);
-            }
-        }
-
-        return matchedRules;
-    }
-
     // Getter and Setter
     public List<ProductTitleMappingRule> getTitleMappingRules() {
         return titleMappingRules;
@@ -188,14 +133,6 @@ public class ProductMappingConfig {
         this.titleMappingRules = titleMappingRules;
     }
 
-    public List<AccessoryMappingRule> getAccessoryRules() {
-        return accessoryRules;
-    }
-
-    public void setAccessoryRules(List<AccessoryMappingRule> accessoryRules) {
-        this.accessoryRules = accessoryRules;
-    }
-
     /**
      * 商品标题映射规则
      */
@@ -203,7 +140,6 @@ public class ProductMappingConfig {
         private String ruleKey;
         private String productTitle;
         private String mainProductType;
-        private String accessoryRule;
 
         // Getters and Setters
         public String getRuleKey() { return ruleKey; }
@@ -215,54 +151,12 @@ public class ProductMappingConfig {
         public String getMainProductType() { return mainProductType; }
         public void setMainProductType(String mainProductType) { this.mainProductType = mainProductType; }
 
-        public String getAccessoryRule() { return accessoryRule; }
-        public void setAccessoryRule(String accessoryRule) { this.accessoryRule = accessoryRule; }
-
         @Override
         public String toString() {
             return "ProductTitleMappingRule{" +
                     "ruleKey='" + ruleKey + '\'' +
                     ", productTitle='" + productTitle + '\'' +
                     ", mainProductType='" + mainProductType + '\'' +
-                    ", accessoryRule='" + accessoryRule + '\'' +
-                    '}';
-        }
-    }
-
-    /**
-     * 附属商品映射规则
-     */
-    public static class AccessoryMappingRule {
-        private String ruleKey;
-        private String mainProductType;
-        private String condition;
-        private String accessoryProductType;
-        private String accessoryChineseName;
-
-        // Getters and Setters
-        public String getRuleKey() { return ruleKey; }
-        public void setRuleKey(String ruleKey) { this.ruleKey = ruleKey; }
-
-        public String getMainProductType() { return mainProductType; }
-        public void setMainProductType(String mainProductType) { this.mainProductType = mainProductType; }
-
-        public String getCondition() { return condition; }
-        public void setCondition(String condition) { this.condition = condition; }
-
-        public String getAccessoryProductType() { return accessoryProductType; }
-        public void setAccessoryProductType(String accessoryProductType) { this.accessoryProductType = accessoryProductType; }
-
-        public String getAccessoryChineseName() { return accessoryChineseName; }
-        public void setAccessoryChineseName(String accessoryChineseName) { this.accessoryChineseName = accessoryChineseName; }
-
-        @Override
-        public String toString() {
-            return "AccessoryMappingRule{" +
-                    "ruleKey='" + ruleKey + '\'' +
-                    ", mainProductType='" + mainProductType + '\'' +
-                    ", condition='" + condition + '\'' +
-                    ", accessoryProductType='" + accessoryProductType + '\'' +
-                    ", accessoryChineseName='" + accessoryChineseName + '\'' +
                     '}';
         }
     }

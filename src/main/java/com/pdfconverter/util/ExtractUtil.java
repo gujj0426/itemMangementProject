@@ -71,4 +71,38 @@ public class ExtractUtil {
         }
         return quantity;
     }
+    /**
+     * 从动态属性文本中解析属性Map
+     * 用于将多行动态属性文本转换为key-value格式
+     *
+     * @param lines 动态属性文本行数组
+     * @return 属性Map
+     */
+    public java.util.Map<String, String> parseDynamicAttributes(String[] lines) {
+        java.util.Map<String, String> attrs = new java.util.HashMap<>();
+
+        if (lines == null || lines.length == 0) {
+            return attrs;
+        }
+
+        for (String line : lines) {
+            line = line.trim();
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            // 尝试按冒号分割
+            int colonIndex = line.indexOf(':');
+            if (colonIndex > 0) {
+                String key = line.substring(0, colonIndex).trim();
+                String value = line.substring(colonIndex + 1).trim();
+                attrs.put(key, value);
+            } else {
+                // 如果没有冒号，整行作为value
+                attrs.put(line, line);
+            }
+        }
+
+        return attrs;
+    }
 }

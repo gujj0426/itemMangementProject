@@ -1,5 +1,6 @@
 package com.pdfconverter.service;
 
+import com.pdfconverter.constant.ProductColor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,9 +23,9 @@ import java.util.stream.Collectors;
  * 支持部分匹配，会从长到短依次匹配，优先匹配更长的字符串（如 "rose gold" 优先于 "gold"）
  */
 @Service
-public class ColorMapper {
+public class ColorMapperService {
 
-    private static final Logger log = LoggerFactory.getLogger(ColorMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(ColorMapperService.class);
 
     /**
      * 映射配置文件路径（默认值）
@@ -35,7 +36,7 @@ public class ColorMapper {
     /**
      * 颜色名称映射表
      * Key: 从订单中提取的原始名称
-     * Value: 对应的中文颜色名称
+     * Value: 对应的ProductColor枚举名称
      */
     private Map<String, String> colorNameMap;
 
@@ -62,6 +63,8 @@ public class ColorMapper {
 
             if (!resource.exists()) {
                 log.warn("颜色名称映射配置文件不存在: {}", mappingFilePath);
+                // 使用默认映射
+                loadDefaultMappings();
                 return;
             }
 
@@ -104,11 +107,70 @@ public class ColorMapper {
 
         } catch (IOException e) {
             log.error("加载颜色名称映射配置文件失败: {}", mappingFilePath, e);
+            // 加载默认映射
+            loadDefaultMappings();
         }
     }
 
     /**
-     * 根据原始名称查询对应的标准颜色名称（支持部分匹配）
+     * 加载默认映射关系
+     */
+    private void loadDefaultMappings() {
+        // 添加一些常见的默认映射
+        colorNameMap.put("gold", "GOLD");
+        colorNameMap.put("rose gold", "ROSE_GOLD");
+        colorNameMap.put("silver", "SILVER");
+        colorNameMap.put("black", "BLACK");
+        colorNameMap.put("white", "WHITE");
+        colorNameMap.put("blue", "BLUE");
+        colorNameMap.put("red", "RED");
+        colorNameMap.put("green", "GREEN");
+        colorNameMap.put("pink", "PINK");
+
+        sortedKeys = colorNameMap.keySet().stream()
+                .sorted((a, b) -> Integer.compare(b.length(), a.length()))
+                .collect(Collectors.toList());
+
+        log.info("使用默认颜色名称映射，共 {} 条映射关系", colorNameMap.size());
+    }
+
+    /**
+     * 根据原始名称查询对应的标准颜色枚举
+     *
+     * @param originalName 从订单中提取的原始名称
+     * @return 对应的ProductColor枚举，如果未找到映射则返回UNKNOWN
+     */
+    public ProductColor mapColor(String originalName) {
+        if (originalName == null || originalName.trim().isEmpty()) {
+            return ProductColor.UNKNOWN;
+        }
+
+        String trimmedValue = originalName.trim().toLowerCase();
+
+        // 按长度降序排序，优先匹配更长的字符串
+        for (String key : sortedKeys) {
+            if (trimmedValue.contains(key.trim().toLowerCase())) {
+                String enumName = colorNameMap.get(key);
+                try {
+                    return ProductColor.valueOf(enumName);
+                } catch (IllegalArgumentException e) {
+                    log.warn("无法找到ProductColor枚举: {}", enumName);
+                }
+            }
+        }
+
+        // 尝试直接转换为枚举
+        try {
+            return ProductColor.valueOf(trimmedValue.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            log.debug("无法将 '{}' 转换为ProductColor枚举", originalName);
+        }
+
+        return ProductColor.UNKNOWN;
+    }
+
+    /**
+     * 根据原始名称查询对应的标准颜色名称（支持部分匹配，返回字符串，兼容旧方法）
      *
      * @param originalName 从订单中提取的原始名称
      * @return 对应的标准颜色名称，如果未找到映射则返回 null
@@ -118,13 +180,10 @@ public class ColorMapper {
             return null;
         }
 
-        String trimmedValue = originalName.trim().toLowerCase();
-
-        // 按长度降序排序，优先匹配更长的字符串（如 "rose gold" 优先于 "gold"）
-        for (String key : sortedKeys) {
-            if (trimmedValue.contains(key.trim().toLowerCase())) {
-                return colorNameMap.get(key);
-            }
+        // 使用mapColor方法
+        ProductColor productColor = mapColor(originalName);
+        if (productColor != ProductColor.UNKNOWN) {
+            return productColor.getDisplayName();
         }
 
         return null;
@@ -159,15 +218,23 @@ public class ColorMapper {
         String trimmedName = originalName.trim();
 
         // 精确匹配
-        String standardName = colorNameMap.get(trimmedName);
-        if (standardName != null) {
-            return standardName;
+        String enumName = colorNameMap.get(trimmedName);
+        if (enumName != null) {
+            try {
+                return ProductColor.valueOf(enumName).getDisplayName();
+            } catch (IllegalArgumentException e) {
+                log.warn("无法找到ProductColor枚举: {}", enumName);
+            }
         }
 
         // 不区分大小写匹配
         for (Map.Entry<String, String> entry : colorNameMap.entrySet()) {
             if (entry.getKey().equalsIgnoreCase(trimmedName)) {
-                return entry.getValue();
+                try {
+                    return ProductColor.valueOf(entry.getValue()).getDisplayName();
+                } catch (IllegalArgumentException e) {
+                    log.warn("无法找到ProductColor枚举: {}", entry.getValue());
+                }
             }
         }
 

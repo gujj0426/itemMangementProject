@@ -1,13 +1,17 @@
 package com.pdfconverter.service;
 
+import com.pdfconverter.constant.OrderType;
 import com.pdfconverter.constant.ProductColor;
 import com.pdfconverter.constant.ProductSize;
 import com.pdfconverter.model.PdfOrderData.ItemDetail;
+import com.pdfconverter.model.ProductAttribute;
+import com.pdfconverter.util.PersonalizationParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,10 +26,10 @@ public class AttributeExtractor {
     private static final Logger log = LoggerFactory.getLogger(AttributeExtractor.class);
 
     @Resource
-    private ColorMapper colorMapper;
+    private ColorMapperService colorMapper;
 
     @Resource
-    private ProductVariableMapper productVariableMapper;
+    private ProductVariableMapperService productVariableMapper;
 
     /**
      * 从 value 中提取 Size（如 L, S, M, XL）
@@ -107,6 +111,60 @@ public class AttributeExtractor {
         }
 
         return attr;
+    }
+
+    /**
+     * 使用 ProductAttribute 补充 ItemDetail 的属性信息
+     * 从 ProductAttribute 中提取型号、颜色、产品变量、设计风格、字体等信息，补充到 ItemDetail 中
+     *
+     * @param dynamicAttrsMap 动态属性Map（用于额外提取产品变量等信息）
+     * @param productAttribute 产品属性对象，包含已提取的属性
+     * @param itemDetail 需要补充属性的商品详情对象
+     * @return 补充属性后的 ItemDetail 对象
+     */
+    public ItemDetail extractAllAttributes(Map<String, String> dynamicAttrsMap,
+            com.pdfconverter.model.ProductAttribute productAttribute, ItemDetail itemDetail) {
+        // 补充型号（如果 productAttribute 中有且 itemDetail 中为空）
+        if (productAttribute.getSize() != null
+                && productAttribute.getSize() != com.pdfconverter.constant.ProductSize.UNKNOWN) {
+            itemDetail.setProductSize(productAttribute.getSize());
+        }
+
+        // 补充颜色（如果 productAttribute 中有且 itemDetail 中为空）
+        if (productAttribute.getColor() != null
+                && productAttribute.getColor() != com.pdfconverter.constant.ProductColor.UNKNOWN) {
+            itemDetail.setProductColor(productAttribute.getColor());
+        }
+
+        // 补充产品变量（优先使用 productAttribute 中的）
+        if (productAttribute.getProductVariable() != null
+                && !productAttribute.getProductVariable().isEmpty()) {
+            itemDetail.setProductVariable(productAttribute.getProductVariable());
+        }
+
+        // 补充设计风格
+        if (productAttribute.getStyle() != null && !productAttribute.getStyle().isEmpty()) {
+            itemDetail.setStyle(productAttribute.getStyle());
+        }
+
+        // 补充字体
+        if (productAttribute.getFont() != null && !productAttribute.getFont().isEmpty()) {
+            itemDetail.setFont(productAttribute.getFont());
+        }
+
+        // 如果动态属性中有月份信息且是花卉类商品，继续提取月份
+        if (dynamicAttrsMap != null && !dynamicAttrsMap.isEmpty()) {
+            Set<String> productTypes = new java.util.HashSet<>();
+            if (itemDetail.getOrderType() != null) {
+                productTypes.add(itemDetail.getOrderType().getDisplayName());
+            }
+
+            for (Map.Entry<String, String> entry : dynamicAttrsMap.entrySet()) {
+                extractMonth(entry, itemDetail, productTypes);
+            }
+        }
+
+        return itemDetail;
     }
 
     /**
@@ -196,37 +254,191 @@ public class AttributeExtractor {
     }
 
     /**
-     * 从动态属性文本中解析属性Map
-     * 用于将多行动态属性文本转换为key-value格式
+     * 解析 Voro 动态信息
+     * 从动态属性中提取型号、颜色、产品类型等信息，并确定附属商品列表
      *
-     * @param lines 动态属性文本行数组
-     * @return 属性Map
+     * @param dynamicAttrsMap 动态属性Map
+     * @param mainItemDetail 主商品详情
+     * @param personalization 个性化内容
+     * @return 包含所有提取属性的 ProductAttribute 对象
      */
-    public java.util.Map<String, String> parseDynamicAttributes(String[] lines) {
-        java.util.Map<String, String> attrs = new java.util.HashMap<>();
+    public ProductAttribute parseVoroDynamicInfo(Map<String, String> dynamicAttrsMap, ItemDetail mainItemDetail, String personalization) {
+        ProductAttribute productAttribute = new ProductAttribute();
 
-        if (lines == null || lines.length == 0) {
-            return attrs;
+        // ========== 第一阶段：收集信息（只收集，不添加） ==========
+
+        // 1. 提取型号、颜色
+        extractSizeAndColor(dynamicAttrsMap, productAttribute);
+
+        // 2. 从动态属性中检测到的产品类型（用Set去重）
+        Set<OrderType> detectedTypes = detectProductTypesFromDynamicAttrs(dynamicAttrsMap);
+
+        // 3. 检测包装盒类型
+        String boxVariable = detectBoxVariable(dynamicAttrsMap);
+        if (boxVariable != null) {
+            detectedTypes.add(OrderType.BOX);
+            productAttribute.setProductVariable(boxVariable);
         }
 
-        for (String line : lines) {
-            line = line.trim();
-            if (line.isEmpty()) {
-                continue;
-            }
+        // ========== 第二阶段：确定附属商品列表（统一决策） ==========
 
-            // 尝试按冒号分割
-            int colonIndex = line.indexOf(':');
-            if (colonIndex > 0) {
-                String key = line.substring(0, colonIndex).trim();
-                String value = line.substring(colonIndex + 1).trim();
-                attrs.put(key, value);
-            } else {
-                // 如果没有冒号，整行作为value
-                attrs.put(line, line);
-            }
+        Set<OrderType> accessoryTypes = determineAccessoryTypes(
+                mainItemDetail, detectedTypes);
+
+        // ========== 第三阶段：统一添加附属商品（只在这里添加一次） ==========
+
+        for (OrderType accessoryType : accessoryTypes) {
+            productAttribute.addAdditionalProductName(accessoryType.getDisplayName());
         }
 
-        return attrs;
+        // ========== 第四阶段：设置其他属性 ==========
+
+        productAttribute.setStyle(PersonalizationParserUtil.extractStyle(personalization));
+        productAttribute.setFont(PersonalizationParserUtil.extractFont(personalization));
+
+        return productAttribute;
     }
+
+    /**
+     * 提取型号和颜色到 ProductAttribute
+     */
+    private void extractSizeAndColor(Map<String, String> dynamicAttrsMap,
+            ProductAttribute productAttribute) {
+        for (Map.Entry<String, String> entry : dynamicAttrsMap.entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            String value = entry.getValue();
+
+            // 解析型号
+            if (key.contains("size")) {
+                productAttribute.setSize(extractSizeFromValue(value));
+            }
+
+            // 解析颜色
+            if (key.contains("color") || key.contains("colour")
+                    || key.contains("locket finish")) {
+                productAttribute.setColor(extractColorFromValue(value));
+            }
+
+            // Size 和 Color 同字段
+            if (key.contains("size") && key.contains("color") && value.contains("_")) {
+                String[] parts = value.split("_");
+                if (parts.length >= 2) {
+                    productAttribute.setColor(extractColorFromValue(parts[0].trim()));
+                    productAttribute.setSize(ProductSize.valueOf(parts[1].trim()));
+                }
+            }
+        }
+    }
+
+    /**
+     * 从动态属性中检测产品类型
+     */
+    private Set<OrderType> detectProductTypesFromDynamicAttrs(
+            Map<String, String> dynamicAttrsMap) {
+        Set<OrderType> detectedTypes = new LinkedHashSet<>();
+
+        for (String value : dynamicAttrsMap.values()) {
+            String valueLower = value.toLowerCase();
+
+            if (valueLower.contains("cufflink") || valueLower.contains("cufflinks")) {
+                detectedTypes.add(OrderType.CUFFLINK);
+            }
+            if (value.matches(".*Tie\\s{0,}Clip.*")) {
+                detectedTypes.add(OrderType.TIE_CLIP);
+            }
+        }
+
+        return detectedTypes;
+    }
+
+    /**
+     * 检测包装盒变量
+     */
+    private String detectBoxVariable(Map<String, String> dynamicAttrsMap) {
+        for (String value : dynamicAttrsMap.values()) {
+            String valueLower = value.toLowerCase();
+
+            if (valueLower.contains("oval box")) {
+                return "Oval Box";
+            } else if (valueLower.contains("square box")) {
+                return "Square Box";
+            } else if (valueLower.contains("box")) {
+                return "Box";
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 确定附属商品类型（核心逻辑）
+     */
+    private Set<OrderType> determineAccessoryTypes(ItemDetail mainItemDetail,
+            Set<OrderType> detectedTypes) {
+        Set<OrderType> accessoryTypes = new LinkedHashSet<>();
+
+        boolean isComposite = mainItemDetail.getIsComposite() != null
+                && mainItemDetail.getIsComposite();
+        OrderType mainOrderType = mainItemDetail.getOrderType();
+
+        if (!isComposite) {
+            // ========== 非组合产品 ==========
+            // 附属商品类别与主商品类别不同，才添加
+            for (OrderType detectedType : detectedTypes) {
+                if (mainOrderType != detectedType) {
+                    accessoryTypes.add(detectedType);
+                }
+            }
+        } else {
+            // ========== 组合产品 ==========
+            String mainOrderTypeCode = mainOrderType.getOrderTypeCode();
+
+            if (mainOrderTypeCode != null && mainOrderTypeCode.contains(" and ")) {
+                // 拆分组合产品类型
+                String[] categoryCodes = mainOrderTypeCode.split(" and ");
+                Set<OrderType> compositeTypes = new LinkedHashSet<>();
+
+                for (String code : categoryCodes) {
+                    OrderType type = OrderType.fromOrderTypeCode(code.trim());
+                    if (type != OrderType.UNKNOWN) {
+                        compositeTypes.add(type);
+                    }
+                }
+
+                // 找到动态属性匹配的主产品类型
+                OrderType matchedMainType = null;
+                for (OrderType compositeType : compositeTypes) {
+                    if (detectedTypes.contains(compositeType)) {
+                        matchedMainType = compositeType;
+                        break; // 找到一个匹配就停止
+                    }
+                }
+
+                // 组合产品中未匹配的类型 -> 附属商品
+                for (OrderType compositeType : compositeTypes) {
+                    if (compositeType != matchedMainType) {
+                        accessoryTypes.add(compositeType);
+                    }
+                }
+
+                // 动态属性中不在组合产品中的类型 -> 附属商品（如包装盒）
+                for (OrderType detectedType : detectedTypes) {
+                    if (!compositeTypes.contains(detectedType)) {
+                        accessoryTypes.add(detectedType);
+                    }
+                }
+
+            } else {
+                // 组合产品但不含 "and"，按非组合产品处理
+                for (OrderType detectedType : detectedTypes) {
+                    if (mainOrderType != detectedType) {
+                        accessoryTypes.add(detectedType);
+                    }
+                }
+            }
+        }
+
+        return accessoryTypes;
+    }
+
+
 }

@@ -2,12 +2,15 @@ package com.pdfconverter.service;
 
 import com.pdfconverter.constant.OrderType;
 import com.pdfconverter.constant.ProductColor;
+import com.pdfconverter.constant.ProductName;
 import com.pdfconverter.constant.ProductSize;
+import com.pdfconverter.model.OrderContext;
 import com.pdfconverter.model.PdfOrderData;
 import com.pdfconverter.model.PdfOrderData.ItemDetail;
 import com.pdfconverter.model.ProductAttribute;
+import com.pdfconverter.model.ProductItem;
 import com.pdfconverter.util.ExtractUtil;
-import com.pdfconverter.util.PersonalizationParserUtil;
+import com.pdfconverter.util.ItemDetailAdditionalUtil;
 import com.pdfconverter.util.ProductNameMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -31,9 +34,9 @@ public class PdfExtractorService {
     @Resource
     private ProductTitleRecognitionService productTitleRecognitionService;
     @Resource
-    private ProductMappingService productMappingService;
-    @Resource
     private ExtractUtil extractUtil;
+    @Resource
+    private OrderProcessingService orderProcessingService;
     /**
      * 解析单个pdf订单信息
      *
@@ -180,22 +183,22 @@ public class PdfExtractorService {
     }
 
     /**
-     * 解析hululuca的商品信息
+     * 解析hululuca的商品信息（使用新的OrderProcessingService）
      */
     private List<ItemDetail> parseItemHululuca(String block) {
         List<ItemDetail> itemDetailList = new ArrayList<>();
 
         try {
             //1. 提取商品标题
-            String itemTitle = getitemTitle(block);
+            String itemTitle = extractUtil.getitemTitle(block);
             // 2. 提取订购数量 Quantity
-            int quantity = extractLineAfter(block, "Quantity:");
+            int quantity = extractUtil.extractLineAfter(block, "Quantity:");
             // 3. 提取 Personalization 内容
-            String personalization = getPersonalization(block);
+            String personalization = extractUtil.getPersonalization(block);
             // 4. 提取动态属性
-            String dynamicSection = extractBetween(block, "Quantity:", "Personalization:").trim();
+            String dynamicSection = extractUtil.extractBetween(block, "Quantity:", "Personalization:").trim();
             String[] dynamicLines = dynamicSection.split("\n");
-            Map<String, String> dynamicAttrsMap = attributeExtractor.parseDynamicAttributes(dynamicLines);
+            Map<String, String> dynamicAttrsMap = extractUtil.parseDynamicAttributes(dynamicLines);
 
             // 5. 识别商品类型
             Set<String> productTypes = new LinkedHashSet<>();
@@ -230,17 +233,23 @@ public class PdfExtractorService {
                 itemDetailList.add(mainItem);
             }
 
-            // 8. 补充附属商品（狗牌需要硅胶绑带）
-            if (productTypes.contains(getDogTagName())) {
-                ItemDetail siliconeBandItem = accessoryFactory.createSimpleAccessory(
-                        OrderType.DOG_TAG_HOLDER,
-                        quantity * 2,  // 数量是狗牌数量的2倍
-                        OrderType.DOG_TAG,
-                        productColor,
-                        productSize
-                );
-                itemDetailList.add(siliconeBandItem);
+            // 8. 使用新的OrderProcessingService处理附加产品
+            // 构建订单上下文
+            OrderContext orderContext = new OrderContext();
+            for (ItemDetail item : itemDetailList) {
+                if (item.getOrderType() != null) {
+                    ProductItem productItem = convertToProductItem(item);
+                    orderContext.addItem(productItem);
+                }
             }
+
+            // 应用附加产品规则
+            orderProcessingService.applyAddonRules(orderContext);
+
+            // 将OrderContext中的附属产品转换为ItemDetail
+            List<ItemDetail> accessoryDetails = convertAccessoriesToItemDetail(orderContext, itemDetailList);
+            itemDetailList.addAll(accessoryDetails);
+
         } catch (Exception e) {
             log.error("解析hululuca商品信息失败: {}", e.getMessage());
             throw e;
@@ -250,10 +259,52 @@ public class PdfExtractorService {
     }
 
     /**
+     * 将ItemDetail转换为ProductItem
+     */
+    private ProductItem convertToProductItem(ItemDetail item) {
+        ProductItem productItem = new ProductItem();
+        productItem.setSourceTitle(item.getItemTitle());
+        productItem.setProductType(item.getOrderType());
+        productItem.setSize(item.getProductSize());
+        productItem.setColor(item.getProductColor());
+        productItem.setVariable(item.getProductVariable());
+        productItem.setQuantity(item.getItemQuantity());
+        productItem.setPersonalization(item.getPersonalization());
+        productItem.setFont(item.getFont());
+        productItem.setStyle(item.getStyle());
+        productItem.setMainProduct(true);
+        return productItem;
+    }
+
+    /**
+     * 将OrderContext中的附属产品转换为ItemDetail
+     */
+    private List<ItemDetail> convertAccessoriesToItemDetail(OrderContext orderContext, List<ItemDetail> mainItems) {
+        List<ItemDetail> accessoryDetails = new ArrayList<>();
+
+        for (ProductItem accessory : orderContext.getAccessories()) {
+            ItemDetail detail = new ItemDetail();
+            detail.setItemTitle(accessory.getSourceTitle());
+            detail.setItemQuantity(accessory.getQuantity());
+            detail.setOrderType(accessory.getProductType());
+            detail.setProductSize(accessory.getSize() != null ? accessory.getSize().getDisplayName() : "");
+            detail.setProductColor(accessory.getColor() != null ? accessory.getColor().getDisplayName() : "");
+            detail.setProductVariable(accessory.getVariable() != null ? accessory.getVariable().getDisplayName() : "");
+            detail.setPersonalization(accessory.getPersonalization());
+            detail.setFont(accessory.getFont());
+            detail.setStyle(accessory.getStyle());
+            detail.setDynamicAttributes("");
+
+            accessoryDetails.add(detail);
+        }
+
+        return accessoryDetails;
+    }
+
+    /**
      * 解析TheVoro的商品信息
      */
     private List<ItemDetail> parseItemTheVoro(String block) throws IOException {
-        List<ItemDetail> itemDetailList = new ArrayList<>();
         //1. 提取商品标题
         String itemTitle = extractUtil.getitemTitle(block);
         // 2. 提取订购数量 Quantity
@@ -265,156 +316,115 @@ public class PdfExtractorService {
         // 4.1 拼接商品订购信息
         String information = "Quantity: " + quantity + "\n" + dynamicSection;
         // 4.2 将动态属性分割为Map
-        Map<String, String> dynamicAttrsMap = attributeExtractor.parseDynamicAttributes(dynamicSection.split("\n"));
+        Map<String, String> dynamicAttrsMap = extractUtil.parseDynamicAttributes(dynamicSection.split("\n"));
         // 5. 建立当前商品的主商品实体 ItemDetail
-        ItemDetail mainItemDetail = getVoroProductTypes(itemTitle, dynamicAttrsMap);
+        ItemDetail mainItemDetail = productTitleRecognitionService.identifyProductType(itemTitle);
         // 5.1 解析所有动态属性，提取主商品的Size、Color，拆分附属商品信息,返回附加商品类型列表
-        ProductAttribute productAttribute = parseVoroDynamicInfo(dynamicAttrsMap, mainItemDetail, personalization);
-        // 7. 组装附属产品列表
-        itemDetailList = assembleItemDetailListForVoro(mainItemDetail,productAttribute);
+        ProductAttribute productAttribute = attributeExtractor.parseVoroDynamicInfo(dynamicAttrsMap, mainItemDetail, personalization);
+        // 5.1 调用给mainItemDetail赋值函数补充型号、颜色、产品变量、设计风格、字体等信息
+        ItemDetailAdditionalUtil.additionalDetail(productAttribute, mainItemDetail);
+        // 6. 组装附属产品列表
+        List<ItemDetail> combineIitemDetailList = assembleItemDetailListForVoro(dynamicAttrsMap, mainItemDetail, productAttribute);
 
         // 8. 补充默认添加的商品，比如心形相盒默认搭配一个同色系的基础链
-        ProductAttribute addOnAttribute = productMappingService.parseProductFromTitle(itemTitle);
-        if (addOnAttribute != null) {
-            List<ItemDetail> accessories = supplementAccessories(addOnAttribute, mainItemDetail);
-            itemDetailList.addAll(accessories);
-        }
+        ItemDetail addOnItemDetail = productTitleRecognitionService.identifyProductType(itemTitle);
 
+        // 9. 添加返回列表
+        return assembleItemDetailList(mainItemDetail, combineIitemDetailList, addOnItemDetail);
+    }
+    /**
+     * 组装最终的产品列表
+     * */
+    private List<ItemDetail> assembleItemDetailList(ItemDetail mainItemDetail, List<ItemDetail> combineIitemDetailList, ItemDetail addOnItemDetail) {
+        List<ItemDetail> itemDetailList = new ArrayList<>();
+        //添加主产品
+        itemDetailList.add(mainItemDetail);
+        //添加附加产品
+        if (combineIitemDetailList != null) {
+            itemDetailList.addAll(combineIitemDetailList);
+        }
+        //添加默认添加的商品
+        if (addOnItemDetail != null && addOnItemDetail.getOrderType() != null) {
+            itemDetailList.add(addOnItemDetail);
+        }
         return itemDetailList;
     }
-
     /**
-     * 补全默认附加商品信息
-     */
-    private List<ItemDetail> supplementAccessories(ProductAttribute addOnAttribute, ItemDetail mainItemDetail) {
-        List<ItemDetail> accessories = new ArrayList<>();
-        for (int i = 0; i < addOnAttribute.getAdditionalProductCount(); i++) {
-            ItemDetail addOnItem = new ItemDetail();
-            addOnItem.setItemTitle(addOnAttribute.getAdditionalProductNames().get(i));
-            addOnItem.setItemQuantity(mainItemDetail.getItemQuantity());
-            addOnItem.setOrderType(addOnAttribute.getOrderType());
-            addOnItem.setProductSize(ProductSize.UNKNOWN);
-            addOnItem.setProductColor(ProductColor.UNKNOWN);
-            addOnItem.setProductVariable(addOnAttribute.getProductVariable());
-            addOnItem.setDynamicAttributes("");
-            addOnItem.setPersonalization("");
-            addOnItem.setStyle("");
-            addOnItem.setFont("");
-            accessories.add(addOnItem);
-        }
-        return accessories;
-    }
-
-    private List<ItemDetail> assembleItemDetailListForVoro(ItemDetail mainItemDetail, ProductAttribute productAttribute) {
+     *  组装附属产品列表
+     *  @param dynamicAttrsMap 动态属性Map
+     *  @param mainItemDetail 主商品实体
+     *  @param productAttribute 产品属性实体
+     *  @return 附属产品列表
+     * */
+    private List<ItemDetail> assembleItemDetailListForVoro(Map<String, String> dynamicAttrsMap, ItemDetail mainItemDetail,
+            ProductAttribute productAttribute) {
         List<ItemDetail> itemDetailList = new ArrayList<>();
 
+        // 使用 ProductAttribute 中的产品类型列表
+        Set<String> productTypes = new LinkedHashSet<>();
+        if (productAttribute.getAdditionalProductNames() != null && !productAttribute.getAdditionalProductNames().isEmpty()) {
+            productTypes.addAll(productAttribute.getAdditionalProductNames());
+        }
+
+        // 如果没有附属商品，则使用主商品类型
+        if (productTypes.isEmpty()) {
+            return null;
+        }
+
+        // 循环读取dynamicAttrsMap
+        for (String key : dynamicAttrsMap.keySet()){
+            String value = dynamicAttrsMap.get(key);
+            // 如果productTypes中包含花卉心形相盒吊坠，解析月份
+            String flowerHeartBoxName = ProductName.FLOWER_HEART_BOX_PENDANT.getDisplayName();
+            if (productAttribute.getAdditionalProductNames() != null
+                    && productAttribute.getAdditionalProductNames().contains(flowerHeartBoxName)
+                    && key.toLowerCase().contains("birth flower style")) {
+                String month = attributeExtractor.getMonthFromValue(value);
+                if (month != null && !month.isEmpty()) {
+                    productAttribute.setProductVariable(month);
+                }
+            }
+
+        }
+        // 循环productTypes，生成ItemDetail列表,每个产品都有7个属性，包括订单类别productType
+        //产品名称productName、尺寸productSize、颜色productColor、产品变量productVariable、设计风格style、字体font
+        //附属产品的尺寸productSize、颜色productColor、产品变量productVariable特定品类需要继承主商品的属性，比如领带夹会继承主商品
+        //有些产品没有尺寸、颜色、产品变量、设计风格、字体，比如包装盒
+        //规则：主商品是领带夹、袖扣、相盒，则继承主商品的属性，否则使用自己的属性，如果没有则为空
+        //
         for (String productType : productTypes) {
-            OrderType orderType = OrderType.fromDisplayName(productType);
+            OrderType orderType = OrderType.fromOrderTypeCode(productType);
+            if (orderType == OrderType.UNKNOWN) {
+                continue;
+            }
             ItemDetail item = new ItemDetail();
-            item.setItemTitle(itemTitle);
-            item.setItemQuantity(quantity);
-            item.setDynamicAttributes(information);
-            item.setPersonalization(personalization);
+            item.setItemTitle(mainItemDetail.getItemTitle());
+            item.setItemQuantity(mainItemDetail.getItemQuantity());
             item.setOrderType(orderType);
-            item.setStyle(style); // 设置设计风格字段
-            item.setFont(font); // 设置字体字段
 
             // 根据产品类型设置特殊字段
             if (orderType == OrderType.BOX) {
                 // 包装盒的特殊处理：只有数量，没有型号、颜色、设计风格、字体
-                String standardName = productNameMapper.getStandardName(productType); // 映射后的标准名称
-                item.setProductVariable(standardName); // 产品变量，如 "Oval Box-椭圆形开窗木盒"
-                // 包装盒不设置型号、颜色、设计风格、字体
-                item.setProductSize("");
-                item.setProductColor("");
-                item.setFont("");
-                item.setStyle("");
-                item.setItemTitle("");
-                item.setDynamicAttributes("");
-                item.setPersonalization("");
+                String productVariable = productAttribute.getProductVariable();
+                if (productVariable != null && !productVariable.isEmpty()) {
+                    item.setProductVariable(ProductVariable.fromDisplayName(productVariable));
+                }
+
             } else {
                 // 其他产品类型（袖扣、领带夹、狗牌、相盒）保留原有字段
-                item.setProductSize(productAttribute.getProductSize());
-                item.setProductColor(productAttribute.getProductColor());
-                item.setProductVariable(productAttribute.getProductVariable());
+                item.setProductSize(productAttribute.getSize());
+                item.setProductColor(productAttribute.getColor());
+                String productVariable = productAttribute.getProductVariable();
+                if (productVariable != null && !productVariable.isEmpty()) {
+                    item.setProductVariable(ProductVariable.fromDisplayName(productVariable));
+                }
+                item.setStyle(productAttribute.getStyle());
+                item.setFont(productAttribute.getFont());
             }
 
             itemDetailList.add(item);
         }
         return itemDetailList;
-    }
-
-    private ProductAttribute parseVoroDynamicInfo(Map<String, String> dynamicAttrsMap, ItemDetail itemDetail, String personalization) {
-        ProductAttribute productAttribute = new ProductAttribute();
-        for (Map.Entry<String, String> entry : dynamicAttrsMap.entrySet()) {
-            String key = entry.getKey().toLowerCase();
-            String value = entry.getValue();
-            //解析商品型号
-            if (key.contains("size")) {
-                itemDetail.setProductSize(attributeExtractor.extractSizeFromValue(value));
-            }
-            //解析商品颜色
-            if ((key.contains("color") || key.contains("colour") || key.contains("locket finish"))) {
-                productAttribute.setColor(attributeExtractor.extractColorFromValue(value));
-            }
-            // 如果 Size 和 Color 都在同一个字段（如 "Size and Color: Gold_L"）
-            if (key.contains("size") && key.contains("color") && value.contains("_")) {
-                String[] parts = value.split("_");
-                if (parts.length >= 2) {
-                    productAttribute.setColor(attributeExtractor.extractColorFromValue(parts[0].trim()));
-                    productAttribute.setSize(parts[1].trim());
-                }
-            }
-            //从动态属性中识别产品类型（袖扣、领带夹、包装盒）
-            if ((value.toLowerCase().contains("cufflink") || value.toLowerCase().contains("cufflinks"))) {
-                productAttribute.setAdditionalProductName(getCufflinkName());
-            }
-            if ((value.matches(".*Tie\\s{0,}Clip.*"))) {
-                productAttribute.setAdditionalProductName(getTieClipName());
-            }
-            if (value.toLowerCase().contains("oval box")) {
-                productAttribute.setAdditionalProductName(getBoxName());
-                productAttribute.setProductVariable("Oval Box");
-            } else if (value.toLowerCase().contains("square box")) {
-                productAttribute.setAdditionalProductName(getBoxName());
-                productAttribute.setProductVariable("Square Box");
-            } else if (value.toLowerCase().contains("box")) {
-                productAttribute.setAdditionalProductName(getBoxName());
-                productAttribute.setProductVariable("Box");
-            }
-            //如果productTypes中包含"花卉心形相盒吊坠"，解析月份"Birth Flower Style"，调用函数getmonthFromValue实现
-            if (productAttribute.getAdditionalProductName().contains(getFlowerHeartBoxName())
-                    && key.contains("birth flower style")) {
-                productAttribute.setProductVariable(attributeExtractor.getMonthFromValue(value));
-            }
-            // 6. 从Personalization中提取刻录及设计信息
-            productAttribute.setStyle(PersonalizationParserUtil.extractStyle(personalization));
-            productAttribute.setFont(PersonalizationParserUtil.extractFont(personalization));
-        }
-        return productAttribute;
-    }
-
-    /**
-     * 通过标题识别出主商品
-     *
-     * @param itemTitle       商品标题
-     * @param dynamicAttrsMap 动态属性Map
-     * @return 主商品类型
-     */
-    private ItemDetail getVoroProductTypes(String itemTitle, Map<String, String> dynamicAttrsMap) {
-        ItemDetail itemDetail = new ItemDetail();
-
-        // 使用商品标题识别服务识别主商品类型
-        String mainProductType = productTitleRecognitionService.identifyProductType(itemTitle);
-        if (!mainProductType.equals("未知商品")) {
-            // 将识别到的商品类型转换为内部使用的常量
-            String internalType = convertToInternalProductType(itemTitle, mainProductType);
-            if (internalType != null && !internalType.isEmpty()) {
-                itemDetail.setOrderType(OrderType.fromDisplayName(internalType));
-            }
-        }
-        return itemDetail;
-
     }
 
     /**

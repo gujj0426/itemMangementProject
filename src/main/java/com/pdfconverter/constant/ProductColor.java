@@ -58,7 +58,7 @@ public enum ProductColor {
     /**
      * 霓虹粉
      */
-    NEON_PINK("Neon Pink", "霓虹粉"),
+    NEON_PINK("Hot Pink", "霓虹粉"),
 
     /**
      * 彩虹色

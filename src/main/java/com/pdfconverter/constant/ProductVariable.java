@@ -66,11 +66,14 @@ public enum ProductVariable {
     BOX_SMALL_SQUARE("小方形礼盒"),
     BOX_RECTANGLE("长方形礼盒"),
     BOX_LARGE_SQUARE("大方形礼盒"),
-    BOX_SQUARE_WOOD("Square Box-方形木盒"),
-    BOX_SQUARE_WINDOW("方形开窗木盒"),
-    BOX_RECTANGLE_WOOD("Box-长方形木盒"),
-    BOX_RECTANGLE_WINDOW("长方形开窗木盒"),
-    BOX_OVAL_WINDOW("Oval Box-椭圆形开窗木盒"),
+    WOOD_BOX_SQUARE_WOOD("Square Box-方形木盒"),
+    WOOD_BOX_SQUARE_WINDOW("方形开窗木盒"),
+    WOOD_BOX_RECTANGLE_WOOD("Box-长方形木盒"),
+    WOOD_BOX_RECTANGLE_WINDOW("长方形开窗木盒"),
+    WOOD_BOX_OVAL_WINDOW("Oval Box-椭圆形开窗木盒"),
+
+    // 狗牌绑带
+    SILICONE_BAND("硅胶绑带"),
 
     /**
      * 猫耳系列
@@ -191,11 +194,12 @@ public enum ProductVariable {
         if (lowerText.contains("小方形礼盒")) return BOX_SMALL_SQUARE;
         if (lowerText.contains("长方形礼盒")) return BOX_RECTANGLE;
         if (lowerText.contains("大方形礼盒")) return BOX_LARGE_SQUARE;
-        if (lowerText.contains("square box") || lowerText.contains("方形木盒")) return BOX_SQUARE_WOOD;
-        if (lowerText.contains("方形开窗木盒")) return BOX_SQUARE_WINDOW;
-        if (lowerText.contains("rectangle box") || lowerText.contains("长方形木盒")) return BOX_RECTANGLE_WOOD;
-        if (lowerText.contains("长方形开窗木盒")) return BOX_RECTANGLE_WINDOW;
-        if (lowerText.contains("oval box") || lowerText.contains("椭圆形开窗木盒")) return BOX_OVAL_WINDOW;
+        if (lowerText.contains("square box") || lowerText.contains("方形木盒")) return WOOD_BOX_SQUARE_WOOD;
+        if (lowerText.contains("方形开窗木盒")) return WOOD_BOX_SQUARE_WINDOW;
+        if (lowerText.contains("rectangle box") || lowerText.contains("长方形木盒")) return WOOD_BOX_RECTANGLE_WOOD;
+        if (lowerText.contains("长方形开窗木盒")) return WOOD_BOX_RECTANGLE_WINDOW;
+        if (lowerText.contains("oval box") || lowerText.contains("椭圆形开窗木盒")) return WOOD_BOX_OVAL_WINDOW;
+        if (lowerText.contains("silicone band") || lowerText.contains("硅胶绑带") || lowerText.contains("dog tag holder")) return SILICONE_BAND;
 
         // 猫耳匹配
         if (lowerText.contains("圆耳猫")) return CAT_EAR_ROUND;
@@ -237,10 +241,8 @@ public enum ProductVariable {
      * 获取包装盒系列的所有枚举值
      */
     public static ProductVariable[] getBoxValues() {
-        return new ProductVariable[]{
-            BOX_SMALL_SQUARE, BOX_RECTANGLE, BOX_LARGE_SQUARE,
-            BOX_SQUARE_WOOD, BOX_SQUARE_WINDOW, BOX_RECTANGLE_WOOD,
-            BOX_RECTANGLE_WINDOW, BOX_OVAL_WINDOW
+        return new ProductVariable[]{WOOD_BOX_SQUARE_WOOD, WOOD_BOX_SQUARE_WINDOW, WOOD_BOX_RECTANGLE_WOOD,
+                WOOD_BOX_RECTANGLE_WINDOW, WOOD_BOX_OVAL_WINDOW
         };
     }
 
