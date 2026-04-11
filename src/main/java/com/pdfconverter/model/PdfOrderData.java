@@ -49,6 +49,9 @@ public class PdfOrderData {
     private String additionalNote;
     // 初始序号（用于Excel文件中的序号起始值）
     private int initialIndex;
+    // 领带夹 Style 6 标识：解析阶段通过 itemDetails 计算得出
+    // true = 存在领带夹商品且其 personalization 含 S6/Style 6
+    private boolean hasTieClipStyle6;
 
     // 无参构造器
     public PdfOrderData() {
@@ -215,6 +218,14 @@ public class PdfOrderData {
     public void setInitialIndex(int initialIndex) {
         this.initialIndex = initialIndex;
     }
+
+    public boolean isHasTieClipStyle6() {
+        return hasTieClipStyle6;
+    }
+
+    public void setHasTieClipStyle6(boolean hasTieClipStyle6) {
+        this.hasTieClipStyle6 = hasTieClipStyle6;
+    }
     public List<ItemDetail> getItemDetails() {
         return itemDetails;
     }
@@ -229,6 +240,8 @@ public class PdfOrderData {
         private Boolean mainProductFlg;
         // 是否组合产品标识
         private Boolean isComposite;
+        // listing标识（用于区分同一ProductName下的不同listing）
+        private String listingId;
         // 商品标题
         private String itemTitle;
         // 商品数量
@@ -255,6 +268,7 @@ public class PdfOrderData {
         public ItemDetail() {
             this.mainProductFlg = false;
             this.isComposite = false;
+            this.listingId = null;
             this.orderType = OrderType.UNKNOWN;
             this.productSize = ProductSize.UNKNOWN;
             this.productColor = ProductColor.UNKNOWN;
@@ -366,6 +380,14 @@ public class PdfOrderData {
 
         public void setStyle(String style) {
             this.style = style;
+        }
+
+        public String getListingId() {
+            return listingId;
+        }
+
+        public void setListingId(String listingId) {
+            this.listingId = listingId;
         }
     }
 

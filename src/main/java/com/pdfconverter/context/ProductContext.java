@@ -3,7 +3,7 @@ package com.pdfconverter.context;
 import com.pdfconverter.service.AttributeExtractor;
 import com.pdfconverter.service.mapper.ColorMapperService;
 import com.pdfconverter.service.mapper.ProductVariableMapperService;
-import com.pdfconverter.factory.AccessoryItemFactory;
+import com.pdfconverter.service.AccessoryItemFactory;
 import com.pdfconverter.service.ProductTitleRecognitionService;
 import lombok.Data;
 

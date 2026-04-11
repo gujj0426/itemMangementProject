@@ -117,9 +117,13 @@ public class ProductSizeMapperService {
     private void loadDefaultMappings() {
         // 添加一些常见的默认映射
         sizeMap.put("small", "SMALL");
+        sizeMap.put("s", "SMALL");
         sizeMap.put("medium", "MEDIUM");
+        sizeMap.put("m", "MEDIUM");
         sizeMap.put("large", "LARGE");
+        sizeMap.put("l", "LARGE");
         sizeMap.put("xlarge", "XLARGE");
+        sizeMap.put("xl", "XLARGE");
         sizeMap.put("xxl", "XXL");
 
         sortedKeys = sizeMap.keySet().stream()

@@ -79,13 +79,13 @@ public class ProductTitleRecognitionConfig {
 
     /**
      * 解析商品标题识别规则
-     * 格式: <关键字列表>|<产品名称>|<产品大类>|<是否组合产品标识>
+     * 格式: <关键字列表>|<产品名称>|<产品大类>|<是否组合产品标识>|<listingId>
      */
     private ProductTitleRecognitionRule parseRecognitionRule(String key, String value) {
         try {
             String[] parts = value.split("\\|");
-            if (parts.length != 4) {
-                log.warn("商品标题识别规则格式错误: {}", value);
+            if (parts.length < 4) {
+                log.warn("商品标题识别规则格式错误（至少需要4个字段）: {}", value);
                 return null;
             }
 
@@ -112,6 +112,11 @@ public class ProductTitleRecognitionConfig {
             // 解析是否组合产品标识
             Boolean isComposite = Boolean.parseBoolean(parts[3].trim());
             rule.setIsComposite(isComposite);
+
+            // 解析 listingId（可选，向后兼容）
+            if (parts.length >= 5) {
+                rule.setListingId(parts[4].trim());
+            }
 
             return rule;
 
@@ -173,6 +178,8 @@ public class ProductTitleRecognitionConfig {
         private String productCategory;
         //组合产品标识
         private Boolean isComposite;
+        //listing标识（用于区分同一ProductName下的不同listing）
+        private String listingId;
 
         // Getters and Setters
         public String getRuleKey() {
@@ -210,6 +217,13 @@ public class ProductTitleRecognitionConfig {
             this.isComposite = isComposite;
         }
 
+        public String getListingId() {
+            return listingId;
+        }
+        public void setListingId(String listingId) {
+            this.listingId = listingId;
+        }
+
         @Override
         public String toString() {
             return "ProductTitleRecognitionRule{" +
@@ -218,6 +232,7 @@ public class ProductTitleRecognitionConfig {
                     ", productName='" + productName + '\'' +
                     ", productCategory='" + productCategory + '\'' +
                     ", isComposite=" + isComposite +
+                    ", listingId='" + listingId + '\'' +
                     '}';
         }
     }

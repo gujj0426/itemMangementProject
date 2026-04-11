@@ -147,7 +147,7 @@ public enum ProductVariable {
 
         String lowerText = text.toLowerCase();
 
-        // 月份匹配
+        // 月份匹配（中文月份名）
         if (lowerText.contains("一月") || lowerText.contains("january")) return MONTH_JANUARY;
         if (lowerText.contains("二月") || lowerText.contains("february")) return MONTH_FEBRUARY;
         if (lowerText.contains("三月") || lowerText.contains("march")) return MONTH_MARCH;
@@ -160,6 +160,26 @@ public enum ProductVariable {
         if (lowerText.contains("十月") || lowerText.contains("october")) return MONTH_OCTOBER;
         if (lowerText.contains("十一月") || lowerText.contains("november")) return MONTH_NOVEMBER;
         if (lowerText.contains("十二月") || lowerText.contains("december")) return MONTH_DECEMBER;
+
+        // 数字月份匹配（如 "10月"、"1月"、"5月"）
+        java.util.regex.Matcher monthMatcher = java.util.regex.Pattern.compile("(\\d+)\\s*月").matcher(text);
+        if (monthMatcher.find()) {
+            int month = Integer.parseInt(monthMatcher.group(1));
+            switch (month) {
+                case 1: return MONTH_JANUARY;
+                case 2: return MONTH_FEBRUARY;
+                case 3: return MONTH_MARCH;
+                case 4: return MONTH_APRIL;
+                case 5: return MONTH_MAY;
+                case 6: return MONTH_JUNE;
+                case 7: return MONTH_JULY;
+                case 8: return MONTH_AUGUST;
+                case 9: return MONTH_SEPTEMBER;
+                case 10: return MONTH_OCTOBER;
+                case 11: return MONTH_NOVEMBER;
+                case 12: return MONTH_DECEMBER;
+            }
+        }
 
         // 孔型匹配
         if (lowerText.contains("横孔")) return HOLE_HORIZONTAL;

@@ -126,11 +126,14 @@ public enum ProductColor {
 
         // 颜色关键词匹配
         if (lowerText.contains("rainbow")) return RAINBOW;
-        if (lowerText.contains("neon") && lowerText.contains("pink")) return NEON_PINK;
+        // 匹配Hot Pink或Neon Pink（优先匹配完整名称）
+        if (lowerText.contains("hot pink") || lowerText.contains("neon pink")) return NEON_PINK;
+        // 匹配单独的Pink（需要放在light pink之前）
+        if (lowerText.contains("pink") && !lowerText.contains("light pink") && !lowerText.contains("hot pink") && !lowerText.contains("neon pink")) return NEON_PINK;
         if (lowerText.contains("purple")) return PURPLE;
         if (lowerText.contains("blue")) return BLUE;
         if (lowerText.contains("red")) return RED;
-        if (lowerText.contains("light") && lowerText.contains("pink")) return LIGHT_PINK;
+        if (lowerText.contains("light pink")) return LIGHT_PINK;
         if (lowerText.contains("yellow")) return YELLOW;
         if (lowerText.contains("white")) return WHITE;
         if (lowerText.contains("gray")) return GRAY;

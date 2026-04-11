@@ -17,6 +17,8 @@ public class ExcelData {
     private String info;
     /** 订单类型 */
     private OrderType orderType;
+    /** 商品名称 **/
+    private String productName;
     /** 字体 */
     private String font;
     /** 设计师 */

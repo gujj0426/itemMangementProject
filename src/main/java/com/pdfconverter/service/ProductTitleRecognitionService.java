@@ -49,8 +49,10 @@ public class ProductTitleRecognitionService {
             itemDetail.setOrderType(OrderType.fromOrderTypeCode(rule.getProductCategory()));
             // 设置产品名称（ProductName枚举）
             itemDetail.setProductName(ProductName.fromNameCode(rule.getProductName()));
-            log.debug("成功识别商品: 标题=[{}], 产品名称=[{}], 产品大类=[{}], 是否组合产品=[{}]",
-                title, rule.getProductName(), rule.getProductCategory(), rule.getIsComposite());
+            // 设置 listingId（用于区分同一ProductName下的不同listing）
+            itemDetail.setListingId(rule.getListingId());
+            log.debug("成功识别商品: 标题=[{}], 产品名称=[{}], 产品大类=[{}], 是否组合产品=[{}], listingId=[{}]",
+                title, rule.getProductName(), rule.getProductCategory(), rule.getIsComposite(), rule.getListingId());
         } else {
             log.warn("无法识别商品, 标题: {}", title);
         }

@@ -45,6 +45,18 @@ public enum OrderType {
      */
     CUFFLINK_AND_TIE_CLIP("Cufflinks and Tie Clip","袖扣和领带夹"),
     /**
+     * 生日石 add-on
+     */
+    ADDON_BIRTHSTONE("Addon Birthstone", "生日石 add-on"),
+    /**
+     * 翅膀 add-on
+     */
+    ADDON_WINGS("Addon Wings", "翅膀 add-on"),
+    /**
+     * 纪念饰品（骨灰罐）
+     */
+    MEMORIAL("Memorial", "纪念饰品"),
+    /**
      * 未知商品类型
      */
     UNKNOWN("", "未知商品");

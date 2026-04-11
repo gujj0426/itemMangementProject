@@ -1,0 +1,308 @@
+产品ID,产品大类,产品大类编号,产品细类,图片,产品名称,型号,颜色,产品变量,店铺
+JC003-0002,饰品类 Jewelry ,JC003,袖扣,,旧款袖扣,S,金色,,voro
+JC003-0003,饰品类 Jewelry ,JC003,袖扣,,旧款袖扣,S,玫瑰金,,voro
+JC003-0008,饰品类 Jewelry ,JC003,袖扣,,旧款袖扣,L,黑色,,voro
+JC002-0001,饰品类 Jewelry ,JC002,袖扣,,单抛袖扣-过渡,S,银色,,voro
+JC002-0002,饰品类 Jewelry ,JC002,袖扣,,单抛袖扣-过渡,S,金色,,voro
+JC002-0003,饰品类 Jewelry ,JC002,袖扣,,单抛袖扣-过渡,S,玫瑰金,,voro
+JC002-0004,饰品类 Jewelry ,JC002,袖扣,,单抛袖扣-过渡,S,黑色,,voro
+JC002-0005,饰品类 Jewelry ,JC002,袖扣,,单抛袖扣-过渡,L,银色,,voro
+JC002-0006,饰品类 Jewelry ,JC002,袖扣,,单抛袖扣-过渡,L,金色,,voro
+JC002-0007,饰品类 Jewelry ,JC002,袖扣,,单抛袖扣-过渡,L,玫瑰金,,voro
+JC002-0008,饰品类 Jewelry ,JC002,袖扣,,单抛袖扣-过渡,L,黑色,,voro
+JC001-0002,饰品类 Jewelry ,JC001,袖扣,,双抛袖扣,S,金色,,voro
+JC001-0003,饰品类 Jewelry ,JC001,袖扣,,双抛袖扣,S,玫瑰金,,voro
+JC001-0004,饰品类 Jewelry ,JC001,袖扣,,双抛袖扣,S,黑色,,voro
+JC001-0005,饰品类 Jewelry ,JC001,袖扣,,双抛袖扣,L,银色,,voro
+JC001-0006,饰品类 Jewelry ,JC001,袖扣,,双抛袖扣,L,金色,,voro
+JC001-0007,饰品类 Jewelry ,JC001,袖扣,,双抛袖扣,L,玫瑰金,,voro
+JC001-0008,饰品类 Jewelry ,JC001,袖扣,,双抛袖扣,L,黑色,,voro
+JT001-0001,饰品类 Jewelry ,JT001,领带夹,,鸭嘴领带夹（薄）,S,银色,,voro
+JT001-0002,饰品类 Jewelry ,JT001,领带夹,,鸭嘴领带夹（薄）,S,金色,,voro
+JT001-0003,饰品类 Jewelry ,JT001,领带夹,,鸭嘴领带夹（薄）,S,玫瑰金,,voro
+JT001-0004,饰品类 Jewelry ,JT001,领带夹,,鸭嘴领带夹（薄）,S,黑色,,voro
+JT001-0005,饰品类 Jewelry ,JT001,领带夹,,鸭嘴领带夹（薄）,L,银色,,voro
+JT001-0006,饰品类 Jewelry ,JT001,领带夹,,鸭嘴领带夹（薄）,L,金色,,voro
+JT001-0007,饰品类 Jewelry ,JT001,领带夹,,鸭嘴领带夹（薄）,L,玫瑰金,,voro
+JT001-0008,饰品类 Jewelry ,JT001,领带夹,,鸭嘴领带夹（薄）,L,黑色,,voro
+JT002-0001,饰品类 Jewelry ,JT002,领带夹,,鸭嘴领带夹（厚）,S,银色,,voro
+JT002-0002,饰品类 Jewelry ,JT002,领带夹,,鸭嘴领带夹（厚）,S,金色,,voro
+JT002-0003,饰品类 Jewelry ,JT002,领带夹,,鸭嘴领带夹（厚）,S,玫瑰金,,voro
+JT002-0004,饰品类 Jewelry ,JT002,领带夹,,鸭嘴领带夹（厚）,S,黑色,,voro
+JT002-0005,饰品类 Jewelry ,JT002,领带夹,,鸭嘴领带夹（厚）,L,银色,,voro
+JT002-0006,饰品类 Jewelry ,JT002,领带夹,,鸭嘴领带夹（厚）,L,金色,,voro
+JT002-0007,饰品类 Jewelry ,JT002,领带夹,,鸭嘴领带夹（厚）,L,玫瑰金,,voro
+JT002-0008,饰品类 Jewelry ,JT002,领带夹,,鸭嘴领带夹（厚）,L,黑色,,voro
+JT003-0001,饰品类 Jewelry ,JT003,领带夹,,双面滑入式领带夹,L,银色,,voro
+JT003-0002,饰品类 Jewelry ,JT003,领带夹,,双面滑入式领带夹,L,金色,,voro
+JT003-0003,饰品类 Jewelry ,JT003,领带夹,,双面滑入式领带夹,L,玫瑰金,,voro
+JT003-0004,饰品类 Jewelry ,JT003,领带夹,,双面滑入式领带夹,L,黑色,,voro
+JT003-0005,饰品类 Jewelry ,JT003,领带夹,,双面滑入式领带夹,S,银色,,voro
+JT003-0006,饰品类 Jewelry ,JT003,领带夹,,双面滑入式领带夹,S,金色,,voro
+JT003-0007,饰品类 Jewelry ,JT003,领带夹,,双面滑入式领带夹,S,玫瑰金,,voro
+JT003-0008,饰品类 Jewelry ,JT003,领带夹,,双面滑入式领带夹,S,黑色,,voro
+JT004-0001,饰品类 Jewelry ,JT004,领带夹,,圆片鸭嘴领带夹,L,银色,,voro
+JT004-0002,饰品类 Jewelry ,JT004,领带夹,,圆片鸭嘴领带夹,L,金色,,voro
+JT004-0003,饰品类 Jewelry ,JT004,领带夹,,圆片鸭嘴领带夹,L,玫瑰金,,voro
+JT004-0004,饰品类 Jewelry ,JT004,领带夹,,圆片鸭嘴领带夹,L,黑色,,voro
+AP001-0001,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,一月,voro
+AP001-0002,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,一月,voro
+AP001-0003,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,二月,voro
+AP001-0004,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,二月,voro
+AP001-0005,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,三月,voro
+AP001-0006,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,三月,voro
+AP001-0007,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,四月,voro
+AP001-0008,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,四月,voro
+AP001-0009,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,五月,voro
+AP001-0010,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,五月,voro
+AP001-0011,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,六月,voro
+AP001-0012,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,六月,voro
+AP001-0013,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,七月,voro
+AP001-0014,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,七月,voro
+AP001-0015,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,八月,voro
+AP001-0016,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,八月,voro
+AP001-0017,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,九月,voro
+AP001-0018,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,九月,voro
+AP001-0019,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,十月,voro
+AP001-0020,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,十月,voro
+AP001-0021,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,十一月,voro
+AP001-0022,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,十一月,voro
+AP001-0023,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,银色,十二月,voro
+AP001-0024,饰品配件 Accessories,AP001,吊坠,,花卉心形相盒吊坠,,金色,十二月,voro
+AP003-0001,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,一月,voro
+AP003-0002,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,二月,voro
+AP003-0003,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,三月,voro
+AP003-0004,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,四月,voro
+AP003-0005,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,五月,voro
+AP003-0006,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,六月,voro
+AP003-0007,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,七月,voro
+AP003-0008,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,八月,voro
+AP003-0009,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,九月,voro
+AP003-0010,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,十月,voro
+AP003-0011,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,十一月,voro
+AP003-0012,饰品配件 Accessories,AP003,吊坠,,生日石原石,,,十二月,voro
+AP005-0019,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,S,银色,开模,voro
+AP005-0020,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,S,金色,开模,voro
+AP005-0021,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,S,玫瑰金,开模,voro
+AP005-0001,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,M,银色,开模,voro
+AP005-0002,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,M,金色,开模,voro
+AP005-0003,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,M,玫瑰金,开模,voro
+AP005-0004,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,L,银色,开模,voro
+AP005-0005,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,L,金色,开模,voro
+AP005-0006,饰品配件 Accessories,AP005,吊坠,,圆片吊坠,L,玫瑰金,开模,voro
+AA001-0001,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,一月,voro
+AA001-0002,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,一月,voro
+AA001-0003,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,一月,voro
+AA001-0004,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,二月,voro
+AA001-0005,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,二月,voro
+AA001-0006,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,二月,voro
+AA001-0007,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,三月,voro
+AA001-0008,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,三月,voro
+AA001-0009,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,三月,voro
+AA001-0010,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,四月,voro
+AA001-0011,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,四月,voro
+AA001-0012,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,四月,voro
+AA001-0013,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,五月,voro
+AA001-0014,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,五月,voro
+AA001-0015,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,五月,voro
+AA001-0016,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,六月,voro
+AA001-0017,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,六月,voro
+AA001-0018,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,六月,voro
+AA001-0019,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,七月,voro
+AA001-0020,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,七月,voro
+AA001-0021,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,七月,voro
+AA001-0022,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,八月,voro
+AA001-0023,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,八月,voro
+AA001-0024,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,八月,voro
+AA001-0025,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,九月,voro
+AA001-0026,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,九月,voro
+AA001-0027,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,九月,voro
+AA001-0028,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,十月,voro
+AA001-0029,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,十月,voro
+AA001-0030,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,十月,voro
+AA001-0031,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,十一月,voro
+AA001-0032,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,十一月,voro
+AA001-0033,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,十一月,voro
+AA001-0034,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,银色,十二月,voro
+AA001-0035,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,金色,十二月,voro
+AA001-0036,饰品配件 Accessories,AA001,吊坠,,生日石 add-on,,玫瑰金,十二月,voro
+AA002-001,饰品配件 Accessories,AA002,吊坠,,翅膀 add-on,,银色,,voro
+AA002-002,饰品配件 Accessories,AA002,吊坠,,翅膀 add-on,,金色,,voro
+AA002-003,饰品配件 Accessories,AA002,吊坠,,翅膀 add-on,,玫瑰金,,voro
+AC001-0001,饰品配件 Accessories,AC001,项链,,基础链,,银色,全链,voro
+AC001-0002,饰品配件 Accessories,AC001,项链,,基础链,,金色,全链,voro
+AC001-0003,饰品配件 Accessories,AC001,项链,,基础链,,玫瑰金,全链,voro
+AC001-0004,饰品配件 Accessories,AC001,项链,,基础链,,银色,半链,voro
+AC001-0005,饰品配件 Accessories,AC001,项链,,基础链,,金色,半链,voro
+AC001-0006,饰品配件 Accessories,AC001,项链,,基础链,,玫瑰金,半链,voro
+AK001-001,饰品配件 Accessories,AK001,钥匙扣,,门字扣,,银色,,voro
+AK001-002,饰品配件 Accessories,AK001,钥匙扣,,门字扣,,金色,,voro
+AK002-001,饰品配件 Accessories,AK002,钥匙扣,,钥匙环,15mm,银色,光圈,hululuca
+AK002-002,饰品配件 Accessories,AK002,钥匙扣,,钥匙环,25mm,银色,光圈,hululuca
+AK002-003,饰品配件 Accessories,AK002,钥匙扣,,钥匙环,30mm,银色,平圈,hululuca
+AK002-004,饰品配件 Accessories,AK002,钥匙扣,,钥匙环,30mm,金色,平圈,hululuca
+AK002-005,饰品配件 Accessories,AK002,钥匙扣,,钥匙环,30mm,玫瑰金,平圈,hululuca
+AK002-006,饰品配件 Accessories,AK002,钥匙扣,,钥匙环,30mm,黑色,平圈,hululuca
+AK003-001,饰品配件 Accessories,AK003,钥匙扣,,旋转螺丝钢丝环,,银色,,hululuca
+AK003-002,饰品配件 Accessories,AK003,钥匙扣,,旋转螺丝钢丝环,,金色,,hululuca
+PY001-0001,宠物用品 Pet,PY001,宠物玩具,,大哥大逗猫棒,,,,hululuca
+PY006-0001,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字0,hululuca
+PY006-0002,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字1,hululuca
+PY006-0003,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字2,hululuca
+PY006-0004,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字3,hululuca
+PY006-0005,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字4,hululuca
+PY006-0006,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字5,hululuca
+PY006-0007,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字6,hululuca
+PY006-0008,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字7,hululuca
+PY006-0009,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字8,hululuca
+PY006-0010,宠物用品 Pet,PY006,宠物玩具,,逗猫棒字母配饰,,,数字9,hululuca
+PY002-0001,宠物用品 Pet,PY002,宠物玩具,,麦克风逗猫棒,,,,hululuca
+PY003-0001,宠物用品 Pet,PY003,宠物玩具,,大拇哥丢球玩具,,,,hululuca
+PY004-0001,宠物用品 Pet,PY004,宠物玩具,,梨形拾便袋,,,,hululuca
+PY005-0001,宠物用品 Pet,PY005,宠物玩具,,宠物围嘴,,,,hululuca
+AG001-0001,饰品配件 Accessories,AG001,包装盒,,包装盒,,,小方形礼盒,voro
+AG001-0002,饰品配件 Accessories,AG001,包装盒,,包装盒,,,长方形礼盒,voro
+AG001-0003,饰品配件 Accessories,AG001,包装盒,,包装盒,,,大方形礼盒,voro
+AG001-0004,饰品配件 Accessories,AG001,包装盒,,包装盒,,,Square Box-方形木盒,voro
+AG001-0005,饰品配件 Accessories,AG001,包装盒,,包装盒,,,方形开窗木盒,voro
+AG001-0006,饰品配件 Accessories,AG001,包装盒,,包装盒,,,Box-长方形木盒,voro
+AG001-0007,饰品配件 Accessories,AG001,包装盒,,包装盒,,,长方形开窗木盒,voro
+AG001-0008,饰品配件 Accessories,AG001,包装盒,,包装盒,,,Oval Box-椭圆形开窗木盒,voro
+PS001-0001,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,"S, M",银色,,hululuca
+PS001-0002,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,"S, M",金色,,hululuca
+PS001-0003,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,"S, M",玫瑰金,,hululuca
+PS001-0004,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,"S, M",黑色,,hululuca
+PS001-0005,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,L,银色,,hululuca
+PS001-0006,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,L,金色,,hululuca
+PS001-0007,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,L,玫瑰金,,hululuca
+PS001-0008,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,L,黑色,,hululuca
+PS001-0009,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,XL,银色,,hululuca
+PS001-0010,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,XL,金色,,hululuca
+PS001-0011,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,XL,玫瑰金,,hululuca
+PS001-0012,宠物用品 Pet,PS001,静音狗牌,,尼龙哑光静音狗牌,XL,黑色,,hululuca
+PS002-0001,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,S,银色,,hululuca
+PS002-0002,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,S,金色,,hululuca
+PS002-0003,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,S,玫瑰金,,hululuca
+PS002-0004,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,S,黑色,,hululuca
+PS002-0005,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,M,银色,,hululuca
+PS002-0006,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,M,金色,,hululuca
+PS002-0007,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,M,玫瑰金,,hululuca
+PS002-0008,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,M,黑色,,hululuca
+PS002-0009,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,L,银色,,hululuca
+PS002-0010,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,L,金色,,hululuca
+PS002-0011,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,L,玫瑰金,,hululuca
+PS002-0012,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,L,黑色,,hululuca
+PS002-0013,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,XL,银色,,hululuca
+PS002-0014,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,XL,金色,,hululuca
+PS002-0015,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,XL,玫瑰金,,hululuca
+PS002-0016,宠物用品 Pet,PS002,静音狗牌,,硅胶哑光静音狗牌,XL,黑色,,hululuca
+PS003-0001,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,S,银色,,hululuca
+PS003-0002,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,S,金色,,hululuca
+PS003-0003,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,S,玫瑰金,,hululuca
+PS003-0004,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,S,黑色,,hululuca
+PS003-0005,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,M,银色,,hululuca
+PS003-0006,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,M,金色,,hululuca
+PS003-0007,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,M,玫瑰金,,hululuca
+PS003-0008,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,M,黑色,,hululuca
+PS003-0009,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,L,银色,,hululuca
+PS003-0010,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,L,金色,,hululuca
+PS003-0011,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,L,玫瑰金,,hululuca
+PS003-0012,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,L,黑色,,hululuca
+PS003-0013,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,XL,银色,,hululuca
+PS003-0014,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,XL,金色,,hululuca
+PS003-0015,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,XL,玫瑰金,,hululuca
+PS003-0016,宠物用品 Pet,PS003,静音狗牌,,硅胶亮光静音狗牌,XL,黑色,,hululuca
+PP001-0001,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,S,红色,,hululuca
+PP001-0002,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,S,黄色,,hululuca
+PP001-0003,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,S,蓝色,,hululuca
+PP001-0004,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,S,黑色,,hululuca
+PP001-0005,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,S,白色,,hululuca
+PP001-0006,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,S,浅粉色,,hululuca
+PP001-0007,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,S,霓虹粉,,hululuca
+PP001-0008,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,M,红色,,hululuca
+PP001-0009,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,M,黄色,,hululuca
+PP001-0010,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,M,蓝色,,hululuca
+PP001-0011,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,M,黑色,,hululuca
+PP001-0012,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,M,白色,,hululuca
+PP001-0013,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,M,浅粉色,,hululuca
+PP001-0014,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,M,霓虹粉,,hululuca
+PP001-0015,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,L,红色,,hululuca
+PP001-0016,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,L,黄色,,hululuca
+PP001-0017,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,L,蓝色,,hululuca
+PP001-0018,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,L,黑色,,hululuca
+PP001-0019,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,L,白色,,hululuca
+PP001-0020,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,L,浅粉色,,hululuca
+PP001-0021,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,L,霓虹粉,,hululuca
+PP001-0022,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,XL,红色,,hululuca
+PP001-0023,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,XL,黄色,,hululuca
+PP001-0024,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,XL,蓝色,,hululuca
+PP001-0025,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,XL,黑色,,hululuca
+PP001-0026,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,XL,白色,,hululuca
+PP001-0027,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,XL,浅粉色,,hululuca
+PP001-0028,宠物用品 Pet,PP001,狗牌配件,,硅胶绑带,XL,霓虹粉,,hululuca
+PS005-0001,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,S,银色,,hululuca
+PS005-0002,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,S,金色,,hululuca
+PS005-0003,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,S,玫瑰金,,hululuca
+PS005-0004,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,S,黑色,,hululuca
+PS005-0005,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,S,蓝色,,hululuca
+PS005-0006,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,M,银色,,hululuca
+PS005-0007,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,M,金色,,hululuca
+PS005-0008,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,M,玫瑰金,,hululuca
+PS005-0009,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,M,黑色,,hululuca
+PS005-0010,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,M,蓝色,,hululuca
+PS005-0011,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,L,银色,,hululuca
+PS005-0012,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,L,金色,,hululuca
+PS005-0013,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,L,玫瑰金,,hululuca
+PS005-0014,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,L,黑色,,hululuca
+PS005-0015,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,L,蓝色,,hululuca
+PS005-0016,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,XL,银色,,hululuca
+PS005-0017,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,XL,金色,,hululuca
+PS005-0018,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,XL,玫瑰金,,hululuca
+PS005-0019,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,XL,黑色,,hululuca
+PS005-0020,宠物用品 Pet,PS005,静音狗牌,,开口长方形静音狗牌,XL,蓝色,,hululuca
+PS006-0001,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,S,银色,,hululuca
+PS006-0002,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,S,金色,,hululuca
+PS006-0003,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,S,玫瑰金,,hululuca
+PS006-0004,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,S,黑色,,hululuca
+PS006-0005,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,S,蓝色,,hululuca
+PS006-0006,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,M,银色,,hululuca
+PS006-0007,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,M,金色,,hululuca
+PS006-0008,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,M,玫瑰金,,hululuca
+PS006-0009,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,M,黑色,,hululuca
+PS006-0010,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,M,蓝色,,hululuca
+PS006-0011,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,L,银色,,hululuca
+PS006-0012,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,L,金色,,hululuca
+PS006-0013,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,L,玫瑰金,,hululuca
+PS006-0014,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,L,黑色,,hululuca
+PS006-0015,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,L,蓝色,,hululuca
+PS006-0016,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,XL,银色,,hululuca
+PS006-0017,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,XL,金色,,hululuca
+PS006-0018,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,XL,玫瑰金,,hululuca
+PS006-0019,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,XL,黑色,,hululuca
+PS006-0020,宠物用品 Pet,PS006,静音狗牌,,开口骨头形静音狗牌,XL,蓝色,,hululuca
+PT001-0001,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,S,银色,,hululuca
+PT001-0002,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,S,金色,,hululuca
+PT001-0003,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,S,玫瑰金,,hululuca
+PT001-0004,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,S,黑色,,hululuca
+PT001-0005,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,S,蓝色,,hululuca
+PT001-0006,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,S,🌈彩虹色,,hululuca
+PT001-0007,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,M,银色,,hululuca
+PT001-0008,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,M,金色,,hululuca
+PT001-0009,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,M,玫瑰金,,hululuca
+PT001-0010,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,M,黑色,,hululuca
+PT001-0011,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,M,蓝色,,hululuca
+PT001-0012,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,M,🌈彩虹色,,hululuca
+PT001-0013,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,L,银色,,hululuca
+PT001-0014,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,L,金色,,hululuca
+PT001-0015,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,L,玫瑰金,,hululuca
+PT001-0016,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,L,黑色,,hululuca
+PT001-0017,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,L,蓝色,,hululuca
+PT001-0018,宠物用品 Pet,PT001,狗牌,,镂空爪子骨头形狗牌,L,🌈彩虹色,,hululuca
+MU001-001,纪念饰品 M,MU001,纪念饰品,,骨灰罐,,银色,铝合金,dearmomo
+MU001-002,纪念饰品 M,MU001,纪念饰品,,骨灰罐,,金色,铝合金,dearmomo
+MU001-003,纪念饰品 M,MU001,纪念饰品,,骨灰罐,,玫瑰金,铝合金,dearmomo
+MU001-004,纪念饰品 M,MU001,纪念饰品,,骨灰罐,,黑色,铝合金,dearmomo
+MU001-005,纪念饰品 M,MU001,纪念饰品,,骨灰罐,,银色,不锈钢,dearmomo
+MU001-006,纪念饰品 M,MU001,纪念饰品,,骨灰罐,,金色,不锈钢,dearmomo
+MU001-007,纪念饰品 M,MU001,纪念饰品,,骨灰罐,,玫瑰金,不锈钢,dearmomo
+MU001-008,纪念饰品 M,MU001,纪念饰品,,骨灰罐,,黑色,不锈钢,dearmomo

@@ -1,0 +1,1358 @@
+{
+  "listingAttributes": [
+    {
+      "listingId": "tc_slide_with_box",
+      "comment": "双面滑入领带夹 - 带 Oval Box（Row原配置）。标签: Color Finish（颜色+附属商品）, Engraving Sides",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "格式：颜色 + 附属商品，如 Silver + Oval Box；也可能只有颜色（降级为纯颜色）",
+          "attributeType": "COLOR_WITH_ACCESSORY",
+          "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "ACCESSORY_ITEM"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "defaultBoxVariable": "Oval Box-椭圆形开窗木盒",
+          "required": true
+        },
+        {
+          "labelName": "Engraving Sides",
+          "comment": "刻录面数：Front Only / Back / Front & Back（决定拆行数量）",
+          "attributeType": "ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "tc_slide_pet_with_box",
+      "comment": "双面滑入领带夹 - 宠物头像款，Customization Option 值为 1Pet/2Pet（不影响拆行，仅记录宠物数量）。Row 22",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "格式：颜色 或 颜色 + 附属商品，如 Silver + Oval Box",
+          "attributeType": "COLOR_WITH_ACCESSORY",
+          "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "ACCESSORY_ITEM"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "defaultBoxVariable": "Oval Box-椭圆形开窗木盒",
+          "required": true
+        },
+        {
+          "labelName": "Customization Option",
+          "comment": "宠物数量，如 1Pet、2Pet，对Excel输出无影响，直接忽略",
+          "attributeType": "IGNORE",
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "tc_slide_with_size_design",
+      "comment": "双面滑入领带夹 - 带尺寸和设计选项。标签: Color and Size（颜色_尺寸）, Design Options",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Size",
+          "comment": "格式：颜色_尺寸，如 Gold_Small。提取颜色和尺寸",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "([^_]+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Design Options",
+          "comment": "设计选项，如 S1、S2，映射到 Style 1、Style 2",
+          "attributeType": "STYLE",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "tc_slide_pet_engraving",
+      "comment": "双面滑入领带夹 - 宠物+刻录面数，Customization Option 值如 1Pet+1Side/2Pet+2Side，Side 数决定拆行。Row 21",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "格式：颜色 或 颜色 + 附属商品，如 Silver + Oval Box",
+          "attributeType": "COLOR_WITH_ACCESSORY",
+          "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "ACCESSORY_ITEM"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "defaultBoxVariable": null,
+          "required": true
+        },
+        {
+          "labelName": "Customization Option",
+          "comment": "格式：{N}Pet + {M} Side，M 决定拆行数，最多5面",
+          "attributeType": "PET_ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "tc_slide_engraved_with_box",
+      "comment": "双面滑入领带夹 - 颜色+尺寸+可选Box，Engraving 决定拆行。Row 23",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Box options",
+          "comment": "格式：颜色_尺寸 或 颜色_尺寸 + 附属商品，如 Silver_S + Oval Box",
+          "attributeType": "COLOR_SIZE_ACCESSORY",
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Engraving",
+          "comment": "刻录面数：Front Only / Back Only / Front & Back（决定拆行数量）",
+          "attributeType": "ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "tc_duck_with_size_box",
+      "comment": "鸭嘴领带夹（薄）- Row15/R17（listing/4367758422/4477410615）。动态属性只有2个：Color Finish（含尺寸的颜色值，如 Silver_Small）, Add-on Box（领带夹+礼盒组合）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "格式：颜色 或 颜色_尺寸，如 Gold 或 Gold_Small、Silver_Large。尺寸部分可选",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "([^_]+)(?:_([^_]+))?",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Add-on Box",
+          "comment": "领带夹和礼盒组合，用+分隔。如 Tie Clip Only / Tie Clip + Oval Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "tc_duck_item_options",
+      "comment": "鸭嘴领带夹（薄）- 颜色+商品名+附属商品混合。标签: Item Options（COLOR_ITEM_COMBO）, Size",
+      "attributeLabels": [
+        {
+          "labelName": "Item Options",
+          "comment": "格式：颜色 TC + 附属商品，如 Sliver TC + Oval Box。提取颜色和附属商品",
+          "attributeType": "COLOR_ITEM_COMBO",
+          "valuePattern": "([^\\s]+)\\s+TC\\s*\\+\\s*(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "ACCESSORY_ITEM"
+          },
+          "itemTypeMapping": {
+            "TC": "Tie Clip Duck Bill"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Size",
+          "comment": "尺寸，如 Small、Large",
+          "attributeType": "SIZE",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "tc_thick_with_size_box",
+      "comment": "鸭嘴领带夹（厚）- 颜色_尺寸+可选Box，带设计风格。Row 19",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Box option",
+          "comment": "格式：颜色_尺寸 或 颜色_尺寸 + Oval Box，如 Silver_Small 或 Silver_S + Oval Box",
+          "attributeType": "COLOR_SIZE_ACCESSORY",
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Design Options",
+          "comment": "设计风格，如 Style 1~Style 48",
+          "attributeType": "STYLE",
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "tc_thick_with_engraving",
+      "comment": "鸭嘴领带夹（厚）- 颜色_尺寸+可选Box，Engraving 决定拆行。Row 20",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Box options",
+          "comment": "格式：颜色_尺寸 或 颜色_尺寸 + Oval Box，如 Silver_Small 或 Silver_S + Oval Box",
+          "attributeType": "COLOR_SIZE_ACCESSORY",
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Engraving",
+          "comment": "刻录面数：Front Only / Back Only / Front & Back（决定拆行数量）",
+          "attributeType": "ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "tc_round_with_box",
+      "comment": "圆片鸭嘴领带夹 - 带Box选项，Row26。标签: Color Finish and Box（颜色[+Box]）, Engraving Sides（Round Disc Only/Round Disc & Bar）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish and Box",
+          "comment": "格式：颜色 或 颜色 + Box，如 Gold 或 Gold + Oval Box。只有颜色时降级为纯颜色处理",
+          "attributeType": "COLOR_WITH_ACCESSORY",
+          "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "ACCESSORY_ITEM"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Engraving Sides",
+          "comment": "刻录面数：Round Disc Only（1行）/ Round Disc & Bar（2行）",
+          "attributeType": "ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "tc_round_pet",
+      "comment": "圆片鸭嘴领带夹 - 宠物头像款，Row27。标签: Color Finish and Box（颜色[+Box]）, Engraving Sides（结构同 tc_round_with_box）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish and Box",
+          "comment": "格式：颜色 或 颜色 + Box，如 Gold 或 Gold + Oval Box。只有颜色时降级为纯颜色处理",
+          "attributeType": "COLOR_WITH_ACCESSORY",
+          "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "ACCESSORY_ITEM"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Engraving Sides",
+          "comment": "刻录面数：Round Disc Only（1行）/ Round Disc & Bar（2行）",
+          "attributeType": "ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "tc_round_photo",
+      "comment": "圆片鸭嘴领带夹 - Custom Photo款，Row29。标签: Color Finish and Box（颜色[+Box]）, Engraving Sides（结构同 tc_round_with_box）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish and Box",
+          "comment": "格式：颜色 或 颜色 + Box，如 Gold 或 Gold + Oval Box。只有颜色时降级为纯颜色处理",
+          "attributeType": "COLOR_WITH_ACCESSORY",
+          "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "ACCESSORY_ITEM"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Engraving Sides",
+          "comment": "刻录面数：Round Disc Only（1行）/ Round Disc & Bar（2行）",
+          "attributeType": "ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_item_list_1",
+      "comment": "袖扣 - Row1（listing/4360752125）。动态属性只有2个：Size and Color（颜色_尺寸）, Item（主商品+附属商品，用+分隔）。Quantity: 和 Personalization: 是固定字段无需配置",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "comment": "颜色和尺寸，如 Silver_S、Gold_L、Blackr_L、Rose Goldr_L。r 为 OCR 误差代表 Rose",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Cufflinks+Oval Box / Cufflink+TieClip+Box。Box 无具体类型时默认 Oval Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_item_list_3",
+      "comment": "袖扣 - Row3（listing/1824161924）。动态属性只有2个：Size and Color, Item。Quantity: 和 Personalization: 是固定字段无需配置",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "comment": "颜色和尺寸，如 Silver_S、Gold_L、Blackr_L、Rose Goldr_L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Cufflinks+Oval Box / Cufflink+TieClip+Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_item_list_4",
+      "comment": "袖扣 - Row4（listing/4409573815，Custom Engraved Wedding Cufflinks for Groom & Groomsmen）。动态属性只有2个：Size and Color, Item",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_item_list_5",
+      "comment": "袖扣 - Row5（Custom Engraved Initials Cufflinks Set-4 colors）。动态属性只有2个：Size and Color, Item",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_woodbox_options",
+      "comment": "袖扣 - Row2（listing/4433085919，Custom Photo Portrait Cufflinks with woodbox）。标签: Size and Color, Woodbox Options",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "comment": "颜色和尺寸，如 Silver_Small（Small→S，Large→L）",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Woodbox Options",
+          "comment": "礼盒选项，如 Cufflinks Only、Cufflinks+Oval Box、Cufflinks+Square Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "productNameMapping": {
+            "Cufflinks": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_with_box_options",
+      "comment": "袖扣 - 带Box选项（颜色+尺寸+Box选择）。标签: Color and Size, Box Options",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Size",
+          "comment": "格式：颜色 或 颜色_尺寸，如 Gold 或 Gold_Small",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "([^_]+)(?:_([^_]+))?",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Box Options",
+          "comment": "Box选项，如 Oval Box、Square Box、Wood Box、No Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "Cufflinks": "Cufflinks",
+            "Oval Box": "Box",
+            "Square Box": "Box",
+            "Wood Box": "Box",
+            "No Box": "Box"
+          },
+          "productNameMapping": {
+            "Cufflinks": "Cufflink",
+            "Box": "Packaging Box"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Wood Box": "Box-长方形木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_with_color_item",
+      "comment": "袖扣 - Row5（listing/1832405994）。动态属性：Color（含尺寸的颜色值，如 Silver_S，_S/_L 代表尺寸）, Item（主商品+附属商品，用+分隔）。PDF标签是 'Color' 不是 'Size and Color'！",
+      "attributeLabels": [
+        {
+          "labelName": "Color",
+          "comment": "PDF标签为 'Color'，值含 _S/_L（尺寸）。如 Silver_S、Gold_L、Blackr_L、Rose Goldr_L。r 为 OCR 误差代表 Rose Gold",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Cufflinks+Oval Box / Cufflink+TieClip+Box。Box 无具体类型时默认 Oval Box。注意：'Cufflink' 单数也有映射",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_finish_size",
+      "comment": "袖扣 - Row12（Pet Portrait Cufflinks with gift box: Stainless Steel Groomsmen Gift）。动态属性只有2个：Color Finish and Size（含尺寸的颜色值，如 Silver_Small）, Item Options（袖扣+礼盒）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish and Size",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "袖扣和礼盒组合，如 Cufflinks Only、Cufflinks+Oval Box、Cufflinks+Square Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "Cufflinks": "Cufflinks"
+          },
+          "productNameMapping": {
+            "Cufflinks": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_color_size",
+      "comment": "袖扣 - Row6（Custom Pet Portrait Cufflinks: Stainless Steel Groomsmen Gift）。动态属性只有2个：Color and Size（含尺寸的颜色值，如 Silver_S）, Item Options（主商品+附属商品，用+分隔）",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "comment": "颜色和尺寸，如 Silver_S、Gold_L、Blackr_L、Rose Goldr_L。r 为 OCR 误差代表 Rose",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Cufflinks+Oval Box / Cufflink+TieClip+Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_combo_tieclip",
+      "comment": "袖扣+领带夹组合商品（Pet Portrait Cufflinks and Tie Clip Set with woodbox）。标签: Cufflinks Color, Tie Clip Color",
+      "attributeLabels": [
+        {
+          "labelName": "Cufflinks Color",
+          "comment": "袖扣颜色，如 Silver、Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Tie Clip Color",
+          "comment": "领带夹颜色，如 Silver、Gold",
+          "attributeType": "COLOR",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_color_only",
+      "comment": "袖扣 - 纯颜色无其他属性（Personalized Pet Portrait Cufflinks）。标签: Color Finish, Size",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "纯颜色值，如 Silver、Gold、Rose Gold、Black",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Size",
+          "comment": "尺寸，如 Small、Large",
+          "attributeType": "SIZE",
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_slide_on_combo",
+      "comment": "袖扣+领带夹组合 - 滑入式（Pet Portrait Cufflinks Slide on Tie Clip Set）。标签: Size and Color, Item Options",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "comment": "格式：尺寸_颜色，如 Small_Silver",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "([^_]+)_(.+)",
+          "groupMapping": {
+            "1": "SIZE",
+            "2": "COLOR"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "商品选项，如 Cufflinks and Tie Clip Set、Cufflinks Only",
+          "attributeType": "PRODUCT_VARIABLE",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_photo_stainless",
+      "comment": "袖扣 - Row9（listing/4470758928，Custom Photo Cufflinks Stainless Steel）。动态属性只有2个：Color and Size, Box Options（袖扣专属盒选项）",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Size",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Box Options",
+          "comment": "袖扣专用盒选项，如 Cufflinks Only、Cufflinks+Oval Box、Cufflinks+Square Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_color_item_options",
+      "comment": "袖扣 - Row7（listing/4411622692）。动态属性只有2个：Color and Size（含尺寸的颜色值，如 Silver_Small）, Item Options（主商品+附属商品）",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Size",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Cufflinks+Oval Box / Cufflink+TieClip+Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_size_color_options",
+      "comment": "袖扣 - Row8（listing/4409815573）。动态属性只有2个：Size and Color（含尺寸的颜色值，如 Silver_Small）, Item Options（主商品+附属商品）",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Cufflinks+Oval Box / Cufflink+TieClip+Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_color_finish_only",
+      "comment": "袖扣 - Personalized Custom Photo Cufflinks（Row11）。标签: Color Finish（纯颜色）, Size",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "纯颜色值，如 Silver、Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Size",
+          "comment": "尺寸，如 Small、Large",
+          "attributeType": "SIZE",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_pet_stainless_combo",
+      "comment": "袖扣 - Row14（listing/4413961667，Pet Portrait Cufflinks and Tie Clip Set with woodbox, Stainless Steel）。动态属性只有2个：Size and Color, Item Options（主商品+附属商品）",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Cufflinks+Oval Box / Cufflink+TieClip+Box。可包含双面滑入式领带夹大号",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "cuff_pet_slide_combo",
+      "comment": "袖扣 - Row15（listing/4413961667，Pet Portrait Cufflinks Slide on Tie Clip Set）。动态属性只有2个：Size and Color, Item Options（袖扣+领带夹+礼盒组合）",
+      "attributeLabels": [
+        {
+          "labelName": "Size and Color",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Cufflinks+Oval Box / Cufflink+TieClip+Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Duck Bill",
+            "Tie Clip": "Tie Clip Duck Bill",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "combo_photo_tie",
+      "comment": "袖扣+领带夹组合 - Photo Portrait款（Row7，listing/4411622692）。标签: Color and Size, Item Options。ProductName=Tie Clip Double Sided Slide In，mainProductFlg=true（领带夹为主商品，袖扣为附属商品）",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Size",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Tie Clip+Oval Box / Cufflinks Only / Cufflinks+Oval Box / Cufflinks+Square Box / Cufflinks+Tie Clip / Cufflink+TieClip+Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Double Sided Slide In",
+            "Tie Clip": "Tie Clip Double Sided Slide In",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "combo_wedding_tie",
+      "comment": "袖扣+领带夹组合 - Custom Wedding Initials款（Row8，listing/4409815573）。标签: Color and Size, Item Options。ProductName=Tie Clip Double Sided Slide In，mainProductFlg=true（领带夹为主商品，袖扣为附属商品）",
+      "attributeLabels": [
+        {
+          "labelName": "Color and Size",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Item Options",
+          "comment": "主商品和附属商品组合，用+分隔。如 Tie Clip Only / Tie Clip+Oval Box / Cufflinks Only / Cufflinks+Oval Box / Cufflinks+Square Box / Cufflinks+Tie Clip / Cufflink+TieClip+Box",
+          "attributeType": "ACCESSORY_ITEMS",
+          "separators": [
+            "+"
+          ],
+          "itemTypeMapping": {
+            "TieClip": "Tie Clip",
+            "Tie Clip": "Tie Clip",
+            "Cufflinks": "Cufflinks",
+            "Cufflink": "Cufflinks",
+            "Box": "Box"
+          },
+          "productNameMapping": {
+            "TieClip": "Tie Clip Double Sided Slide In",
+            "Tie Clip": "Tie Clip Double Sided Slide In",
+            "Cufflinks": "Cufflink",
+            "Cufflink": "Cufflink"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒",
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "pendant_round_custom_pet",
+      "productName": "Round Pendant",
+      "comment": "圆片吊坠 - Custom Pet Portrait Necklace（Row29）。标签: Color, Number and Size of Discs",
+      "attributeLabels": [
+        {
+          "labelName": "Color",
+          "comment": "纯颜色值，如 Silver, Gold, Black, Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Number and Size of Discs",
+          "comment": "格式：N Disc_尺寸，如 2 Disc_Large。N决定拆行数，尺寸写入型号列",
+          "attributeType": "QUANTITY_WITH_SIZE",
+          "valuePattern": "(\\d+)\\s*Disc_(.+)",
+          "groupMapping": {
+            "1": "QUANTITY",
+            "2": "SIZE"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "pendant_round_multi_large",
+      "productName": "Round Pendant",
+      "comment": "圆片吊坠 - Custom Pet Portrait Multi Charm Necklace（Row31，只有Large）。标签: Color, Number of Discs",
+      "attributeLabels": [
+        {
+          "labelName": "Color",
+          "comment": "纯颜色值，如 Silver, Gold, Black, Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Number of Discs",
+          "comment": "格式：N Disc_Large，如 2 Disc_Large。N决定拆行数，尺寸固定为L",
+          "attributeType": "QUANTITY_WITH_SIZE",
+          "valuePattern": "(\\d+)\\s*Disc_(.+)",
+          "groupMapping": {
+            "1": "QUANTITY",
+            "2": "SIZE"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "pendant_round_multi_small",
+      "productName": "Round Pendant",
+      "comment": "圆片吊坠 - Personalized Pet Portrait Multi Charm Necklace（Row32，只有Small）。标签: Color, Number of Discs",
+      "attributeLabels": [
+        {
+          "labelName": "Color",
+          "comment": "纯颜色值，如 Silver, Gold, Black, Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Number of Discs",
+          "comment": "格式：N Disc_Small，如 2 Disc_Small。N决定拆行数，尺寸固定为S",
+          "attributeType": "QUANTITY_WITH_SIZE",
+          "valuePattern": "(\\d+)\\s*Disc_(.+)",
+          "groupMapping": {
+            "1": "QUANTITY",
+            "2": "SIZE"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "pendant_round_photo",
+      "productName": "Round Pendant",
+      "comment": "圆片吊坠 - Custom Photo Necklace Portrait Family Memorial Gift（Row33）。标签: Color, Number and Size of Discs（Small+Large全集）",
+      "attributeLabels": [
+        {
+          "labelName": "Color",
+          "comment": "纯颜色值，如 Silver, Gold, Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Number and Size of Discs",
+          "comment": "格式：N Disc_尺寸，如 1 Disc_Small / 2 Disc_Large。N决定拆行数",
+          "attributeType": "QUANTITY_WITH_SIZE",
+          "valuePattern": "(\\d+)\\s*Disc_(.+)",
+          "groupMapping": {
+            "1": "QUANTITY",
+            "2": "SIZE"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "pendant_single_charm_photo",
+      "comment": "圆片吊坠 - Custom Photo Single Charm Necklace（Row34）。标签: Color, Size and Engraving Sides",
+      "attributeLabels": [
+        {
+          "labelName": "Color",
+          "comment": "纯颜色值，如 Silver, Gold, Black, Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Size and Engraving Sides",
+          "comment": "格式：{尺寸} & {刻录面数}，如 Small & Single-Side / Small & Double-Side",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "([A-Za-z]+)\\s*&\\s*(.+)",
+          "groupMapping": {
+            "1": "SIZE",
+            "2": "ENGRAVING_SIDES"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "pendant_single_charm_pet",
+      "comment": "圆片吊坠 - Personalized Pet Portrait Single Charm Necklace（Row30/33）。标签: Color, Size and Engraving Sides",
+      "attributeLabels": [
+        {
+          "labelName": "Color",
+          "comment": "纯颜色值，如 Silver, Gold, Black, Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Size and Engraving Sides",
+          "comment": "格式：{尺寸} & {刻录面数}，如 Small & Single-Side / Large & Double-Side",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "([A-Za-z]+)\\s*&\\s*(.+)",
+          "groupMapping": {
+            "1": "SIZE",
+            "2": "ENGRAVING_SIDES"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "box_addon",
+      "productName": "Packaging Box",
+      "comment": "礼盒单独购买listing（Cufflink Box-Add on）。标签: Wooden Case（带字母前缀，如 A: Cufflinks Gift Box）",
+      "attributeLabels": [
+        {
+          "labelName": "Wooden Case",
+          "comment": "礼盒类型，带字母前缀，如 A: Cufflinks Gift Box、B: Rectangle Set Box、C/D: Oval Gift Box。前缀会被自动去掉后查映射。",
+          "attributeType": "ACCESSORY_ITEMS",
+          "boxVariableMapping": {
+            "Cufflinks Gift Box": "Square Box-方形木盒",
+            "Rectangle Set Box": "Box-长方形木盒",
+            "Oval Gift Box": "Oval Box-椭圆形开窗木盒"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "necklace_heart_birth_flower",
+      "comment": "花卉心形相盒吊坠 - Personalized Birth Flower Locket Gift（Row28）。标签: Locket Finish（颜色）, Birth Flower Style（月份序号+宝石名）",
+      "attributeLabels": [
+        {
+          "labelName": "Locket Finish",
+          "comment": "颜色，如 Silver、Gold、Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Birth Flower Style",
+          "comment": "格式：{月份序号} {宝石名}，如 1 Garnet Glow（一月）、12 Turquoise（十二月）",
+          "attributeType": "BIRTH_FLOWER_STYLE",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "addon_wing",
+      "productName": "Addon Wings",
+      "comment": "翅膀 add-on 单独购买listing（Row35）。标签: Primary color 或 Color（颜色）, Assembly Type（忽略）",
+      "attributeLabels": [
+        {
+          "labelName": "Primary color",
+          "comment": "主颜色，兼容 'Color' 和 'Primary color'，如 Silver、Gold、Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Color",
+          "comment": "颜色（兼容旧标签名）",
+          "attributeType": "COLOR",
+          "required": false
+        },
+        {
+          "labelName": "Assembly Type",
+          "comment": "装配类型，对Excel输出无影响",
+          "attributeType": "IGNORE",
+          "required": false
+        }
+      ]
+    },
+    {
+      "listingId": "addon_birthstone",
+      "productName": "Addon Birthstone",
+      "comment": "生日石 add-on 单独购买listing（Row36）。标签: Primary color 或 Color（颜色）, Birthstones（月份-宝石名）",
+      "attributeLabels": [
+        {
+          "labelName": "Primary color",
+          "comment": "主颜色，兼容 'Color' 和 'Primary color'，如 Silver、Gold、Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Color",
+          "comment": "颜色（兼容旧标签名）",
+          "attributeType": "COLOR",
+          "required": false
+        },
+        {
+          "labelName": "Birthstones",
+          "comment": "月份-宝石名，如 January-Garnet、February-Amethyst。提取月份名映射到产品变量",
+          "attributeType": "PRODUCT_VARIABLE",
+          "required": true,
+          "extractionPattern": "^([A-Za-z]+)"
+        }
+      ]
+    },
+    {
+      "listingId": "urn_human_portrait",
+      "productName": "Ash Can",
+      "comment": "骨灰罐 - 人类肖像款（Row40）。标签: Color Finish（颜色：Silver/Gold/Black/Rose Gold）, Engraving Options（Lib Only/Body Only/Bottom Only/Lib & Body/Lib & Bottom/Body & Bottom/Lib & Body & Bottom）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "颜色：Silver、Gold、Black、Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Engraving Options",
+          "comment": "刻录选项：Lib Only/Body Only/Bottom Only（1面）/ Lib & Body/Lib & Bottom/Body & Bottom（2面）/ Lib & Body & Bottom（3面）。根据 & 数量决定拆行",
+          "attributeType": "URN_ENGRAVING_OPTIONS",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "urn_pet_portrait",
+      "productName": "Ash Can",
+      "comment": "骨灰罐 - 宠物肖像款（Row41）。标签: Color Finish, Engraving Options（同 urn_human_portrait）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "颜色：Silver、Gold、Black、Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Engraving Options",
+          "comment": "刻录选项：Lib Only/Body Only/Bottom Only（1面）/ Lib & Body/Lib & Bottom/Body & Bottom（2面）/ Lib & Body & Bottom（3面）。根据 & 数量决定拆行",
+          "attributeType": "URN_ENGRAVING_OPTIONS",
+          "required": true
+        }
+      ]
+    },
+    {
+      "listingId": "urn_generic",
+      "productName": "Ash Can",
+      "comment": "骨灰罐 - 通用款（Row42）。标签: Color Finish, Engraving Options（同 urn_human_portrait）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "颜色：Silver、Gold、Black、Rose Gold",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Engraving Options",
+          "comment": "刻录选项：Lib Only/Body Only/Bottom Only（1面）/ Lib & Body/Lib & Bottom/Body & Bottom（2面）/ Lib & Body & Bottom（3面）。根据 & 数量决定拆行",
+          "attributeType": "URN_ENGRAVING_OPTIONS",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

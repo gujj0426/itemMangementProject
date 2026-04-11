@@ -1,0 +1,179 @@
+{
+  "accessoryRules": [
+    {
+      "ruleId": "single-charm-chain",
+      "description": "圆片单片吊坠（Custom Photo Single Charm Necklace）补充同色全链",
+      "priority": 10,
+      "enabled": true,
+      "mainProductTypes": ["PENDANT"],
+      "excludeProductTypes": [],
+      "titleKeywords": ["single charm", "necklace"],
+      "orderCondition": {
+        "requireOtherProducts": [],
+        "requireNoWoodBox": false
+      },
+      "accessoryType": "CABLE_CHAIN",
+      "accessoryVariable": "CHAIN_FULL",
+      "quantityRule": {
+        "sameAsMain": true,
+        "fixedQuantity": null,
+        "multiplier": 1
+      },
+      "inheritConfig": {
+        "inheritColor": true,
+        "inheritSize": false,
+        "inheritVariable": false
+      }
+    },
+    {
+      "ruleId": "flower-heart-chain",
+      "description": "花卉心形相盒补充基础链",
+      "priority": 10,
+      "enabled": true,
+      "mainProductTypes": ["PENDANT"],
+      "excludeProductTypes": [],
+      "titleKeywords": ["flower heart", "birth flower", "locket"],
+      "orderCondition": {
+        "requireOtherProducts": [],
+        "requireNoWoodBox": false
+      },
+      "accessoryType": "CABLE_CHAIN",
+      "accessoryVariable": "CHAIN_FULL",
+      "quantityRule": {
+        "sameAsMain": true,
+        "fixedQuantity": null,
+        "multiplier": 1
+      },
+      "inheritConfig": {
+        "inheritColor": true,
+        "inheritSize": false,
+        "inheritVariable": false
+      }
+    },
+    {
+      "ruleId": "cufflink-only-small-box",
+      "description": "只有袖扣且无木盒时附加小方形礼盒",
+      "priority": 20,
+      "enabled": true,
+      "mainProductTypes": ["CUFFLINK"],
+      "excludeProductTypes": ["BOX", "TIE_CLIP"],
+      "titleKeywords": [],
+      "orderCondition": {
+        "requireOtherProducts": [],
+        "requireNoWoodBox": true
+      },
+      "accessoryType": "BOX",
+      "accessoryVariable": "BOX_SMALL_SQUARE",
+      "quantityRule": {
+        "sameAsMain": true,
+        "fixedQuantity": null,
+        "multiplier": 1
+      },
+      "inheritConfig": {
+        "inheritColor": false,
+        "inheritSize": false,
+        "inheritVariable": false
+      }
+    },
+    {
+      "ruleId": "tieclip-only-long-box",
+      "description": "只有领带夹且无木盒时附加长方形礼盒",
+      "priority": 20,
+      "enabled": true,
+      "mainProductTypes": ["TIE_CLIP"],
+      "excludeProductTypes": ["BOX", "CUFFLINK"],
+      "titleKeywords": [],
+      "orderCondition": {
+        "requireOtherProducts": [],
+        "requireNoWoodBox": true
+      },
+      "accessoryType": "BOX",
+      "accessoryVariable": "BOX_RECTANGLE",
+      "quantityRule": {
+        "sameAsMain": true,
+        "fixedQuantity": null,
+        "multiplier": 1
+      },
+      "inheritConfig": {
+        "inheritColor": false,
+        "inheritSize": false,
+        "inheritVariable": false
+      }
+    },
+    {
+      "ruleId": "cufflink-tieclip-large-box",
+      "description": "既有袖扣又有领带夹且无木盒时附加大方形礼盒",
+      "priority": 15,
+      "enabled": true,
+      "mainProductTypes": ["CUFFLINK"],
+      "excludeProductTypes": ["BOX"],
+      "titleKeywords": [],
+      "orderCondition": {
+        "requireOtherProducts": ["TIE_CLIP"],
+        "requireNoWoodBox": true
+      },
+      "accessoryType": "BOX",
+      "accessoryVariable": "BOX_LARGE_SQUARE",
+      "quantityRule": {
+        "sameAsMain": false,
+        "fixedQuantity": 1,
+        "multiplier": 1
+      },
+      "inheritConfig": {
+        "inheritColor": false,
+        "inheritSize": false,
+        "inheritVariable": false
+      }
+    },
+    {
+      "ruleId": "dogtag-silicone-bands",
+      "description": "硅胶静音狗牌补充2个硅胶绑带",
+      "priority": 5,
+      "enabled": true,
+      "mainProductTypes": ["DOG_TAG"],
+      "excludeProductTypes": [],
+      "titleKeywords": ["silicone", "silent"],
+      "orderCondition": {
+        "requireOtherProducts": [],
+        "requireNoWoodBox": false
+      },
+      "accessoryType": "DOG_TAG_HOLDER",
+      "accessoryVariable": null,
+      "quantityRule": {
+        "sameAsMain": true,
+        "fixedQuantity": null,
+        "multiplier": 2
+      },
+      "inheritConfig": {
+        "inheritColor": false,
+        "inheritSize": true,
+        "inheritVariable": false
+      }
+    },
+    {
+      "ruleId": "birthstone-base-chain",
+      "description": "生日石原石补充基础链",
+      "priority": 10,
+      "enabled": true,
+      "mainProductTypes": ["PENDANT"],
+      "excludeProductTypes": [],
+      "titleKeywords": ["birthstone", "raw stone"],
+      "orderCondition": {
+        "requireOtherProducts": [],
+        "requireNoWoodBox": false
+      },
+      "accessoryType": "CABLE_CHAIN",
+      "accessoryVariable": "CHAIN_FULL",
+      "quantityRule": {
+        "sameAsMain": true,
+        "fixedQuantity": null,
+        "multiplier": 1
+      },
+      "inheritConfig": {
+        "inheritColor": true,
+        "inheritSize": false,
+        "inheritVariable": false
+      }
+    }
+  ]
+}

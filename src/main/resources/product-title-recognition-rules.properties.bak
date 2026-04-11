@@ -1,0 +1,64 @@
+# ============================================
+# 商品标题识别规则配置文件
+# ============================================
+# 说明：此文件用于通过商品标题中的关键字识别商品名称和产品大类
+# 格式：<配置键>=<关键字列表(用逗号分隔)>|<产品名称>|<产品大类>|<是否组合产品标识>
+# 字段说明：
+# - 配置键：唯一标识，用于引用该配置
+# - 关键字列表：商品标题中需要包含的关键字，多个关键字用逗号分隔（必须全部匹配）
+# - 产品名称：具体的产品名称（对应 ProductName 枚举的 nameCode）Tie Clip Double Sided Slide In
+# - 产品大类：产品的所属大类（对应 OrderType 枚举的 displayName 或 name）Tie Clip
+# - 是否组合产品标识：true表示组合产品，false表示非组合产品 组合产品的意思是这个listing中一次购买多个商品
+#                  比如：袖扣+领带夹+椭圆形开窗木盒
+# ============================================
+
+# 领带夹类 - 单独双面滑入领带夹，Slide on Tie Clip
+tie.clip.slide.1= 2 Sides,tie clip|Tie Clip Double Sided Slide In|Tie Clip|false
+tie.clip.slide.2=custom engraved,tie clip,woodbox,handwriting|Tie Clip Double Sided Slide In|Tie Clip|false
+
+# 领带夹类 - Tie Clip
+tie.clip.1=tie clip,woodbox,stainless steel,groomsmen gift|Tie Clip Duck Bill|Tie Clip|false
+tie.clip.2=custom,groomsmen,tie clip,suit holder,woodbox|Tie Clip Duck Bill|Tie Clip|false
+
+# 领带夹类 - Pet Portrait Tie Clip
+tie.clip.pet.1=pet portrait,tie clip,woodbox|Tie Clip Round Duck Bill|Tie Clip|false
+
+# 袖扣类 - Cufflinks
+cufflinks.1=custom engraved,initials,cufflinks,4 colors|Cufflink|Cufflinks|false
+cufflinks.2=custom cufflinks,groomsman,groom gift,wedding|Cufflink|Cufflinks|false
+cufflinks.3=gifts for him,gold cufflinks,custom name logo|Cufflink|Cufflinks|false
+cufflinks.4=custom engraved,wedding cufflinks,groom,groomsmen|Cufflink|Cufflinks|false
+
+# 袖扣类 - Pet Portrait Cufflinks
+cufflinks.pet.1=pet portrait,cufflinks,gift box|Cufflink|Cufflinks|false
+cufflinks.pet.2=custom pet portrait,cufflinks|Cufflink|Cufflinks|false
+cufflinks.pet.3=personalized pet portrait,cufflinks|Cufflink|Cufflinks|false
+
+# 袖扣类 - Photo Portrait Cufflinks
+cufflinks.photo.1=custom photo portrait,cufflinks,woodbox|Cufflink|Cufflinks|false
+cufflinks.photo.2=custom photo cufflinks,stainless steel,engraved,couple|Cufflink|Cufflinks|false
+
+# 组合商品 - Cufflinks and Tie Clip Set
+combo.1=pet portrait,cufflinks,tie clip,woodbox|Tie Clip Double Sided Slide In|Cufflinks and Tie Clip|true
+combo.2=pet portrait,cufflinks,slide on,tie clip|Tie Clip Double Sided Slide In|Cufflinks and Tie Clip|true
+combo.3=photo portrait,cufflinks,tie clip|Tie Clip Double Sided Slide In|Cufflinks and Tie Clip|true
+combo.4=custom,wedding,initials,cufflinks,tie clip,gift,woodbox|Tie Clip Double Sided Slide In|Cufflinks and Tie Clip|true
+
+# 附加商品 - Box
+accessory.box.1=cufflink box,add on|Packaging Box|Box|false
+
+# 心形相盒
+necklace.heart.1=personalized,birth flower,locket,heart,necklace|Flower Heart Box Pendant|Pendant|false
+
+# ============================================
+# 狗牌类
+# ============================================
+
+# 硅胶哑光静音狗牌（带硅胶绑带，颜色单独一行）
+dog.tag.silicone.1=silicone,dog tag,slide on,slide-on,silent|硅胶哑光静音狗牌|Dog Tag|false
+
+# 镂空爪子骨头形狗牌（双面刻录，但输出1行）
+dog.tag.paw.1=paw print,dog tag,stainless steel,bone|镂空爪子骨头形狗牌|Dog Tag|false
+
+# 尼龙哑光静音狗牌（带弹力带，S/M尺码）
+dog.tag.nylon.1=slide-on,dog tag,stainless steel,nylon,elastic band|尼龙哑光静音狗牌|Dog Tag|false

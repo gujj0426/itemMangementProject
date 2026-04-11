@@ -4,10 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableScheduling; // 必须有！
 
 @SpringBootApplication
 @EnableScheduling  // 关键注解：启用定时任务
+@EnableConfigurationProperties  // 启用配置属性绑定
 public class PdfToExcelApplication {
     private static final Logger log = LoggerFactory.getLogger(PdfToExcelApplication.class);
 

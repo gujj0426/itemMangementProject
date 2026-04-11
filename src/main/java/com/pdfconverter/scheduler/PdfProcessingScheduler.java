@@ -1,8 +1,10 @@
 package com.pdfconverter.scheduler;
 
 import com.pdfconverter.model.PdfOrderData;
+import com.pdfconverter.service.ConfigImportService;
 import com.pdfconverter.service.export.ExcelWriterService;
 import com.pdfconverter.service.core.FileService;
+import com.pdfconverter.service.core.Style6MarkService;
 import com.pdfconverter.service.PdfExtractorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,11 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class PdfProcessingScheduler {
@@ -29,11 +35,19 @@ public class PdfProcessingScheduler {
     private final PdfExtractorService pdfExtractor;
     private final ExcelWriterService excelWriter;
     private final FileService fileService;
+    private final ConfigImportService configImportService;
+    private final Style6MarkService style6MarkService;
 
-    public PdfProcessingScheduler(PdfExtractorService pdfExtractor, ExcelWriterService excelWriter, FileService fileService) {
+    public PdfProcessingScheduler(PdfExtractorService pdfExtractor,
+                                   ExcelWriterService excelWriter,
+                                   FileService fileService,
+                                   ConfigImportService configImportService,
+                                   Style6MarkService style6MarkService) {
         this.pdfExtractor = pdfExtractor;
         this.excelWriter = excelWriter;
         this.fileService = fileService;
+        this.configImportService = configImportService;
+        this.style6MarkService = style6MarkService;
     }
 
     @PostConstruct
@@ -50,8 +64,6 @@ public class PdfProcessingScheduler {
             log.info("正在创建输入目录...");
             boolean created = dir.mkdirs();
             log.info("创建目录 {}: {}", inputFolder, created ? "成功" : "失败");
-        } else {
-            log.info("✅ 输入目录已存在: {}", dir.getAbsolutePath());
         }
 
         File bakDir = new File(bakFolder);
@@ -60,8 +72,6 @@ public class PdfProcessingScheduler {
             log.info("正在创建备份目录...");
             boolean created = bakDir.mkdirs();
             log.info("创建目录 {}: {}", bakFolder, created ? "成功" : "失败");
-        } else {
-            log.info("✅ 备份目录已存在: {}", bakDir.getAbsolutePath());
         }
 
         log.info("========================================");
@@ -69,6 +79,17 @@ public class PdfProcessingScheduler {
 
     @Scheduled(fixedRate = 60000) // 每分钟执行
     public void processPdfFiles() {
+        // ── 优先处理配置模板文件 ──────────────────────────────────────
+        try {
+            int configCount = configImportService.processConfigFiles();
+            if (configCount > 0) {
+                log.info("✅ 本轮处理了 {} 个配置模板文件，请重启服务以使配置生效", configCount);
+            }
+        } catch (Exception e) {
+            log.error("配置模板处理异常: {}", e.getMessage(), e);
+        }
+
+        // ── 正常 PDF 处理流程 ──────────────────────────────────────────
         File dir = new File(inputFolder);
         if (!dir.exists()) {
             log.warn("输入目录不存在: {}，跳本次扫描", inputFolder);
@@ -92,13 +113,20 @@ public class PdfProcessingScheduler {
         List<PdfOrderData> allOrders = new ArrayList<>();
         List<File> successFiles = new ArrayList<>();
         List<File> failedFiles = new ArrayList<>();
+        // PDF → 需要标注 Style 6 的页码列表（0基），由解析阶段直接计算
+        Map<File, Set<Integer>> style6PagesByPdf = new LinkedHashMap<>();
 
         for (File pdf : pdfs) {
             try {
                 log.info("正在解析文件: {}", pdf.getName());
-                // 解析单个pdf，收集订单信息
-                List<PdfOrderData> orders = pdfExtractor.extractFromPdf(pdf.getAbsolutePath());
+                // 解析单个pdf，收集订单信息，同时收集需要标注的页码
+                Set<Integer> style6Pages = new LinkedHashSet<>();
+                List<PdfOrderData> orders = pdfExtractor.extractFromPdf(pdf.getAbsolutePath(), style6Pages);
                 allOrders.addAll(orders);
+                if (!style6Pages.isEmpty()) {
+                    style6PagesByPdf.put(pdf, style6Pages);
+                    log.info("  → 含 Style 6 订单，需标注页码: {}", style6Pages);
+                }
                 log.info("✓ 成功解析文件: {}，订单数: {}", pdf.getName(), orders.size());
                 successFiles.add(pdf);
             } catch (Exception e) {
@@ -121,9 +149,17 @@ public class PdfProcessingScheduler {
             }
         }
 
-        // 第三阶段：移动成功的PDF到备份目录
+        // 第三阶段：检测Style 6并标注，然后移动PDF到备份目录
+        // 页码映射在解析阶段（Phase 1）已收集完毕，不再重复扫描 PDF
         for (File pdf : successFiles) {
             try {
+                Set<Integer> pagesToMark = style6PagesByPdf.get(pdf);
+                if (pagesToMark != null && !pagesToMark.isEmpty()) {
+                    style6MarkService.detectAndMark(pdf.getAbsolutePath(), new ArrayList<>(pagesToMark));
+                    log.info("✓ {} 已添加Style 6标注（页码: {}）", pdf.getName(), pagesToMark);
+                }
+
+                // 移动到备份目录
                 String bakPath = bakFolder + File.separator + pdf.getName();
                 fileService.moveToBackup(pdf.getAbsolutePath(), bakPath);
                 log.info("✓ 成功移动文件到备份: {}", pdf.getName());

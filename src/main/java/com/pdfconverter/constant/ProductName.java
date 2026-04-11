@@ -14,6 +14,7 @@ public enum ProductName {
      * 领带夹类
      */
     TIE_CLIP_DUCK_BILL("Tie Clip Duck Bill", "鸭嘴领带夹"),
+    TIE_CLIP_DUCK_BILL_THICK("Tie Clip Duck Bill 2", "鸭嘴领带夹(厚)"),
     TIE_CLIP_DOUBLE_SIDED_SLIDE_IN("Tie Clip Double Sided Slide In", "双面滑入式领带夹"),
     TIE_CLIP_ROUND_DUCK_BILL("Tie Clip Round Duck Bill", "圆片鸭嘴领带夹"),
 

@@ -11,29 +11,44 @@ import java.util.List;
  * 包括附加产品名称、颜色、型号、样式、字体等属性
  */
 public class ProductAttribute {
-    // 附加产品名称列表（支持多个）
+    // 附加产品orderTypeCode列表（如["Tie Clip","Box"]），用于组装 ItemDetail.orderType
     private List<String> additionalProductNames;
+    // 附加产品ProductName.nameCode列表（如["Tie Clip Duck Bill","Packaging Box"]），用于查产品清单
+    private List<String> additionalProductNameCodes;
+    // 附加产品包装盒变量列表（与additionalProductNames等长，非Box类型为空串），如 "Oval Box-椭圆形开窗木盒"
+    private List<String> additionalBoxVariables;
+    // 附加产品独立尺寸列表（与additionalProductNames等长，为空时继承主商品尺寸），如 "L"
+    private List<String> additionalSizes;
     // 颜色
     private ProductColor color;
     // 型号
     private ProductSize size;
     //产品变量
     private String productVariable;
+    // 片数（用于圆片吊坠等需要拆行的商品）
+    private Integer pieceCount;
     // 样式
     private String style;
     // 字体
     private String font;
     // 原始 Personalization 内容（保留原始数据）
     private String originalPersonalization;
+    // 硅胶绑带颜色（用于狗牌产品的附属商品）
+    private ProductColor siliconeBandColor;
 
     // 无参构造器
     public ProductAttribute() {
         this.additionalProductNames = new ArrayList<>();
+        this.additionalProductNameCodes = new ArrayList<>();
+        this.additionalBoxVariables = new ArrayList<>();
+        this.additionalSizes = new ArrayList<>();
         this.color = ProductColor.UNKNOWN;
         this.style = "";
         this.font = "";
         this.size = ProductSize.UNKNOWN;
         this.originalPersonalization = "";
+        this.siliconeBandColor = ProductColor.UNKNOWN;
+        this.pieceCount = null;
     }
 
     // Getter 和 Setter 方法
@@ -43,6 +58,30 @@ public class ProductAttribute {
 
     public void setAdditionalProductNames(List<String> additionalProductNames) {
         this.additionalProductNames = additionalProductNames;
+    }
+
+    public List<String> getAdditionalProductNameCodes() {
+        return additionalProductNameCodes;
+    }
+
+    public void setAdditionalProductNameCodes(List<String> additionalProductNameCodes) {
+        this.additionalProductNameCodes = additionalProductNameCodes;
+    }
+
+    public List<String> getAdditionalBoxVariables() {
+        return additionalBoxVariables;
+    }
+
+    public void setAdditionalBoxVariables(List<String> additionalBoxVariables) {
+        this.additionalBoxVariables = additionalBoxVariables;
+    }
+
+    public List<String> getAdditionalSizes() {
+        return additionalSizes;
+    }
+
+    public void setAdditionalSizes(List<String> additionalSizes) {
+        this.additionalSizes = additionalSizes;
     }
 
     // 添加单个产品名称的便捷方法
@@ -109,5 +148,21 @@ public class ProductAttribute {
 
     public void setProductVariable(String productVariable) {
         this.productVariable = productVariable;
+    }
+
+    public Integer getPieceCount() {
+        return pieceCount;
+    }
+
+    public void setPieceCount(Integer pieceCount) {
+        this.pieceCount = pieceCount;
+    }
+
+    public ProductColor getSiliconeBandColor() {
+        return siliconeBandColor;
+    }
+
+    public void setSiliconeBandColor(ProductColor siliconeBandColor) {
+        this.siliconeBandColor = siliconeBandColor;
     }
 }
