@@ -1175,6 +1175,311 @@
           "required": true
         }
       ]
+    },
+
+    {
+      "listingId": "silicone_holder_size_color",
+      "productName": "Silicone Band",
+      "comment": "硅胶绑带（狗牌配件）Row43（listing/1901353137: Silent Silicone Dog Tag Holder: Slide-On Collar Attachment）。标签: Silicone Rubber Size（颜色_尺寸，如 Silicone only_S/M/L/XL）, Silicone Rubber Color（绑带颜色）",
+      "attributeLabels": [
+        {
+          "labelName": "Silicone Rubber Size",
+          "comment": "颜色_尺寸格式，如 Silicone only_S，下划线后为尺寸 S/M/L/XL",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Silicone Rubber Color",
+          "comment": "硅胶绑带颜色：Red/Yellow/Blue/White/Black/Light Pink/Hot Pink",
+          "attributeType": "COLOR",
+          "required": true
+        }
+      ]
+    },
+
+    {
+      "listingId": "open_rect_color_size",
+      "productName": "Dog Tag Open Rectangle Silent",
+      "comment": "开口长方形静音狗牌 Row44（listing/4305925788: Silent Slide-On Dog Tag: Personalized Stainless Steel Pet ID）。标签: Color & Size（颜色_尺寸，5色×4尺寸）, Font（Font 1~Font 25，输出字体列）",
+      "attributeLabels": [
+        {
+          "labelName": "Color & Size",
+          "comment": "颜色_尺寸格式，如 Silver_S、Gold_M、Rose Gold_XL",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Font",
+          "comment": "字体选项 Font 1~Font 25，输出到 Excel 字体列",
+          "attributeType": "FONT",
+          "required": false
+        }
+      ]
+    },
+
+    {
+      "listingId": "open_rect_finish_size",
+      "productName": "Dog Tag Open Rectangle Silent",
+      "comment": "开口长方形静音狗牌 Row45（listing/4359765701: Silent Slide-On Dog Tag: Personalized Stainless Steel Pet ID）。标签: Color Finish（5色独立行）, Size Options（Small→S/Medium→M/Large→L/X-Large→XL）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish",
+          "comment": "颜色：Silver/Gold/Black/Rose Gold/Blue（5色）",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Size Options",
+          "comment": "尺寸：Small→S / Medium→M / Large→L / X-Large→XL",
+          "attributeType": "SIZE",
+          "required": true
+        }
+      ]
+    },
+
+    {
+      "listingId": "nylon_matte_color_font",
+      "productName": "Dog Tag Nylon Matte Silent",
+      "comment": "尼龙哑光静音狗牌 Row46（listing/4348238573: Personalized Slide-On Dog Tag: Silent Stainless Steel Pet ID-Nylon Elastic Band）。标签: Color & Color Options（颜色_尺寸，S/M合并，如 Silver_S/M）, Font Option（Font #1~Font #25）",
+      "attributeLabels": [
+        {
+          "labelName": "Color & Color Options",
+          "comment": "颜色_尺寸格式，S/M合并为一档（如 Silver_S/M）。下划线后为尺寸标识",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Font Option",
+          "comment": "字体选项 Font #1~Font #25，输出到 Excel 字体列",
+          "attributeType": "FONT",
+          "required": false
+        }
+      ]
+    },
+
+    {
+      "listingId": "nylon_matte_floral_finish_size",
+      "productName": "Dog Tag Nylon Matte Silent",
+      "comment": "尼龙哑光静音狗牌 Row47（listing/4364446574: Personalized Silent Slide-On Dog Tag: Floral Stainless Steel Pet ID）。标签: Color Finish Options（4色）, Size Options（Small/Medium→S/M，三档）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish Options",
+          "comment": "颜色：Silver/Gold/Black/Rose Gold（4色）",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Size Options",
+          "comment": "尺寸三档：Small/Medium→S/M，Large→L，X-Large→XL",
+          "attributeType": "SIZE",
+          "required": true
+        }
+      ]
+    },
+
+    {
+      "listingId": "nylon_matte_finish_size",
+      "productName": "Dog Tag Nylon Matte Silent",
+      "comment": "尼龙哑光静音狗牌 Row48（listing/4359486042: Silent Slide-On Dog Tag: Stainless Steel Pet ID with Nylon Elastic Band）。标签: Color Finish Options（4色）, Size Options（三档）",
+      "attributeLabels": [
+        {
+          "labelName": "Color Finish Options",
+          "comment": "颜色：Silver/Gold/Black/Rose Gold（4色）",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Size Options",
+          "comment": "尺寸三档：Small/Medium→S/M，Large→L，X-Large→XL",
+          "attributeType": "SIZE",
+          "required": true
+        }
+      ]
+    },
+
+    {
+      "listingId": "nylon_matte_floral_color_design",
+      "productName": "Dog Tag Nylon Matte Silent",
+      "comment": "尼龙哑光静音狗牌 Row49（listing/4364459472: Personalized Floral Dog Tag: Silent Stainless Steel Pet ID with Elastic Band）。标签: Color & Size Options（颜色_尺寸，S/M合并格式）, Font Option（Design #1~Design #36，映射为 Style N 输出风格列）",
+      "attributeLabels": [
+        {
+          "labelName": "Color & Size Options",
+          "comment": "颜色_尺寸格式，S/M合并（如 Silver_S/M）。下划线后为尺寸",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Font Option",
+          "comment": "设计风格：Design #1~Design #36，映射为 Style 1~Style 36，输出到 Excel 风格列",
+          "attributeType": "STYLE",
+          "required": false
+        }
+      ]
+    },
+
+    {
+      "listingId": "silicone_matte_size_holder",
+      "productName": "Dog Tag Silicone Matte Silent",
+      "comment": "硅胶哑光静音狗牌 Row50（listing/1885600332: Dog Tags-Custom Silicone Silent ID Tag For Cat Collar-Dog ID Tag Gift...）。标签: Size Options（颜色_尺寸，4色×4尺寸）, Silicone Rubber Holder Color（绑带颜色）",
+      "attributeLabels": [
+        {
+          "labelName": "Size Options",
+          "comment": "颜色_尺寸格式，如 Silver_S、Gold_M、Rose Gold_XL",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Silicone Rubber Holder Color",
+          "comment": "硅胶绑带颜色：Red/Yellow/Blue/White/Black/Light Pink/Hot Pink。每单附加2个硅胶绑带，颜色由此字段决定",
+          "attributeType": "COLOR",
+          "required": false
+        }
+      ]
+    },
+
+    {
+      "listingId": "silicone_matte_polished_size",
+      "productName": "Dog Tag Silicone Matte Silent",
+      "comment": "硅胶哑光静音狗牌 Row51（listing/4304958954: Personalized Silent Silicone Dog Tag: Slide-On Collar ID, Custom Engraved, polished stainless steel）。标签: Size Options（含 Polished 前缀，如 Polished Silver_S）, Silicone Rubber Holder Color（绑带颜色）",
+      "attributeLabels": [
+        {
+          "labelName": "Size Options",
+          "comment": "颜色_尺寸格式，值含 Polished 前缀（如 Polished Silver_S）。regex 用非捕获组去除前缀",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(?:Polished\\s+)?(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Silicone Rubber Holder Color",
+          "comment": "硅胶绑带颜色：Red/Yellow/Blue/White/Black/Light Pink/Hot Pink",
+          "attributeType": "COLOR",
+          "required": false
+        }
+      ]
+    },
+
+    {
+      "listingId": "silicone_matte_black_size",
+      "productName": "Dog Tag Silicone Matte Silent",
+      "comment": "硅胶哑光静音狗牌 Row52（listing/1883818048: Silent Dog Tag: Personalized Silicone Slide-On Collar ID）。标签: Size（仅黑色，如 Black_Small/Medium/Large/X-Large）, Silicone Rubber Holder Color（绑带颜色）",
+      "attributeLabels": [
+        {
+          "labelName": "Size",
+          "comment": "颜色_尺寸格式，仅黑色。如 Black_Small→颜色Black/尺寸S，Black_Medium→M，Black_Large→L，Black_X-Large→XL",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Silicone Rubber Holder Color",
+          "comment": "硅胶绑带颜色：Red/Yellow/Blue/White/Black/Light Pink/Hot Pink",
+          "attributeType": "COLOR",
+          "required": false
+        }
+      ]
+    },
+
+    {
+      "listingId": "silicone_glossy_color_size",
+      "productName": "Dog Tag Silicone Glossy Silent",
+      "comment": "硅胶亮光静音狗牌 Row53（listing/4414762018: Silent Personalized Dog Tag: No Jingle Silicone Cover, Custom Engraved, polished stainless）。标签: Color Options（4色，含 Polished 前缀）, Size（S/M/L/XL 四档）。附加商品绑带颜色从 Personalization 字段提取",
+      "attributeLabels": [
+        {
+          "labelName": "Color Options",
+          "comment": "颜色：Polished Silver/Gold/Black/RoseGold（4色，含 Polished 前缀，提取时去除前缀）",
+          "attributeType": "COLOR",
+          "required": true
+        },
+        {
+          "labelName": "Size",
+          "comment": "尺寸：S/M/L/XL（4档）",
+          "attributeType": "SIZE",
+          "required": true
+        }
+      ]
+    },
+
+    {
+      "listingId": "hollow_paw_color_size",
+      "productName": "Dog Tag Hollow Claw Bone Silent",
+      "comment": "镂空爪子骨头形狗牌 Row54（listing/1902123709: Personalized Paw Print Dog Tag: Stainless Steel Pet ID, Bone Shape）。标签: Color & Size（颜色_尺寸，4色×4尺寸）, Engraving Option（Front Only→1行 / Front & Back→2行）",
+      "attributeLabels": [
+        {
+          "labelName": "Color & Size",
+          "comment": "颜色_尺寸格式，如 Silver_S、Gold_M、Black_XL、Rose Gold_L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Engraving Option",
+          "comment": "刻录面数：Front Only→1行，Front & Back→2行（拆行逻辑同 ENGRAVING_SIDES）",
+          "attributeType": "ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
+    },
+
+    {
+      "listingId": "hollow_paw_portrait_color_size",
+      "productName": "Dog Tag Hollow Claw Bone Silent",
+      "comment": "镂空爪子骨头形狗牌（宠物肖像款）Row55（listing/4312251710: Custom Pet Portrait Dog Tag: Stainless Steel Bone Tag with Paw）。标签: Color & Size（颜色_尺寸，4色×4尺寸）, Engraving Option（Front Only→1行 / Front & Back→2行）",
+      "attributeLabels": [
+        {
+          "labelName": "Color & Size",
+          "comment": "颜色_尺寸格式，如 Silver_S、Gold_M、Black_XL、Rose Gold_L",
+          "attributeType": "COMPOSITE",
+          "valuePattern": "(.+)_(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "SIZE"
+          },
+          "required": true
+        },
+        {
+          "labelName": "Engraving Option",
+          "comment": "刻录面数：Front Only→1行，Front & Back→2行（拆行逻辑同 ENGRAVING_SIDES）",
+          "attributeType": "ENGRAVING_SIDES",
+          "required": true
+        }
+      ]
     }
 
   ]

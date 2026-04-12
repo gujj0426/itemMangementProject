@@ -48,7 +48,7 @@ public class PdfExtractorService {
      * @return 解析订单实体list
      */
     public List<PdfOrderData> extractFromPdf(String pdfPath) throws IOException {
-        return extractFromPdf(pdfPath, null);
+        return extractFromPdf(pdfPath, null, null);
     }
 
     /**
@@ -57,11 +57,12 @@ public class PdfExtractorService {
      * - 第一遍：记录每个订单（Order #）出现的页码范围
      * - 第二遍：按页码范围提取完整文本再解析，避免订单被页码边界切断
      *
-     * @param pdfPath      文件路径
-     * @param style6Pages  传出参数：需要标注的页码集合（0基），若为null则不收集
+     * @param pdfPath              文件路径
+     * @param style6Pages          传出参数：需要标注领带夹Style 6的页码集合（0基），若为null则不收集
+     * @param silentDogTagSPages   传出参数：需要标注静音狗牌S的页码集合（0基），若为null则不收集
      * @return 解析订单实体list
      */
-    public List<PdfOrderData> extractFromPdf(String pdfPath, Set<Integer> style6Pages) throws IOException {
+    public List<PdfOrderData> extractFromPdf(String pdfPath, Set<Integer> style6Pages, Set<Integer> silentDogTagSPages) throws IOException {
         List<PdfOrderData> orders = new ArrayList<>();
         try (PDDocument document = PDDocument.load(new File(pdfPath))) {
             PDFTextStripper stripper = new PDFTextStripper();
@@ -109,6 +110,12 @@ public class PdfExtractorService {
                     if (style6Pages != null && order.isHasTieClipStyle6()) {
                         for (int p = startPage - 1; p <= endPage - 1; p++) {
                             style6Pages.add(p);
+                        }
+                    }
+                    // 记录含静音狗牌S的所有页码
+                    if (silentDogTagSPages != null && order.isHasSilentDogTagS()) {
+                        for (int p = startPage - 1; p <= endPage - 1; p++) {
+                            silentDogTagSPages.add(p);
                         }
                     }
                 } catch (Exception e) {
@@ -261,6 +268,28 @@ public class PdfExtractorService {
             return matched;
         });
         order.setHasTieClipStyle6(hasStyle6);
+
+        // 计算静音狗牌 S码标识：存在静音狗牌商品且型号为 S（含 S/M 合并档），排除尼龙狗牌
+        boolean hasSilentDogTagS = items.stream().anyMatch(item -> {
+            if (item.getOrderType() == com.pdfconverter.constant.OrderType.DOG_TAG) {
+                com.pdfconverter.constant.ProductSize size = item.getProductSize();
+                if (size == com.pdfconverter.constant.ProductSize.S ||
+                    size == com.pdfconverter.constant.ProductSize.SM) {
+                    // 排除尼龙狗牌（尼龙的 S/M 合并档不输出标注）
+                    com.pdfconverter.constant.ProductName pn = item.getProductName();
+                    if (pn != null && pn.name().contains("NYLON")) {
+                        return false;
+                    }
+                    log.debug("[静音狗牌S调试] order={}, product={}, size={}",
+                            order.getOrderNumber(),
+                            item.getProductName() != null ? item.getProductName().getDisplayName() : "null",
+                            size.getSizeCode());
+                    return true;
+                }
+            }
+            return false;
+        });
+        order.setHasSilentDogTagS(hasSilentDogTagS);
 
         return order;
     }

@@ -3,8 +3,8 @@ package com.pdfconverter.scheduler;
 import com.pdfconverter.model.PdfOrderData;
 import com.pdfconverter.service.ConfigImportService;
 import com.pdfconverter.service.export.ExcelWriterService;
+import com.pdfconverter.service.core.PdfMarkService;
 import com.pdfconverter.service.core.FileService;
-import com.pdfconverter.service.core.Style6MarkService;
 import com.pdfconverter.service.PdfExtractorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,18 +36,18 @@ public class PdfProcessingScheduler {
     private final ExcelWriterService excelWriter;
     private final FileService fileService;
     private final ConfigImportService configImportService;
-    private final Style6MarkService style6MarkService;
+    private final PdfMarkService pdfMarkService;
 
     public PdfProcessingScheduler(PdfExtractorService pdfExtractor,
                                    ExcelWriterService excelWriter,
                                    FileService fileService,
                                    ConfigImportService configImportService,
-                                   Style6MarkService style6MarkService) {
+                                   PdfMarkService pdfMarkService) {
         this.pdfExtractor = pdfExtractor;
         this.excelWriter = excelWriter;
         this.fileService = fileService;
         this.configImportService = configImportService;
-        this.style6MarkService = style6MarkService;
+        this.pdfMarkService = pdfMarkService;
     }
 
     @PostConstruct
@@ -113,19 +113,26 @@ public class PdfProcessingScheduler {
         List<PdfOrderData> allOrders = new ArrayList<>();
         List<File> successFiles = new ArrayList<>();
         List<File> failedFiles = new ArrayList<>();
-        // PDF → 需要标注 Style 6 的页码列表（0基），由解析阶段直接计算
-        Map<File, Set<Integer>> style6PagesByPdf = new LinkedHashMap<>();
+        // PDF → 标注页码映射（markId → Set{页码0基}），由解析阶段收集
+        Map<File, Map<String, Set<Integer>>> marksByPdf = new LinkedHashMap<>();
 
         for (File pdf : pdfs) {
             try {
                 log.info("正在解析文件: {}", pdf.getName());
-                // 解析单个pdf，收集订单信息，同时收集需要标注的页码
-                Set<Integer> style6Pages = new LinkedHashSet<>();
-                List<PdfOrderData> orders = pdfExtractor.extractFromPdf(pdf.getAbsolutePath(), style6Pages);
+                // 标注页码收集：key=markId（与 PdfMarkService.MARKS 一致）
+                Map<String, Set<Integer>> marksPages = new LinkedHashMap<>();
+                marksPages.put("tieClipStyle6", new LinkedHashSet<>());
+                marksPages.put("silentDogTagS",  new LinkedHashSet<>());
+                List<PdfOrderData> orders = pdfExtractor.extractFromPdf(
+                        pdf.getAbsolutePath(), marksPages.get("tieClipStyle6"), marksPages.get("silentDogTagS"));
                 allOrders.addAll(orders);
-                if (!style6Pages.isEmpty()) {
-                    style6PagesByPdf.put(pdf, style6Pages);
-                    log.info("  → 含 Style 6 订单，需标注页码: {}", style6Pages);
+                // 清理空集后记录
+                marksPages.values().removeIf(Set::isEmpty);
+                if (!marksPages.isEmpty()) {
+                    marksByPdf.put(pdf, marksPages);
+                    for (Map.Entry<String, Set<Integer>> e : marksPages.entrySet()) {
+                        log.info("  → 标注 {}，需标注页码: {}", e.getKey(), e.getValue());
+                    }
                 }
                 log.info("✓ 成功解析文件: {}，订单数: {}", pdf.getName(), orders.size());
                 successFiles.add(pdf);
@@ -149,14 +156,13 @@ public class PdfProcessingScheduler {
             }
         }
 
-        // 第三阶段：检测Style 6并标注，然后移动PDF到备份目录
-        // 页码映射在解析阶段（Phase 1）已收集完毕，不再重复扫描 PDF
+        // 第三阶段：标注 PDF（通过 PdfMarkService 统一处理），然后移动到备份目录
         for (File pdf : successFiles) {
             try {
-                Set<Integer> pagesToMark = style6PagesByPdf.get(pdf);
-                if (pagesToMark != null && !pagesToMark.isEmpty()) {
-                    style6MarkService.detectAndMark(pdf.getAbsolutePath(), new ArrayList<>(pagesToMark));
-                    log.info("✓ {} 已添加Style 6标注（页码: {}）", pdf.getName(), pagesToMark);
+                Map<String, Set<Integer>> marksPages = marksByPdf.get(pdf);
+                if (marksPages != null && !marksPages.isEmpty()) {
+                    pdfMarkService.markAll(pdf.getAbsolutePath(), marksPages);
+                    log.info("✓ {} 已完成标注: {}", pdf.getName(), marksPages.keySet());
                 }
 
                 // 移动到备份目录
@@ -164,7 +170,7 @@ public class PdfProcessingScheduler {
                 fileService.moveToBackup(pdf.getAbsolutePath(), bakPath);
                 log.info("✓ 成功移动文件到备份: {}", pdf.getName());
             } catch (Exception e) {
-                log.error("✗ 移动文件到备份失败: {} - {}", pdf.getName(), e.getMessage(), e);
+                log.error("✗ PDF标注或移动失败: {} - {}", pdf.getName(), e.getMessage(), e);
             }
         }
 

@@ -53,6 +53,10 @@ public class PdfOrderData {
     // true = 存在领带夹商品且其 personalization 含 S6/Style 6
     private boolean hasTieClipStyle6;
 
+    // 静音狗牌 S码标识：解析阶段通过 itemDetails 计算得出
+    // true = 存在静音狗牌商品且型号为 S（含S/M合并档）
+    private boolean hasSilentDogTagS;
+
     // 无参构造器
     public PdfOrderData() {
         this.initialIndex = 1; // 默认值为1
@@ -226,6 +230,15 @@ public class PdfOrderData {
     public void setHasTieClipStyle6(boolean hasTieClipStyle6) {
         this.hasTieClipStyle6 = hasTieClipStyle6;
     }
+
+    public boolean isHasSilentDogTagS() {
+        return hasSilentDogTagS;
+    }
+
+    public void setHasSilentDogTagS(boolean hasSilentDogTagS) {
+        this.hasSilentDogTagS = hasSilentDogTagS;
+    }
+
     public List<ItemDetail> getItemDetails() {
         return itemDetails;
     }
