@@ -32,7 +32,7 @@
       "enabled": true,
       "mainProductTypes": ["PENDANT"],
       "excludeProductTypes": [],
-      "titleKeywords": ["flower heart", "birth flower", "locket"],
+      "titleKeywords": ["birth flower", "locket"],
       "orderCondition": {
         "requireOtherProducts": [],
         "requireNoWoodBox": false

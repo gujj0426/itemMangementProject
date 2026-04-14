@@ -718,11 +718,11 @@
     },
     {
       "listingId": "tc_slide_pet_with_box",
-      "comment": "双面滑入领带夹 - Row23（listing/4456469202）。标签: Color Finish, Customization Option（宠物数量，不影响Excel输出）",
+      "comment": "双面滑入领带夹 - Row23（listing/4456469202）。标签: Color Finish（颜色+附属商品）, Customization Option（宠物数量，不影响Excel输出）。选项同tc_slide_with_box，只选颜色时不降级补盒",
       "attributeLabels": [
         {
           "labelName": "Color Finish",
-          "comment": "格式：颜色 或 颜色 + 附属商品，如 Silver + Oval Box",
+          "comment": "有+号时拆分为颜色+木盒，纯颜色时只提取颜色，不降级补盒",
           "attributeType": "COLOR_WITH_ACCESSORY",
           "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
           "groupMapping": {
@@ -732,7 +732,6 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒"
           },
-          "defaultBoxVariable": "Oval Box-椭圆形开窗木盒",
           "required": true
         },
         {
@@ -784,11 +783,11 @@
     },
     {
       "listingId": "tc_slide_with_box",
-      "comment": "双面滑入领带夹 - Row26（listing/4410324404）。标签: Color Finish（颜色+附属商品）, Engraving Sides",
+      "comment": "双面滑入领带夹 - Row26（listing/4410324404）。标签: Color Finish（颜色+附属商品）, Engraving Sides。选项：Silver/Gold/Black/Rose Gold 或 颜色+Oval Box，只选颜色时不降级补盒",
       "attributeLabels": [
         {
           "labelName": "Color Finish",
-          "comment": "格式：颜色 + 附属商品，如 Silver + Oval Box；也可能只有颜色（降级为纯颜色）",
+          "comment": "有+号时拆分为颜色+木盒，纯颜色时只提取颜色，不降级补盒",
           "attributeType": "COLOR_WITH_ACCESSORY",
           "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
           "groupMapping": {
@@ -798,7 +797,6 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒"
           },
-          "defaultBoxVariable": "Oval Box-椭圆形开窗木盒",
           "required": true
         },
         {
