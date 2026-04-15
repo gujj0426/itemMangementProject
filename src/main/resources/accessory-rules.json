@@ -51,6 +51,31 @@
       }
     },
     {
+      "ruleId": "flower-heart-large-box",
+      "description": "花卉心形相盒附加大方礼盒",
+      "priority": 10,
+      "enabled": true,
+      "mainProductTypes": ["PENDANT"],
+      "excludeProductTypes": [],
+      "titleKeywords": ["birth flower", "locket"],
+      "orderCondition": {
+        "requireOtherProducts": [],
+        "requireNoWoodBox": false
+      },
+      "accessoryType": "BOX",
+      "accessoryVariable": "BOX_LARGE_SQUARE",
+      "quantityRule": {
+        "sameAsMain": false,
+        "fixedQuantity": 1,
+        "multiplier": 1
+      },
+      "inheritConfig": {
+        "inheritColor": false,
+        "inheritSize": false,
+        "inheritVariable": false
+      }
+    },
+    {
       "ruleId": "cufflink-only-small-box",
       "description": "只有袖扣且无木盒时附加小方形礼盒",
       "priority": 20,

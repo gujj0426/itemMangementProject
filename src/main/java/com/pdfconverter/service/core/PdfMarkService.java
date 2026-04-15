@@ -233,12 +233,20 @@ public class PdfMarkService {
         collector.setStartPage(pageIdx + 1);
         collector.setEndPage(pageIdx + 1);
         collector.getText(document);
-        for (Token t : collector.getTokens()) {
-            if (t.text.toUpperCase().startsWith("DO THE GREEN")) {
-                return t.y;
+        // 拼接相邻 token 为"行"，以 Y 坐标差超过阈值判断换行
+        // 直接逐 token 查：若某 token 的文字（单独或拼接前后 token）包含 "DO THE GREEN"
+        List<Token> tokens = collector.getTokens();
+        for (int i = 0; i < tokens.size(); i++) {
+            // 尝试将当前及后面 3 个 token 拼接，覆盖 "Do the green thing" 被拆开的情况
+            StringBuilder sb = new StringBuilder();
+            for (int j = i; j < Math.min(i + 4, tokens.size()); j++) {
+                sb.append(tokens.get(j).text).append(" ");
+            }
+            if (sb.toString().toUpperCase().contains("DO THE GREEN")) {
+                return tokens.get(i).y;
             }
         }
-        return 0; // 未找到，返回 0 表示 fallback
+        return 0;
     }
 
     /**
@@ -266,10 +274,11 @@ public class PdfMarkService {
     }
 
     private boolean hasTieClipStyle6OnPage(PDDocument document, int pageIdx) throws IOException {
-        TextPositionCollector collector = new TextPositionCollector();
-        collector.setStartPage(pageIdx + 1);
-        collector.setEndPage(pageIdx + 1);
-        collector.getText(document);
+        // 用 PDFTextStripper 直接提取整页文本（按行），避免 writeString 按词拆分导致 "TIE CLIP" 被拆成两个 token 的问题
+        PDFTextStripper lineStripper = new PDFTextStripper();
+        lineStripper.setStartPage(pageIdx + 1);
+        lineStripper.setEndPage(pageIdx + 1);
+        String pageText = lineStripper.getText(document);
 
         boolean inItem = false;
         boolean inPerso = false;
@@ -277,12 +286,13 @@ public class PdfMarkService {
         boolean foundTieClip = false;
         boolean foundStyle6 = false;
 
-        for (Token t : collector.getTokens()) {
-            String line = t.text.trim();
+        for (String rawLine : pageText.split("\\r?\\n")) {
+            String line = rawLine.trim();
             String upper = line.toUpperCase();
 
+            // 进入领带夹商品块：标题行包含 TIE CLIP（且不是纯木盒行）
             if (!inItem && (upper.contains("TIE CLIP") || upper.contains("TIECLIP"))) {
-                if (upper.contains("BOX") && !upper.contains("CLIP")) continue;
+                // 排除纯木盒行（如 "Wooden Case: Tie Clip Box" 类似情况，不太可能，保守保留）
                 inItem = true;
                 foundTieClip = true;
                 continue;
@@ -290,7 +300,10 @@ public class PdfMarkService {
 
             if (!inItem) continue;
 
+            // Quantity: 开始下一个商品，重置 inPerso
             if (upper.startsWith("QUANTITY:")) {
+                // 如果 inPerso 还没结束，做最后一次 Style6 检查
+                if (inPerso && STYLE_6_PATTERN.matcher(fieldBuf).find()) foundStyle6 = true;
                 inPerso = false;
                 fieldBuf.setLength(0);
                 continue;
@@ -299,27 +312,35 @@ public class PdfMarkService {
             if (upper.startsWith("PERSONALIZATION:") || upper.startsWith("DESIGN OPTIONS:")) {
                 inPerso = true;
                 fieldBuf.setLength(0);
-                String val = line.substring(line.indexOf(':') + 1).trim();
-                fieldBuf.append(val).append(" ");
+                String val = line.contains(":") ? line.substring(line.indexOf(':') + 1).trim() : "";
+                fieldBuf.append(val).append("\n");
                 if (STYLE_6_PATTERN.matcher(val).find()) foundStyle6 = true;
                 continue;
             }
 
             if (inPerso) {
-                if (line.isEmpty() || isNewProperty(line)) {
+                // 遇到新属性行（非空且以属性关键词开头）→ 结束 personalization 收集并检查
+                if (!line.isEmpty() && isNewProperty(line)) {
                     if (STYLE_6_PATTERN.matcher(fieldBuf).find()) foundStyle6 = true;
                     inPerso = false;
                     fieldBuf.setLength(0);
                 } else {
-                    fieldBuf.append(line).append(" ");
+                    // 继续累积（含空行，保留 sub-field 如 "Front style: S6"）
+                    fieldBuf.append(line).append("\n");
                 }
             }
 
+            // 页脚标志，退出商品块
             if (upper.startsWith("DO THE GREEN") || upper.startsWith("REUSE THIS")) {
+                // 最后一次检查未关闭的 inPerso
+                if (inPerso && STYLE_6_PATTERN.matcher(fieldBuf).find()) foundStyle6 = true;
                 inItem = false;
             }
         }
+        // 扫描结束后再做一次兜底检查
+        if (inPerso && STYLE_6_PATTERN.matcher(fieldBuf).find()) foundStyle6 = true;
 
+        log.debug("hasTieClipStyle6 page={}: foundTieClip={}, foundStyle6={}", pageIdx + 1, foundTieClip, foundStyle6);
         return foundTieClip && foundStyle6;
     }
 

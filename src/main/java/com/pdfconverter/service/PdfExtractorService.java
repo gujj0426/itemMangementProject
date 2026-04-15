@@ -189,21 +189,21 @@ public class PdfExtractorService {
             //--------------------------------- 商品块提取------------------------------
             int startIndex = matcher.end(); // "X items" 的结束位置
             String remainingText = orderText.substring(startIndex);
-            
+
             // 使用 "Quantity:" 分割商品块（每个商品都有 Quantity: 行，比用标题分割更可靠）
             // 先找到第一个 Quantity: 的位置
             int firstQtyIndex = remainingText.indexOf("Quantity:");
             if (firstQtyIndex == -1) {
                 throw new IllegalArgumentException("No 'Quantity:' found in order items.");
             }
-            
+
             // 从第一个 Quantity: 向前找，确定第一个商品的起始位置
             // 第一个商品的起始位置应该是 "Ship to" 行之后、第一个 Quantity: 之前的某处
             String[] itemBlocks = new String[itemCount];
             // 记录每个商品块的起始和结束位置
             // blockEnd[i] 同时也是 blockStart[i+1]，避免二次查找
             int[] blockEnds = new int[itemCount];
-            
+
             // 收集所有 Quantity: 的位置
             List<Integer> qtyPositions = new ArrayList<>();
             int scanPos = firstQtyIndex;
@@ -211,17 +211,17 @@ public class PdfExtractorService {
                 qtyPositions.add(scanPos);
                 scanPos = remainingText.indexOf("Quantity:", scanPos + 1);
             }
-            
+
             for (int i = 0; i < itemCount; i++) {
                 int currentQtyPos = (i < qtyPositions.size()) ? qtyPositions.get(i) : -1;
                 if (currentQtyPos == -1) break;
-                
+
                 int nextQtyPos = (i + 1 < qtyPositions.size()) ? qtyPositions.get(i + 1) : -1;
                 int blockStart, blockEnd;
-                
+
                 // 从当前 Quantity: 向前找商品标题的起始位置
                 blockStart = findItemBlockStart(remainingText, currentQtyPos);
-                
+
                 if (nextQtyPos != -1) {
                     // 在下一个 Quantity: 之前找结束位置（商品分隔空行处）
                     blockEnd = findItemBlockEnd(remainingText, nextQtyPos);
@@ -231,7 +231,7 @@ public class PdfExtractorService {
                     blockEnd = remainingText.length();
                     blockEnds[i] = blockEnd;
                 }
-                
+
                 // 最后一个商品块需要截断 "Do the green thing"
                 if (i == itemCount - 1) {
                     int endIndex = remainingText.indexOf("Do the green thing", blockStart);
@@ -240,7 +240,7 @@ public class PdfExtractorService {
                         blockEnds[i] = blockEnd;
                     }
                 }
-                
+
                 if (blockStart < blockEnd) {
                     itemBlocks[i] = remainingText.substring(blockStart, blockEnd).trim();
                     items.addAll(parseItemDetail(itemBlocks[i], order.getShopName()));
@@ -274,7 +274,7 @@ public class PdfExtractorService {
             if (item.getOrderType() == com.pdfconverter.constant.OrderType.DOG_TAG) {
                 com.pdfconverter.constant.ProductSize size = item.getProductSize();
                 if (size == com.pdfconverter.constant.ProductSize.S ||
-                    size == com.pdfconverter.constant.ProductSize.SM) {
+                        size == com.pdfconverter.constant.ProductSize.SM) {
                     // 排除尼龙狗牌（尼龙的 S/M 合并档不输出标注）
                     com.pdfconverter.constant.ProductName pn = item.getProductName();
                     if (pn != null && pn.name().contains("NYLON")) {
@@ -351,9 +351,9 @@ public class PdfExtractorService {
             }
 
             if (line.startsWith("Ship to") || line.startsWith("Scheduled to ship by") ||
-                line.startsWith("Shop") || line.startsWith("Order date") ||
-                line.startsWith("Payment method") || line.startsWith("Shipping method") ||
-                line.startsWith("Packaging") || line.startsWith("Tracking")) {
+                    line.startsWith("Shop") || line.startsWith("Order date") ||
+                    line.startsWith("Payment method") || line.startsWith("Shipping method") ||
+                    line.startsWith("Packaging") || line.startsWith("Tracking")) {
                 titleStartLine = i + 1;
                 break;
             }
@@ -376,19 +376,19 @@ public class PdfExtractorService {
 
         return searchStart + charPos;
     }
-    
+
     /**
      * 判断是否为属性标签（用于区分属性行和商品标题）
      */
     private boolean isAttributeLabel(String text) {
         String[] attributeLabels = {
-            "Color", "Size", "Color and Size", "Color Finish", "Color Finish and Box",
-            "Box Options", "Item Options", "Item", "Add-on Box", "Design Options",
-            "Engraving Sides", "Customization Option", "Number and Size of Discs",
-            "Wooden Case", "Quantity", "Personalization", "Font", "Style",
-            "Silicone Rubber Holder Color", "Additional Add-on Engraving"
+                "Color", "Size", "Color and Size", "Color Finish", "Color Finish and Box",
+                "Box Options", "Item Options", "Item", "Add-on Box", "Design Options",
+                "Engraving Sides", "Customization Option", "Number and Size of Discs",
+                "Wooden Case", "Quantity", "Personalization", "Font", "Style",
+                "Silicone Rubber Holder Color", "Additional Add-on Engraving"
         };
-        
+
         for (String label : attributeLabels) {
             if (text.equalsIgnoreCase(label) || text.toLowerCase().startsWith(label.toLowerCase())) {
                 return true;
@@ -396,7 +396,7 @@ public class PdfExtractorService {
         }
         return false;
     }
-    
+
     /**
      * 找到商品块的结束位置（在下一个 Quantity: 之前）
      * 简单策略：直接返回 nextQuantityPos 位置，让商品块在下一个 Quantity: 之前结束
@@ -417,13 +417,13 @@ public class PdfExtractorService {
             itemTitle = itemTitle.substring(shopName.length()).trim();
         } else if (shopName != null && !shopName.isEmpty() && itemTitle.startsWith(shopName)) {
             itemTitle = itemTitle.substring(shopName.length()).trim();
-        }        
+        }
         // 2. 提取订购数量
         int quantity = extractUtil.extractLineAfter(block, "Quantity:");
-        
+
         // 3. 提取Personalization内容
         String personalization = extractUtil.getPersonalization(block);
-        
+
         // 4. 提取动态属性（原始文本 + Map形式）
         // 先尝试从 Quantity: 到 Personalization: 之间提取
         String dynamicSection = extractUtil.extractBetween(block, "Quantity:", "Personalization:").trim();
@@ -441,8 +441,8 @@ public class PdfExtractorService {
                     // 遇到左栏边界标记，停止（后续内容不属于本商品的动态属性）
                     if (trimmed.matches("(?i)Scheduled to ship by.*")) break;
                     if (trimmed.equals("Shop") || trimmed.startsWith("Order date") ||
-                        trimmed.startsWith("Payment method") || trimmed.startsWith("Shipping method") ||
-                        trimmed.startsWith("Packaging") || trimmed.startsWith("Tracking")) break;
+                            trimmed.startsWith("Payment method") || trimmed.startsWith("Shipping method") ||
+                            trimmed.startsWith("Packaging") || trimmed.startsWith("Tracking")) break;
                     if (trimmed.matches("(?i)(Do the green thing).*")) break;
                     // 过滤纯地址行（仅包含数字+字母，如邮编/州名/国家名）
                     if (trimmed.matches("[A-Z]{2}\\s+\\d{5}.*")) continue;  // 州 邮编
@@ -454,13 +454,13 @@ public class PdfExtractorService {
             }
         }
         Map<String, String> dynamicAttrsMap = extractUtil.parseDynamicAttributes(dynamicSection.split("\n"));
-        
+
         // 订购完全信息：动态属性原始文本 + Personalization 原样拼接
         String fullOrderInfo = buildFullOrderInfo(dynamicSection, personalization);
-        
+
         log.debug("商品标题：{}", itemTitle);
         log.debug("动态属性：{}", dynamicAttrsMap);
-        
+
         // 5. 识别产品类型
         ItemDetail mainItemDetail = productTitleRecognitionService.identifyProductType(itemTitle);
         mainItemDetail.setItemQuantity(quantity);
@@ -468,14 +468,14 @@ public class PdfExtractorService {
         mainItemDetail.setItemTitle(itemTitle);
         // 订购完全信息存入dynamicAttributes字段
         mainItemDetail.setDynamicAttributes(fullOrderInfo);
-        
+
         // 6. 使用规则引擎提取属性（包含颜色、尺寸、附属商品列表）
         // 注意：配置文件中用的是 nameCode（英文），需要用 getNameCode() 而非 getDisplayName()
         String listingId = mainItemDetail.getListingId();
         String productNameCode = mainItemDetail.getProductName() != null ?
-                            mainItemDetail.getProductName().getNameCode() : null;
+                mainItemDetail.getProductName().getNameCode() : null;
         String productNameDisplay = mainItemDetail.getProductName() != null ?
-                            mainItemDetail.getProductName().getDisplayName() : null;
+                mainItemDetail.getProductName().getDisplayName() : null;
 
         ProductAttribute productAttribute;
         if (productNameCode != null && !productNameCode.isEmpty()) {
@@ -485,13 +485,13 @@ public class PdfExtractorService {
         }
 
         log.info("产品[{}({})]属性提取结果: listingId={}, color={}, size={}, accessories={}",
-                 productNameDisplay, productNameCode, listingId,
-                 productAttribute.getColor(), productAttribute.getSize(),
-                 productAttribute.getAdditionalProductNames());
-        
+                productNameDisplay, productNameCode, listingId,
+                productAttribute.getColor(), productAttribute.getSize(),
+                productAttribute.getAdditionalProductNames());
+
         // 7. 将提取的属性应用到mainItemDetail
         applyProductAttribute(mainItemDetail, productAttribute, personalization);
-        
+
         // 8. 组装附属产品列表（TieClip、Box 等）
         List<ItemDetail> combineItemDetailList = assembleItemDetailListForVoro(
                 dynamicAttrsMap, mainItemDetail, productAttribute);
@@ -507,7 +507,7 @@ public class PdfExtractorService {
         // 11. 组装最终列表
         return assembleItemDetailList(mainItemDetail, combineItemDetailList, null, addOnItemList);
     }
-    
+
     /**
      * 构建订购完全信息：动态属性（过滤噪音行）+ Personalization
      * 过滤掉 Quantity: X、Scheduled to ship by...、日期行等非属性内容
@@ -532,8 +532,8 @@ public class PdfExtractorService {
                 if (trimmed.matches("(?i).*[Aa]dditional\\s+[Aa]dd-[Oo]n.*[Ee]ngraving.*")) continue;
                 // 遇到 PDF 左栏边界标记，停止（后续内容属于订单基本信息或下一商品标题）
                 if (trimmed.equals("Shop") || trimmed.startsWith("Order date") ||
-                    trimmed.startsWith("Payment method") || trimmed.startsWith("Shipping method") ||
-                    trimmed.startsWith("Packaging") || trimmed.startsWith("Tracking")) {
+                        trimmed.startsWith("Payment method") || trimmed.startsWith("Shipping method") ||
+                        trimmed.startsWith("Packaging") || trimmed.startsWith("Tracking")) {
                     break;
                 }
                 if (sb.length() > 0) sb.append("\n");
@@ -546,7 +546,7 @@ public class PdfExtractorService {
         }
         return sb.toString();
     }
-    
+
     /**
      * 从Personalization中提取样式
      */
@@ -558,7 +558,7 @@ public class PdfExtractorService {
         // 实际实现可能需要更复杂的逻辑
         return null;
     }
-    
+
     /**
      * 从Personalization中提取字体
      */
@@ -570,7 +570,7 @@ public class PdfExtractorService {
         // 实际实现可能需要更复杂的逻辑
         return null;
     }
-    
+
     /**
      * 将ProductAttribute应用到ItemDetail
      * @param personalization 个性化文本，用于兜底提取 style/font
@@ -580,12 +580,12 @@ public class PdfExtractorService {
         if (productAttribute.getColor() != null) {
             itemDetail.setProductColor(productAttribute.getColor());
         }
-        
+
         // 设置尺寸
         if (productAttribute.getSize() != null) {
             itemDetail.setProductSize(productAttribute.getSize());
         }
-        
+
         // 设置产品变量
         if (productAttribute.getProductVariable() != null && !productAttribute.getProductVariable().isEmpty()) {
             String varStr = productAttribute.getProductVariable();
@@ -595,7 +595,7 @@ public class PdfExtractorService {
                 itemDetail.setProductVariable(pv);
             }
         }
-        
+
         // 特殊场景：对于 BOX 类型主商品（如 box_addon listing），
         // ACCESSORY_ITEMS 解析出的附属商品 boxVariable 会与主商品类型相同而被跳过，
         // 因此在这里直接把 additionalBoxVariables 中第一个有效值赋给主商品自身的 productVariable。
@@ -612,7 +612,7 @@ public class PdfExtractorService {
                 }
             }
         }
-        
+
         // 设置字体（ItemDetail构造器初始化为空字符串""，不能用!=null判断，要用isEmpty）
         String extractedStyle = PersonalizationParserUtil.extractStyle(personalization);
         String extractedFont = PersonalizationParserUtil.extractFont(personalization);
@@ -621,7 +621,7 @@ public class PdfExtractorService {
         } else if (extractedFont != null) {
             itemDetail.setFont(extractedFont);
         }
-        
+
         // 设置样式
         if (!productAttribute.getStyle().isEmpty()) {
             itemDetail.setStyle(productAttribute.getStyle());
@@ -681,11 +681,11 @@ public class PdfExtractorService {
         for (int i = 0; i < allProductTypeCodes.size(); i++) {
             String productTypeCode = allProductTypeCodes.get(i);
             String productNameCode = (allProductNameCodes != null && i < allProductNameCodes.size())
-                                    ? allProductNameCodes.get(i) : "";
+                    ? allProductNameCodes.get(i) : "";
             String boxVariable = (allBoxVariables != null && i < allBoxVariables.size())
-                                ? allBoxVariables.get(i) : "";
+                    ? allBoxVariables.get(i) : "";
             String additionalSize = (allAdditionalSizes != null && i < allAdditionalSizes.size())
-                                   ? allAdditionalSizes.get(i) : "";
+                    ? allAdditionalSizes.get(i) : "";
 
             OrderType orderType = OrderType.fromOrderTypeCode(productTypeCode);
             if (orderType == OrderType.UNKNOWN) {
@@ -706,7 +706,7 @@ public class PdfExtractorService {
             item.setPersonalization(mainItemDetail.getPersonalization());
             // 订购完全信息与主商品一致（同一个订单行的信息）
             item.setDynamicAttributes(mainItemDetail.getDynamicAttributes());
-            
+
             // 设置 ProductName（用于查产品清单细类）
             if (productNameCode != null && !productNameCode.isEmpty()) {
                 ProductName pn = ProductName.fromNameCode(productNameCode);
@@ -721,21 +721,25 @@ public class PdfExtractorService {
             if (orderType == OrderType.BOX) {
                 // 包装盒：无尺寸/颜色/字体/样式，产品变量 = 具体盒型（如"Oval Box-椭圆形开窗木盒"）
                 // 优先用从 boxVariableMapping 解析出的变量
-                String resolvedBoxVar = (boxVariable != null && !boxVariable.isEmpty()) 
-                                       ? boxVariable : productAttribute.getProductVariable();
+                String resolvedBoxVar = (boxVariable != null && !boxVariable.isEmpty())
+                        ? boxVariable : productAttribute.getProductVariable();
                 if (resolvedBoxVar != null && !resolvedBoxVar.isEmpty()) {
                     item.setProductVariable(com.pdfconverter.constant.ProductVariable.fromDisplayName(resolvedBoxVar));
                 }
             } else {
-                // 领带夹等其他附属商品：继承主商品的颜色，尺寸优先用独立尺寸
-                // 如果附属商品有独立尺寸（如 S_TieClip 中的 S），使用独立尺寸
+                // 领带夹等其他附属商品：继承主商品颜色。
+                // 尺寸规则：优先附属独立尺寸，其次按品类默认（领带夹默认L），最后才回退主商品尺寸。
                 if (additionalSize != null && !additionalSize.isEmpty()) {
                     com.pdfconverter.constant.ProductSize size = com.pdfconverter.constant.ProductSize.fromSizeCode(additionalSize);
                     if (size != com.pdfconverter.constant.ProductSize.UNKNOWN) {
                         item.setProductSize(size);
+                    } else if (orderType == OrderType.TIE_CLIP) {
+                        item.setProductSize(com.pdfconverter.constant.ProductSize.L);
                     } else {
                         item.setProductSize(productAttribute.getSize());
                     }
+                } else if (orderType == OrderType.TIE_CLIP) {
+                    item.setProductSize(com.pdfconverter.constant.ProductSize.L);
                 } else {
                     item.setProductSize(productAttribute.getSize());
                 }
@@ -748,8 +752,8 @@ public class PdfExtractorService {
                 item.setFont(productAttribute.getFont());
             }
 
-            log.info("添加附属商品：{} ({}), productName={}", 
-                     orderType.getDisplayName(), orderType.getOrderTypeCode(), item.getProductName());
+            log.info("添加附属商品：{} ({}), productName={}",
+                    orderType.getDisplayName(), orderType.getOrderTypeCode(), item.getProductName());
             itemDetailList.add(item);
         }
 

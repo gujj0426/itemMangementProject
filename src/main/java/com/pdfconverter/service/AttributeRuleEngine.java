@@ -503,8 +503,8 @@ public class AttributeRuleEngine {
                 log.debug("从附属商品 [{}] 中提取独立尺寸: {} -> itemName={}, size={}", part, itemSize, itemName, itemSize);
             }
 
-            // 去掉选项字母前缀（如 "A: Cufflinks Gift Box" → "Cufflinks Gift Box"，"B: Rectangle Set Box" → "Rectangle Set Box"）
-            java.util.regex.Matcher optionPrefixMatcher = java.util.regex.Pattern.compile("^[A-Za-z]:\\s*(.+)$").matcher(itemName);
+            // 去掉选项字母前缀（如 "A: Cufflinks Gift Box" → "Cufflinks Gift Box"，"B: Rectangle Set Box" → "Rectangle Set Box"，"C/D: Oval Gift Box" → "Oval Gift Box"）
+            java.util.regex.Matcher optionPrefixMatcher = java.util.regex.Pattern.compile("^[A-Za-z][A-Za-z/]*:\\s*(.+)$").matcher(itemName);
             if (optionPrefixMatcher.matches()) {
                 String stripped = optionPrefixMatcher.group(1).trim();
                 log.debug("去掉选项前缀：[{}] -> [{}]", itemName, stripped);

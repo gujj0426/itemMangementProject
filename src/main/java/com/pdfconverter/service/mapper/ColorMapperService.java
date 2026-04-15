@@ -145,7 +145,7 @@ public class ColorMapperService {
             return ProductColor.UNKNOWN;
         }
 
-        String trimmedValue = originalName.trim().toLowerCase();
+        String trimmedValue = normalizeColorText(originalName);
 
         // 按长度降序排序，优先匹配更长的字符串
         for (String key : sortedKeys) {
@@ -167,6 +167,18 @@ public class ColorMapperService {
         }
 
         return ProductColor.UNKNOWN;
+    }
+
+    /**
+     * 颜色文本标准化（兼容 OCR/人工录入常见拼写偏差）
+     */
+    private String normalizeColorText(String raw) {
+        String normalized = raw.trim().toLowerCase();
+        normalized = normalized.replace("sliver", "silver");
+        normalized = normalized.replace("blackr", "black");
+        normalized = normalized.replace("rose goldr", "rose gold");
+        normalized = normalized.replace("rosegold", "rose gold");
+        return normalized;
     }
 
     /**
@@ -264,8 +276,8 @@ public class ColorMapperService {
 
         String trimmedName = originalName.trim();
         return colorNameMap.containsKey(trimmedName) ||
-               colorNameMap.entrySet().stream()
-                       .anyMatch(entry -> entry.getKey().equalsIgnoreCase(trimmedName));
+                colorNameMap.entrySet().stream()
+                        .anyMatch(entry -> entry.getKey().equalsIgnoreCase(trimmedName));
     }
 
     /**

@@ -304,11 +304,11 @@
     },
     {
       "listingId": "combo_wedding_tie",
-      "comment": "袖扣+领带夹组合 Row9 - Custom Wedding Initials款（listing/4411622692，Custom Wedding Initials Cufflinks and Tie Clip Gift Set）。动态属性：Color and Size, Item Options",
+      "comment": "袖扣+领带夹组合 Row9 - Custom Wedding Initials款（listing/4411622692，Custom Wedding Initials Cufflinks and Tie Clip Gift Set）。动态属性：Size and Color, Item Options",
       "attributeLabels": [
         {
-          "labelName": "Color and Size",
-          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Blackr_Large、Rose Goldr_Large。Small→S，Large→L",
+          "labelName": "Size and Color",
+          "comment": "颜色和尺寸，如 Silver_Small、Gold_Large、Rose Gold_Large。Small→S，Large→L",
           "attributeType": "COMPOSITE",
           "valuePattern": "(.+)_(.+)",
           "groupMapping": {
