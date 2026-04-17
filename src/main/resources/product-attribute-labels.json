@@ -38,7 +38,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": true
         }
@@ -78,7 +78,8 @@
           },
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
-            "Square Box": "Square Box-方形木盒"
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -122,7 +123,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": true
         }
@@ -166,7 +167,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": true
         }
@@ -208,7 +209,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": true
         }
@@ -252,7 +253,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -296,7 +297,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -340,7 +341,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -380,7 +381,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -476,7 +477,8 @@
           },
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
-            "Square Box": "Square Box-方形木盒"
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -520,7 +522,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -582,7 +584,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -621,7 +623,7 @@
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
             "Square Box": "Square Box-方形木盒",
-            "Box": "Oval Box-椭圆形开窗木盒"
+            "Box": "Box-长方形木盒"
           },
           "required": false
         }
@@ -700,12 +702,20 @@
     },
     {
       "listingId": "tc_slide_pet_engraving",
-      "comment": "双面滑入领带夹 - Row22（listing/4438154230）。标签: Color Finish（纯颜色：Silver/Gold/Black/Rose Gold）, Customization Option",
+      "comment": "双面滑入领带夹 - Row22（listing/4438154230）。标签: Color Finish（颜色+附属商品）, Customization Option。选项同tc_slide_pet_with_box，只选颜色时不降级补盒",
       "attributeLabels": [
         {
           "labelName": "Color Finish",
-          "comment": "纯颜色值：Silver、Gold、Black、Rose Gold（无下划线）。另有 Silver + Oval Box 等含+组合由 COLOR_WITH_ACCESSORY 处理",
-          "attributeType": "COLOR",
+          "comment": "有+号时拆分为颜色+木盒，纯颜色时只提取颜色，不降级补盒",
+          "attributeType": "COLOR_WITH_ACCESSORY",
+          "valuePattern": "([^+]+)\\s*\\+\\s*(.+)",
+          "groupMapping": {
+            "1": "COLOR",
+            "2": "ACCESSORY_ITEM"
+          },
+          "boxVariableMapping": {
+            "Oval Box": "Oval Box-椭圆形开窗木盒"
+          },
           "required": true
         },
         {
@@ -822,7 +832,8 @@
           },
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
-            "Square Box": "Square Box-方形木盒"
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Box-长方形木盒"
           },
           "required": true
         },
@@ -849,7 +860,8 @@
           },
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
-            "Square Box": "Square Box-方形木盒"
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Box-长方形木盒"
           },
           "required": true
         },
@@ -876,7 +888,8 @@
           },
           "boxVariableMapping": {
             "Oval Box": "Oval Box-椭圆形开窗木盒",
-            "Square Box": "Square Box-方形木盒"
+            "Square Box": "Square Box-方形木盒",
+            "Box": "Box-长方形木盒"
           },
           "required": true
         },
