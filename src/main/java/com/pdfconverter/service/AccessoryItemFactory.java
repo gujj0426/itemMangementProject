@@ -260,8 +260,12 @@ public class AccessoryItemFactory {
         addOn.setItemTitle(mainItem.getItemTitle());
         addOn.setDynamicAttributes(mainItem.getDynamicAttributes());
         addOn.setPersonalization(mainItem.getPersonalization());
-        addOn.setFont(mainItem.getFont());
-        addOn.setStyle(mainItem.getStyle());
+
+        // 包装盒（BOX）不继承主商品的 Font 和 Style，避免输出到 Excel 列中
+        if (accessoryType != OrderType.BOX) {
+            addOn.setFont(mainItem.getFont());
+            addOn.setStyle(mainItem.getStyle());
+        }
 
         return addOn;
     }

@@ -551,4 +551,9 @@ public class ProductListService {
             return Objects.hash(productName, productVariable, color, size);
         }
     }
+
+    /** 返回产品清单条目总数（用于管理接口状态查询） */
+    public int getProductCount() {
+        return productNameMap.values().stream().mapToInt(List::size).sum();
+    }
 }

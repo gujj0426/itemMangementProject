@@ -629,11 +629,11 @@
     },
     {
       "listingId": "tc_duck_item_options",
-      "comment": "鸭嘴领带夹（薄）- Row18（listing/4406422174）。标签: Item Options（COLOR_ITEM_COMBO）, Design Options",
+      "comment": "鸭嘴领带夹（薄）- Row18（listing/4406422174）。标签: Item Options（COLOR_ITEM_COMBO）, Design Options。注：PDF无Size字段",
       "attributeLabels": [
         {
           "labelName": "Item Options",
-          "comment": "格式：颜色 TC + 附属商品，如 Sliver TC + Oval Box。提取颜色和附属商品",
+          "comment": "格式：颜色 TC + 附属商品，如 Silver TC + Oval Box。提取颜色和附属商品",
           "attributeType": "COLOR_ITEM_COMBO",
           "valuePattern": "([^\\s]+)\\s+TC\\s*\\+\\s*(.+)",
           "groupMapping": {
@@ -650,9 +650,9 @@
         },
         {
           "labelName": "Size",
-          "comment": "尺寸，如 Small、Large",
+          "comment": "尺寸，如 Small、Large。PDF中无此字段，固定为L",
           "attributeType": "SIZE",
-          "required": true
+          "required": false
         }
       ]
     },

@@ -186,8 +186,14 @@ public class ExcelWriterService {
                                 // 订购完全信息：直接使用 dynamicAttributes（原始动态属性+Personalization）
                                 data.setInformation(detail.getDynamicAttributes());
                                 data.setOrderType(detail.getOrderType());
-                                data.setFont(detail.getFont());
-                                data.setStyle(detail.getStyle());
+                                // 附属商品行不输出 Font 和 Style
+                                if (isMainProduct) {
+                                    data.setFont(detail.getFont());
+                                    data.setStyle(detail.getStyle());
+                                } else {
+                                    data.setFont(null);
+                                    data.setStyle(null);
+                                }
                                 // 型号列：输出 L/S 等sizeCode
                                 data.setProductSize(sizeCode);
                                 data.setProductColor(color != null ? color : "");

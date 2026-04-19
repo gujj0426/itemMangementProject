@@ -207,4 +207,9 @@ public class AccessoryRuleConfig {
         public boolean isInheritVariable() { return inheritVariable; }
         public void setInheritVariable(boolean inheritVariable) { this.inheritVariable = inheritVariable; }
     }
+
+    /** 返回当前加载的规则数量（用于管理接口状态查询） */
+    public int getRulesCount() {
+        return rules.size();
+    }
 }

@@ -103,6 +103,8 @@ public class AttributeRuleEngine {
                 log.warn("未找到标签 [{}] 的语义配置", labelName);
                 continue;
             }
+
+            log.info("【COLOR_ITEM_COMBO调试】标签 [{}] 匹配到配置，类型={}，值=[{}]，listingId={}", labelName, attributeType, value, listingId);
             
             // 根据属性类型提取
             try {
@@ -225,12 +227,26 @@ public class AttributeRuleEngine {
      */
     private ProductAttributeConfig.AttributeLabel findLabelConfig(
             List<ProductAttributeConfig.AttributeLabel> labels, String labelName) {
-        
+        // OCR容错：'ltem Options' 实际是 'Item Options' 的OCR误识别（小写l≠大写I）
+        // 统一归一化为 "item options"（全小写）后比较，再返回原始配置名
+        String normalizedInput = labelName.toLowerCase();
+        if (normalizedInput.equals("ltem options")) {
+            normalizedInput = "item options";
+        }
+
         for (ProductAttributeConfig.AttributeLabel label : labels) {
-            if (label.labelName.equalsIgnoreCase(labelName)) {
+            String configName = label.labelName;
+            String normalizedConfig = configName.toLowerCase();
+            if (normalizedConfig.equals("ltem options")) {
+                normalizedConfig = "item options";
+            }
+            if (normalizedConfig.equals(normalizedInput)) {
+                log.debug("findLabelConfig 命中：PDF标签=[{}] -> 配置标签=[{}]，类型={}", labelName, label.labelName, label.attributeType);
                 return label;
             }
         }
+        log.debug("findLabelConfig 未命中：PDF标签=[{}]，当前配置标签列表={}", labelName,
+                labels.stream().map(l -> l.labelName).toArray());
         return null;
     }
     
@@ -688,6 +704,7 @@ public class AttributeRuleEngine {
     private void extractColorItemCombo(ProductAttribute attribute, String value,
                                     ProductAttributeConfig.AttributeLabel labelConfig) {
         String valuePattern = labelConfig.valuePattern;
+        log.info("【COLOR_ITEM_COMBO调试】原始值=[{}]，pattern=[{}]", value, valuePattern);
         if (valuePattern == null) {
             log.warn("COLOR_ITEM_COMBO 未配置值模式");
             return;
@@ -695,8 +712,10 @@ public class AttributeRuleEngine {
 
         Pattern pattern = Pattern.compile(valuePattern);
         Matcher matcher = pattern.matcher(value);
-
-        if (matcher.matches()) {
+        boolean matched = matcher.matches();
+        if (matched) {
+            log.info("【COLOR_ITEM_COMBO调试】匹配成功，group1=[{}]，group2=[{}]",
+                    matcher.group(1), matcher.group(2));
             Map<String, String> groupMapping = labelConfig.groupMapping;
             if (groupMapping == null) {
                 log.warn("COLOR_ITEM_COMBO 未配置分组映射");
@@ -711,8 +730,14 @@ public class AttributeRuleEngine {
                 log.debug("COLOR_ITEM_COMBO 提取颜色：{} -> {}", colorValue, color.getDisplayName());
             }
 
-            // 提取附属商品（第3个group）
-            String accessoryValue = matcher.group(3).trim();
+            // 提取附属商品（第2个group，即 TC + 后面的部分）
+            String rawAccessoryValue = matcher.group(2).trim();
+            // 应用 boxVariableMapping 映射（如 "Oval Box" -> "Oval Box-椭圆形开窗木盒"）
+            String accessoryValue = rawAccessoryValue;
+            if (labelConfig.boxVariableMapping != null && labelConfig.boxVariableMapping.containsKey(rawAccessoryValue)) {
+                accessoryValue = labelConfig.boxVariableMapping.get(rawAccessoryValue);
+                log.debug("COLOR_ITEM_COMBO 映射盒子变量：{} -> {}", rawAccessoryValue, accessoryValue);
+            }
             List<String> accessoryOrderTypeCodes = new ArrayList<>();
             List<String> accessoryProductNameCodes = new ArrayList<>();
             List<String> accessoryBoxVariables = new ArrayList<>();
