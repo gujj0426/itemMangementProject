@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,10 +60,14 @@ public class ProductListService {
             subClassMap = new ConcurrentHashMap<>();
             defaultChineseNameMap = new ConcurrentHashMap<>();
             
+            // 自动检测编码：依次尝试 UTF-8(BOM)、UTF-8、GBK
+            Charset charset = detectCsvCharset(CSV_FILE);
+            log.info("CSV文件编码检测结果：{}", charset.name());
+            
             // 读取CSV文件
             FileInputStream fis = new FileInputStream(CSV_FILE);
             BufferedReader reader = new BufferedReader(
-                new InputStreamReader(fis, StandardCharsets.UTF_8)
+                new InputStreamReader(fis, charset)
             );
             
             String line;
@@ -74,6 +79,10 @@ public class ProductListService {
             if (headerLine == null) {
                 log.error("CSV文件为空：{}", CSV_FILE);
                 return;
+            }
+            // 去除 UTF-8 BOM（EF BB BF 在字符串里表现为 \uFEFF）
+            if (headerLine.startsWith("\uFEFF")) {
+                headerLine = headerLine.substring(1);
             }
             
             // 解析表头
@@ -479,6 +488,35 @@ public class ProductListService {
         return productNameMap.containsKey(productName.toLowerCase());
     }
     
+    /**
+     * 自动检测 CSV 文件编码
+     * 检测顺序：UTF-8 BOM → UTF-8（含"产品名称"则用UTF-8）→ GBK
+     */
+    private Charset detectCsvCharset(String filePath) {
+        try {
+            byte[] bom = new byte[3];
+            FileInputStream fis = new FileInputStream(filePath);
+            int read = fis.read(bom, 0, 3);
+            fis.close();
+            // 检测 UTF-8 BOM (EF BB BF)
+            if (read >= 3 && bom[0] == (byte)0xEF && bom[1] == (byte)0xBB && bom[2] == (byte)0xBF) {
+                return StandardCharsets.UTF_8;
+            }
+            // 尝试 UTF-8 读取表头，看是否包含"产品名称"
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8))) {
+                String line = br.readLine();
+                if (line != null && line.contains("产品名称")) {
+                    return StandardCharsets.UTF_8;
+                }
+            }
+        } catch (Exception e) {
+            log.warn("编码检测失败，降级为GBK：{}", e.getMessage());
+        }
+        // 默认使用 GBK（Windows 中文环境下 Excel 保存的 CSV）
+        return Charset.forName("GBK");
+    }
+
     /**
      * 重新加载产品清单
      */
