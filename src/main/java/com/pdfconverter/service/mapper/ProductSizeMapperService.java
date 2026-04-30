@@ -146,6 +146,11 @@ public class ProductSizeMapperService {
 
         String trimmedValue = originalName.trim().toLowerCase();
 
+        // 特判合并尺寸（如 "S/M"），避免被 "s" 提前命中
+        if (trimmedValue.contains("s/m")) {
+            return ProductSize.SM;
+        }
+
         // 按长度降序排序，优先匹配更长的字符串
         for (String key : sortedKeys) {
             if (trimmedValue.contains(key.trim().toLowerCase())) {

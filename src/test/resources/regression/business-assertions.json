@@ -1,0 +1,54 @@
+{
+  "groups": [
+    {
+      "groupId": "G-DOGTAG",
+      "caseId": "dogtag-batch-5-20260311",
+      "pdfClasspathPath": "/samples/pdf/dogtag-batch-5-20260311.pdf",
+      "assertions": [
+        { "type": "order_total_item_quantity", "orderNumber": "3997080366", "expectedInt": 7 },
+        { "type": "excel_order_row_count", "orderNumber": "3997080366", "expectedInt": 14 },
+
+        { "type": "excel_rows_match", "orderNumber": "3997080366", "productName": "硅胶哑光静音狗牌", "expectedInt": 7,
+          "requiredColumns": { "型号": "S", "颜色": "银色", "数量": "1" } },
+        { "type": "excel_rows_match", "orderNumber": "3997080366", "productName": "硅胶绑带", "expectedInt": 7,
+          "requiredColumns": { "型号": "S", "数量": "2" } },
+
+        { "type": "order_total_item_quantity", "orderNumber": "3999840953", "expectedInt": 2 },
+        { "type": "excel_rows_match", "orderNumber": "3999840953", "productName": "镂空爪子骨头形狗牌", "expectedInt": 4,
+          "requiredColumns": { "型号": "L", "颜色": "银色" } },
+        { "type": "excel_quantity_distribution", "orderNumber": "3999840953", "productName": "镂空爪子骨头形狗牌",
+          "expectedFilledQtyRows": 2, "expectedEmptyQtyRows": 2 },
+
+        { "type": "excel_order_row_count", "orderNumber": "4000384867", "expectedInt": 1 },
+        { "type": "excel_rows_match", "orderNumber": "4000384867", "productName": "尼龙哑光静音狗牌", "expectedInt": 1,
+          "requiredColumns": { "型号": "S/M", "颜色": "银色", "数量": "1", "字体": "Font 10(no)" } }
+      ]
+    },
+    {
+      "groupId": "G-URN",
+      "caseId": "urn-1-20260328",
+      "pdfClasspathPath": "/samples/pdf/urn-1-20260328.pdf",
+      "assertions": [
+        { "type": "order_total_item_quantity", "orderNumber": "4015776715", "expectedInt": 1 },
+        { "type": "excel_rows_match", "orderNumber": "4015776715", "productName": "骨灰罐", "expectedInt": 2,
+          "requiredColumns": { "颜色": "银色", "产品变量": "不锈钢" } },
+        { "type": "excel_quantity_distribution", "orderNumber": "4015776715", "productName": "骨灰罐",
+          "expectedFilledQtyRows": 1, "expectedEmptyQtyRows": 1 },
+        { "type": "excel_rows_match", "orderNumber": "4015776715", "productName": "包装盒", "expectedInt": 1,
+          "requiredColumns": { "产品变量": "小方形礼盒", "数量": "1" } }
+      ]
+    },
+    {
+      "groupId": "G-HEART-LOCKET",
+      "caseId": "cufflink-12-04192026",
+      "pdfClasspathPath": "/samples/pdf/袖扣_订单_12单_04192026.pdf",
+      "assertions": [
+        { "type": "excel_rows_match", "orderNumber": "4032032630", "productName": "花卉心形相盒吊坠", "expectedInt": 1,
+          "requiredColumns": { "颜色": "金色", "产品变量": "十月", "数量": "1" } },
+        { "type": "excel_rows_match", "orderNumber": "4032032630", "productName": "基础链", "expectedInt": 1,
+          "requiredColumns": { "颜色": "金色", "产品变量": "全链", "数量": "1" } },
+        { "type": "excel_order_row_count_min", "orderNumber": "4032032630", "expectedInt": 2 }
+      ]
+    }
+  ]
+}

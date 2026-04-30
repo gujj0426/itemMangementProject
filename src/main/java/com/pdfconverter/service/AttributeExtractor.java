@@ -47,11 +47,11 @@ public class AttributeExtractor {
         }
 
         String upperValue = value.toUpperCase();
+        if (upperValue.contains("S/M")) return ProductSize.SM;
         if (upperValue.contains("XL")) return ProductSize.XL;
         if (upperValue.contains("L")) return ProductSize.L;
         if (upperValue.contains("M")) return ProductSize.M;
         if (upperValue.contains("S")) return ProductSize.S;
-        if (upperValue.contains("S/M")) return ProductSize.SM;
 
         return null;
     }

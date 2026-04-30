@@ -1133,6 +1133,7 @@
     {
       "listingId": "urn_human_portrait",
       "productName": "Ash Can",
+      "defaultProductVariable": "不锈钢",
       "comment": "骨灰罐 - 人类肖像款（Row40）。标签: Color Finish（颜色：Silver/Gold/Black/Rose Gold）, Engraving Options（Lib Only/Body Only/Bottom Only/Lib & Body/Lib & Bottom/Body & Bottom/Lib & Body & Bottom）",
       "attributeLabels": [
         {
@@ -1152,6 +1153,7 @@
     {
       "listingId": "urn_pet_portrait",
       "productName": "Ash Can",
+      "defaultProductVariable": "不锈钢",
       "comment": "骨灰罐 - 宠物肖像款（Row41）。标签: Color Finish, Engraving Options（同 urn_human_portrait）",
       "attributeLabels": [
         {
@@ -1171,6 +1173,7 @@
     {
       "listingId": "urn_generic",
       "productName": "Ash Can",
+      "defaultProductVariable": "不锈钢",
       "comment": "骨灰罐 - 通用款（Row42）。标签: Color Finish, Engraving Options（同 urn_human_portrait）",
       "attributeLabels": [
         {

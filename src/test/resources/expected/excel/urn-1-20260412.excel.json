@@ -1,0 +1,6 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "urn-1-20260412",
+  "headers" : [ "产品编号", "用户名", "订单编号", "产品名称", "型号", "颜色", "产品变量", "设计风格", "刻录信息", "字体", "icon", "是否派单", "设计师", "数量", "出库日期", "Personalization", "订购完全信息", "商品标题" ],
+  "rows" : [ [ "", "Debra Williams", "4029634489", "骨灰罐", "", "银色", "", "", "", "Font 4(no)", "", "", "", "1", "__TODAY__", "font 4\nbody only-\nMark Kenneth\n6/5/1987-2/23/2026", "Color Finish: Silver\nEngraving Options: Body Only\nfont 4\nbody only-\nMark Kenneth\n6/5/1987-2/23/2026", "Custom Engraved Human Portrait Mini Urn, Personalized Photo Cremation Urn, Memorial Gift" ], [ "", "Debra Williams", "4029634489", "骨灰罐", "", "银色", "", "", "", "Font 4(no)", "", "", "", "1", "__TODAY__", "font 4\nbody only-\nMark Kenneth\n6/5/1987-2/23/2026", "Color Finish: Silver\nEngraving Options: Body Only\nfont 4\nbody only-\nMark Kenneth\n6/5/1987-2/23/2026", "Custom Engraved Human Portrait Mini Urn, Personalized Photo Cremation Urn, Memorial Gift" ], [ "", "Debra Williams", "4029634489", "骨灰罐", "", "银色", "", "", "", "Font 4(no)", "", "", "", "1", "__TODAY__", "font 4\nbody only-\nMark Kenneth\n6/5/1987-2/23/2026", "Color Finish: Silver\nEngraving Options: Body Only\nfont 4\nbody only-\nMark Kenneth\n6/5/1987-2/23/2026", "Custom Engraved Human Portrait Mini Urn, Personalized Photo Cremation Urn, Memorial Gift" ] ]
+}

@@ -170,6 +170,15 @@ public class AttributeRuleEngine {
                  listingId, productName, attribute.getColor(), attribute.getSize(),
                  attribute.getProductVariable(), attribute.getFont(), attribute.getStyle());
 
+        // listing 级默认产品变量（配置驱动）：仅当未从动态属性提取到变量时应用
+        if (attribute.getProductVariable() == null || attribute.getProductVariable().isEmpty()) {
+            String defaultVariable = attributeConfig.getDefaultVariableForListing(listingId);
+            if (defaultVariable != null && !defaultVariable.isEmpty()) {
+                attribute.setProductVariable(defaultVariable);
+                log.debug("应用 listing 默认产品变量：listingId={}, variable={}", listingId, defaultVariable);
+            }
+        }
+
         return attribute;
     }
     
@@ -1018,13 +1027,7 @@ public class AttributeRuleEngine {
             if (c == '&') ampersandCount++;
         }
         int sideCount = ampersandCount + 1; // 0个&→1面，1个&→2面，2个&→3面
-        if (sideCount == 1) {
-            attribute.setProductVariable("单面");
-        } else if (sideCount == 2) {
-            attribute.setProductVariable("双面");
-        } else {
-            attribute.setProductVariable(sideCount + "面");
-        }
-        log.debug("URN_ENGRAVING_OPTIONS 提取刻录面数：{} ({}个&) -> {} 面", raw, ampersandCount, sideCount);
+        // 仅用于刻录面数识别，不再写入 productVariable，避免覆盖产品材质等业务变量（如“不锈钢”）。
+        log.debug("URN_ENGRAVING_OPTIONS 识别面数：{} ({}个&) -> {} 面", raw, ampersandCount, sideCount);
     }
 }

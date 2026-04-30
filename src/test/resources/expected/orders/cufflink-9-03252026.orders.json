@@ -1,0 +1,275 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "cufflink-9-03252026",
+  "orders" : [ {
+    "orderNumber" : "4010589174",
+    "username" : "Miguel Idrach",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "L",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_SMALL_SQUARE"
+    } ]
+  }, {
+    "orderNumber" : "4012978221",
+    "username" : "Tonya Jones",
+    "totalItemQuantity" : 2,
+    "itemLines" : [ {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_ROUND_DUCK_BILL",
+      "listingId" : "tc_round_photo",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "GOLD",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_RECTANGLE"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_with_box_options",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "GOLD",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "PACKAGING_BOX",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    } ]
+  }, {
+    "orderNumber" : "4010537666",
+    "username" : "Anne Hellmer",
+    "totalItemQuantity" : 2,
+    "itemLines" : [ {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "PACKAGING_BOX",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "PACKAGING_BOX",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    } ]
+  }, {
+    "orderNumber" : "4010519942",
+    "username" : "Torre M Shepker",
+    "totalItemQuantity" : 2,
+    "itemLines" : [ {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 2,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_RECTANGLE"
+    } ]
+  }, {
+    "orderNumber" : "4010519760",
+    "username" : "Ashley Bojorquez",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "BOX",
+      "productName" : "PACKAGING_BOX",
+      "listingId" : "box_addon",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_RECTANGLE_WOOD"
+    } ]
+  }, {
+    "orderNumber" : "4012826067",
+    "username" : "James Haynes",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : "tc_duck_with_size_box",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "GOLD",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_RECTANGLE"
+    } ]
+  }, {
+    "orderNumber" : "4012607415",
+    "username" : "Steven Bumb",
+    "totalItemQuantity" : 2,
+    "itemLines" : [ {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "PACKAGING_BOX",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "GOLD",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "PACKAGING_BOX",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    } ]
+  }, {
+    "orderNumber" : "4012450967",
+    "username" : "Brianna Harvey",
+    "totalItemQuantity" : 3,
+    "itemLines" : [ {
+      "orderType" : "ADDON_BIRTHSTONE",
+      "productName" : "ADDON_BIRTHSTONE",
+      "listingId" : "addon_birthstone",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "MONTH_SEPTEMBER"
+    }, {
+      "orderType" : "ADDON_WINGS",
+      "productName" : "ADDON_WINGS",
+      "listingId" : "addon_wing",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "PENDANT",
+      "productName" : "ROUND_PENDANT",
+      "listingId" : "pendant_single_charm_photo",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "CABLE_CHAIN",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "CHAIN_FULL"
+    } ]
+  }, {
+    "orderNumber" : "4010008490",
+    "username" : "Evodie Figueiredo",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_SQUARE_WOOD"
+    } ]
+  } ]
+}

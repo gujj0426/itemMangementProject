@@ -1,0 +1,233 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "cufflink-6-04062026-marked",
+  "orders" : [ {
+    "orderNumber" : "4024016441",
+    "username" : "Tyler Sattelberg",
+    "totalItemQuantity" : 8,
+    "itemLines" : [ {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_LARGE_SQUARE"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_LARGE_SQUARE"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_LARGE_SQUARE"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_LARGE_SQUARE"
+    } ]
+  }, {
+    "orderNumber" : "4021002448",
+    "username" : "Daniela  Vargas",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_woodbox_options",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "L",
+      "productColor" : "GOLD",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_SQUARE_WOOD"
+    } ]
+  }, {
+    "orderNumber" : "4020992964",
+    "username" : "Jessica Schetter",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "PACKAGING_BOX",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    } ]
+  }, {
+    "orderNumber" : "4023825835",
+    "username" : "Christian Lucero",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "PACKAGING_BOX",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    } ]
+  }, {
+    "orderNumber" : "4020592714",
+    "username" : "Whitney Lebon",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_woodbox_options",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "L",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    } ]
+  }, {
+    "orderNumber" : "4023481537",
+    "username" : "Philip Crosby",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_woodbox_options",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
+    } ]
+  } ]
+}

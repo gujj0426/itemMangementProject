@@ -1,0 +1,15 @@
+{
+  "caseId": "replace-with-case-id",
+  "listingId": "replace-with-listing-id",
+  "scenario": "replace-with-scenario",
+  "expectedRows": [
+    {
+      "orderNumber": "REPLACE_ORDER_NUMBER",
+      "productName": "REPLACE_PRODUCT_NAME",
+      "model": "L",
+      "color": "Silver",
+      "productVariable": "",
+      "quantity": "1"
+    }
+  ]
+}

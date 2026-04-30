@@ -68,9 +68,11 @@ public class PdfExtractorService {
             PDFTextStripper stripper = new PDFTextStripper();
             int pageCount = document.getNumberOfPages();
 
-            // ── 第一遍：扫描所有页，记录每个订单的页码范围 ──────────────────
-            // key: 订单号，value: [起始页(0基), 结束页(0基)]
-            Map<String, int[]> orderPageRanges = new LinkedHashMap<>();
+            // ── 第一遍：扫描所有页，记录每个订单首次出现页 ──────────────────
+            // key: 订单号，value: 起始页(0基)
+            // 说明：部分跨页订单的续页不会重复出现 "Order #xxxx"，因此不能依赖“同订单号再次出现”来更新结束页。
+            // 正确做法：按订单起始页切分，结束页 = 下一订单起始页 - 1。
+            Map<String, Integer> orderStartPages = new LinkedHashMap<>();
             Pattern orderNumPattern = Pattern.compile("Order\\s*#\\s*(\\S+)");
 
             for (int pageIdx = 1; pageIdx <= pageCount; pageIdx++) {
@@ -82,14 +84,28 @@ public class PdfExtractorService {
                 while (matcher.find()) {
                     String orderNum = matcher.group(1).trim();
                     int page0 = pageIdx - 1;
-                    if (!orderPageRanges.containsKey(orderNum)) {
-                        // 新订单：记录起始页
-                        orderPageRanges.put(orderNum, new int[]{page0, page0});
-                    } else {
-                        // 已存在的订单：更新结束页
-                        orderPageRanges.get(orderNum)[1] = page0;
+                    // 仅记录首次出现页；同页/后续重复出现不影响起始页
+                    if (!orderStartPages.containsKey(orderNum)) {
+                        orderStartPages.put(orderNum, page0);
                     }
                 }
+            }
+
+            // 根据起始页推导每个订单的页码范围
+            // key: 订单号，value: [起始页(0基), 结束页(0基)]
+            Map<String, int[]> orderPageRanges = new LinkedHashMap<>();
+            List<Map.Entry<String, Integer>> starts = new ArrayList<>(orderStartPages.entrySet());
+            for (int i = 0; i < starts.size(); i++) {
+                String orderNum = starts.get(i).getKey();
+                int startPage0 = starts.get(i).getValue();
+                int endPage0 = (i + 1 < starts.size())
+                        ? starts.get(i + 1).getValue() - 1
+                        : pageCount - 1;
+                // 防御：若出现异常顺序，至少保证不小于起始页
+                if (endPage0 < startPage0) {
+                    endPage0 = startPage0;
+                }
+                orderPageRanges.put(orderNum, new int[]{startPage0, endPage0});
             }
 
             // ── 第二遍：按页码范围提取完整文本并解析 ───────────────────────

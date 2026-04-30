@@ -1,0 +1,22 @@
+{
+  "caseId": "replace-with-case-id",
+  "listingId": "replace-with-listing-id",
+  "scenario": "replace-with-scenario",
+  "expectedOrderCount": 1,
+  "orders": [
+    {
+      "orderNumber": "REPLACE_ORDER_NUMBER",
+      "itemCount": 1,
+      "items": [
+        {
+          "orderType": "CUFFLINK",
+          "productName": "CUFFLINK",
+          "sizeCode": "L",
+          "color": "Silver",
+          "productVariable": "",
+          "quantity": 1
+        }
+      ]
+    }
+  ]
+}

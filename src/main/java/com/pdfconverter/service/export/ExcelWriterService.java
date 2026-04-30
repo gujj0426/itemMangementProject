@@ -416,22 +416,36 @@ public class ExcelWriterService {
             return Math.min(sides, 5); // 最多5面
         }
 
-        // 格式6：Engraving Options（骨灰罐）— 根据 "&" 数量决定面数
-        if (lower.contains("engraving options")) {
+        // 优先从 "Engraving Option(s): xxx" 这一行提取，避免被 Personalization 里的 '&' 干扰
+        java.util.regex.Matcher engravingOptionLine = java.util.regex.Pattern.compile(
+                "engraving\\s*options?\\s*:\\s*([^\\n\\r]+)", java.util.regex.Pattern.CASE_INSENSITIVE)
+                .matcher(info);
+        if (engravingOptionLine.find()) {
+            String optionValue = engravingOptionLine.group(1).trim().toLowerCase();
+            if ((optionValue.contains("front") && optionValue.contains("back"))
+                    || (optionValue.contains("round disc") && optionValue.contains("bar"))
+                    || optionValue.contains("double-side")
+                    || optionValue.contains("double side")
+                    || (optionValue.contains("lid") && optionValue.contains("body"))) {
+                return 2;
+            }
             int ampersandCount = 0;
-            for (char c : lower.toCharArray()) {
+            for (char c : optionValue.toCharArray()) {
                 if (c == '&') ampersandCount++;
             }
-            return Math.min(ampersandCount + 1, 5); // 0个&→1面，1个&→2面，2个&→3面
+            return Math.min(ampersandCount + 1, 5);
         }
 
-        // 格式1/2/3/5：Engraving Sides / Engraving: 关键字判断
-        boolean hasEngravingSides = lower.contains("engraving sides") || lower.contains("engraving:");
+        // 格式1/2/3/5：Engraving Sides / Engraving Option / Engraving: 关键字判断
+        boolean hasEngravingSides = lower.contains("engraving sides")
+                || lower.contains("engraving option")
+                || lower.contains("engraving:");
         boolean isFrontBack = lower.contains("front") && lower.contains("back");
         boolean isRoundDiscBar = lower.contains("round disc") && lower.contains("bar");
         boolean isDoubleSide = lower.contains("double-side") || lower.contains("double side");
+        boolean isLidBody = lower.contains("lid") && lower.contains("body");
 
-        if (hasEngravingSides && (isFrontBack || isRoundDiscBar || isDoubleSide)) {
+        if (hasEngravingSides && (isFrontBack || isRoundDiscBar || isDoubleSide || isLidBody)) {
             return 2;
         }
 

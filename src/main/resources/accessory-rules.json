@@ -151,6 +151,31 @@
       }
     },
     {
+      "ruleId": "urn-small-box",
+      "description": "骨灰罐补充小方形礼盒",
+      "priority": 10,
+      "enabled": true,
+      "mainProductTypes": ["MEMORIAL"],
+      "excludeProductTypes": ["BOX"],
+      "titleKeywords": ["urn"],
+      "orderCondition": {
+        "requireOtherProducts": [],
+        "requireNoWoodBox": false
+      },
+      "accessoryType": "BOX",
+      "accessoryVariable": "BOX_SMALL_SQUARE",
+      "quantityRule": {
+        "sameAsMain": true,
+        "fixedQuantity": null,
+        "multiplier": 1
+      },
+      "inheritConfig": {
+        "inheritColor": false,
+        "inheritSize": false,
+        "inheritVariable": false
+      }
+    },
+    {
       "ruleId": "dogtag-silicone-bands",
       "description": "硅胶静音狗牌补充2个硅胶绑带",
       "priority": 5,

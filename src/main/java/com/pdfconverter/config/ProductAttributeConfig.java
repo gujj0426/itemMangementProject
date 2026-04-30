@@ -35,6 +35,8 @@ public class ProductAttributeConfig {
 
     // 标签名称 -> 标签配置（用于快速查找）
     private Map<String, AttributeLabel> labelConfigMap;
+    // listingId -> 默认产品变量（可选）
+    private Map<String, String> listingDefaultVariableMap;
     
     @PostConstruct
     public void init() {
@@ -53,6 +55,7 @@ public class ProductAttributeConfig {
             listingLabelMap = new ConcurrentHashMap<>();
             productLabelMap = new ConcurrentHashMap<>();
             labelConfigMap = new ConcurrentHashMap<>();
+            listingDefaultVariableMap = new ConcurrentHashMap<>();
 
             // 读取JSON文件
             ClassPathResource resource = new ClassPathResource(CONFIG_FILE);
@@ -82,6 +85,9 @@ public class ProductAttributeConfig {
                         if (listingId != null && !listingId.isEmpty() &&
                             labels != null && !labels.isEmpty()) {
                             listingLabelMap.put(listingId, labels);
+                            if (la.defaultProductVariable != null && !la.defaultProductVariable.trim().isEmpty()) {
+                                listingDefaultVariableMap.put(listingId, la.defaultProductVariable.trim());
+                            }
                             log.debug("加载 listing [{}] 的属性标签配置，共 {} 个标签",
                                      listingId, labels.size());
 
@@ -148,6 +154,16 @@ public class ProductAttributeConfig {
 
         // 兜底：从 productLabelMap 查找（向后兼容）
         return productLabelMap.getOrDefault(productName, Collections.emptyList());
+    }
+
+    /**
+     * 获取 listing 的默认产品变量（可选）
+     */
+    public String getDefaultVariableForListing(String listingId) {
+        if (listingId == null || listingId.isEmpty()) {
+            return null;
+        }
+        return listingDefaultVariableMap.get(listingId);
     }
 
     /**
@@ -245,6 +261,7 @@ public class ProductAttributeConfig {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class ListingAttribute {
         public String listingId;
+        public String defaultProductVariable;
         public List<AttributeLabel> attributeLabels;
     }
 

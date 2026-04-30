@@ -1,0 +1,183 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "dogtag-batch-5-20260311",
+  "orders" : [ {
+    "orderNumber" : "3997080366",
+    "username" : "Tondi Hunter",
+    "totalItemQuantity" : 7,
+    "itemLines" : [ {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "S",
+      "productColor" : "NEON_PINK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "S",
+      "productColor" : "YELLOW",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "S",
+      "productColor" : "LIGHT_PINK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "S",
+      "productColor" : "WHITE",
+      "productVariable" : "UNKNOWN"
+    } ]
+  }, {
+    "orderNumber" : "3997225040",
+    "username" : "Abby R. Bock",
+    "totalItemQuantity" : 2,
+    "itemLines" : [ {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "M",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "M",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "M",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "M",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    } ]
+  }, {
+    "orderNumber" : "3999840953",
+    "username" : "Scott Carroll",
+    "totalItemQuantity" : 2,
+    "itemLines" : [ {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_HOLLOW_CLAW_BONE_SILENT",
+      "listingId" : "hollow_paw_color_size",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_HOLLOW_CLAW_BONE_SILENT",
+      "listingId" : "hollow_paw_color_size",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    } ]
+  }, {
+    "orderNumber" : "3999863995",
+    "username" : "Brenai Shires",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "WHITE",
+      "productVariable" : "UNKNOWN"
+    } ]
+  }, {
+    "orderNumber" : "4000384867",
+    "username" : "Areeg Sweis",
+    "totalItemQuantity" : 1,
+    "itemLines" : [ {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_NYLON_MATTE_SILENT",
+      "listingId" : "nylon_matte_color_font",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    } ]
+  } ]
+}
