@@ -45,3 +45,9 @@ Regenerate after intentional behavior changes:
 
 `mvn -q -Dtest=GoldenSnapshotGeneratorTest -DregenerateGolden=true test`
 
+## Same-order box accessory merge (包装盒)
+
+Parser merges multiple non-main **包装盒** lines on the **same order** when **产品变量** matches (sums **数量**); merged rows are emitted after non-box lines. Different **产品变量** values stay on separate rows.
+
+**Regression:** `cufflink-6-04062026-marked.pdf`, order **4024016441** — seven 「大方形礼盒」 lines collapse to one row with quantity **7**; 「Box-长方形木盒」 remains a separate row with quantity **1**. Assertions live under group **`G-CUFFLINK-SAME-ORDER-BOX-MERGE`** in `../regression/business-assertions.json`.
+

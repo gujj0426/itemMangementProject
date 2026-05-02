@@ -43,4 +43,8 @@ public class ExcelData {
     private String dynamicAttributes;
     /** 样式（从Personalization中提取的样式/字体信息）*/
     private String style;
+    /** 刻录信息（可由 LLM 抽取） */
+    private String engravingContent;
+    /** icon 列（LLM 标准化为 icon #1 … icon #90） */
+    private String icon;
 }

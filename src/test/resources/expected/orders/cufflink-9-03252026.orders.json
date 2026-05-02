@@ -38,15 +38,6 @@
       "productColor" : "GOLD",
       "productVariable" : "UNKNOWN"
     }, {
-      "orderType" : "BOX",
-      "productName" : "UNKNOWN",
-      "listingId" : null,
-      "itemQuantity" : 1,
-      "mainProductFlg" : false,
-      "productSize" : "UNKNOWN",
-      "productColor" : "UNKNOWN",
-      "productVariable" : "BOX_RECTANGLE"
-    }, {
       "orderType" : "CUFFLINK",
       "productName" : "CUFFLINK",
       "listingId" : "cuff_with_box_options",
@@ -55,6 +46,15 @@
       "productSize" : "S",
       "productColor" : "GOLD",
       "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_RECTANGLE"
     }, {
       "orderType" : "BOX",
       "productName" : "PACKAGING_BOX",
@@ -79,15 +79,6 @@
       "productColor" : "SILVER",
       "productVariable" : "UNKNOWN"
     }, {
-      "orderType" : "BOX",
-      "productName" : "PACKAGING_BOX",
-      "listingId" : null,
-      "itemQuantity" : 1,
-      "mainProductFlg" : false,
-      "productSize" : "UNKNOWN",
-      "productColor" : "UNKNOWN",
-      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
-    }, {
       "orderType" : "TIE_CLIP",
       "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
       "listingId" : "tc_slide_with_box",
@@ -100,7 +91,7 @@
       "orderType" : "BOX",
       "productName" : "PACKAGING_BOX",
       "listingId" : null,
-      "itemQuantity" : 1,
+      "itemQuantity" : 2,
       "mainProductFlg" : false,
       "productSize" : "UNKNOWN",
       "productColor" : "UNKNOWN",
@@ -180,15 +171,6 @@
       "productColor" : "BLACK",
       "productVariable" : "UNKNOWN"
     }, {
-      "orderType" : "BOX",
-      "productName" : "PACKAGING_BOX",
-      "listingId" : null,
-      "itemQuantity" : 1,
-      "mainProductFlg" : false,
-      "productSize" : "UNKNOWN",
-      "productColor" : "UNKNOWN",
-      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
-    }, {
       "orderType" : "TIE_CLIP",
       "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
       "listingId" : "tc_slide_with_box",
@@ -201,7 +183,7 @@
       "orderType" : "BOX",
       "productName" : "PACKAGING_BOX",
       "listingId" : null,
-      "itemQuantity" : 1,
+      "itemQuantity" : 2,
       "mainProductFlg" : false,
       "productSize" : "UNKNOWN",
       "productColor" : "UNKNOWN",

@@ -277,6 +277,14 @@ public class PdfOrderData {
         private String font;
         // 样式
         private String style;
+        /** LLM 校验后的标准设计风格（允许列表内）；可选 */
+        private String llmDesignStyle;
+        /** LLM 校验后的标准字体（允许列表内）；可选 */
+        private String llmFont;
+        /** LLM 抽取的刻录正文 */
+        private String llmEngravingContent;
+        /** LLM 校验后的 Icon（icon #1 … icon #90）；可选 */
+        private String llmIcon;
         // 无参构造器
         public ItemDetail() {
             this.mainProductFlg = false;
@@ -393,6 +401,38 @@ public class PdfOrderData {
 
         public void setStyle(String style) {
             this.style = style;
+        }
+
+        public String getLlmDesignStyle() {
+            return llmDesignStyle;
+        }
+
+        public void setLlmDesignStyle(String llmDesignStyle) {
+            this.llmDesignStyle = llmDesignStyle;
+        }
+
+        public String getLlmFont() {
+            return llmFont;
+        }
+
+        public void setLlmFont(String llmFont) {
+            this.llmFont = llmFont;
+        }
+
+        public String getLlmEngravingContent() {
+            return llmEngravingContent;
+        }
+
+        public void setLlmEngravingContent(String llmEngravingContent) {
+            this.llmEngravingContent = llmEngravingContent;
+        }
+
+        public String getLlmIcon() {
+            return llmIcon;
+        }
+
+        public void setLlmIcon(String llmIcon) {
+            this.llmIcon = llmIcon;
         }
 
         public String getListingId() {

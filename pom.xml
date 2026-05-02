@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.pdfconverter</groupId>
-    <artifactId>pdf-to-excel-cufflink</artifactId>
+    <artifactId>pdf-to-excel-cufflink-ForAI</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>pdf-to-excel-cufflink</name>
     <description>Convert Cufflink PDF Orders to Excel with Scheduling</description>

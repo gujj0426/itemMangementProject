@@ -97,7 +97,8 @@ class RegressionBusinessRulesTest {
                 return;
             }
             case "excel_rows_match": {
-                List<List<String>> rows = filterRows(excelSnap, headerIndex, a.orderNumber, a.productName);
+                List<List<String>> rows = filterRows(excelSnap, headerIndex, a.orderNumber, a.productName,
+                        a.productVariable);
                 assertEquals(a.expectedInt, rows.size(), ctx + " product row count mismatch");
                 if (a.requiredColumns != null) {
                     for (List<String> row : rows) {
@@ -111,7 +112,8 @@ class RegressionBusinessRulesTest {
                 return;
             }
             case "excel_quantity_distribution": {
-                List<List<String>> rows = filterRows(excelSnap, headerIndex, a.orderNumber, a.productName);
+                List<List<String>> rows = filterRows(excelSnap, headerIndex, a.orderNumber, a.productName,
+                        a.productVariable);
                 Integer qtyIdx = headerIndex.get("数量");
                 assertNotNull(qtyIdx, ctx + " missing 数量 header");
                 int filled = 0;
@@ -146,14 +148,18 @@ class RegressionBusinessRulesTest {
     }
 
     private static List<List<String>> filterRows(ExcelGoldenSnapshot snap, Map<String, Integer> idx,
-                                                 String orderNumber, String productName) {
+                                                 String orderNumber, String productName,
+                                                 String productVariableEquals) {
         Integer orderIdx = idx.get("订单编号");
         Integer productIdx = idx.get("产品名称");
+        Integer variableIdx = idx.get("产品变量");
         List<List<String>> out = new ArrayList<>();
         for (List<String> row : snap.rows) {
             boolean okOrder = orderIdx != null && Objects.equals(orderNumber, row.get(orderIdx));
             boolean okProduct = productIdx != null && Objects.equals(productName, row.get(productIdx));
-            if (okOrder && okProduct) {
+            boolean okVar = productVariableEquals == null || productVariableEquals.isBlank()
+                    || (variableIdx != null && Objects.equals(productVariableEquals, row.get(variableIdx)));
+            if (okOrder && okProduct && okVar) {
                 out.add(row);
             }
         }
@@ -226,6 +232,8 @@ class RegressionBusinessRulesTest {
         public String type;
         public String orderNumber;
         public String productName;
+        /** 非空时仅保留「产品变量」列等于该值的行（用于区分同一订单多种包装盒） */
+        public String productVariable;
         public Integer expectedInt;
         public Integer expectedFilledQtyRows;
         public Integer expectedEmptyQtyRows;

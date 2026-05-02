@@ -10,7 +10,9 @@ import com.pdfconverter.model.ProductAttribute;
 import com.pdfconverter.model.ProductItem;
 import com.pdfconverter.util.ExtractUtil;
 import com.pdfconverter.util.ItemDetailAdditionalUtil;
+import com.pdfconverter.util.OrderAccessoryMergeUtil;
 import com.pdfconverter.util.PersonalizationParserUtil;
+import com.pdfconverter.service.llm.PersonalizationIntentLlmService;
 import com.pdfconverter.service.mapper.ProductNameMappingService;
 import com.pdfconverter.service.mapper.ProductVariableMapperService;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -41,6 +43,8 @@ public class PdfExtractorService {
     private ProductVariableMapperService productVariableMapper;
     @Resource
     private AccessoryItemFactory accessoryItemFactory;
+    @Resource
+    private PersonalizationIntentLlmService personalizationIntentLlmService;
     /**
      * 解析单个pdf订单信息，同时收集需要 Style 6 标注的页码
      *
@@ -266,6 +270,8 @@ public class PdfExtractorService {
             System.out.println("Debug: No match found for item count."); // 调试输出
             throw new IllegalArgumentException("No valid item count found in text.");
         }
+        // 同订单内相同盒型的附属包装盒合并为一行（数量累加）
+        items = OrderAccessoryMergeUtil.mergeIdenticalBoxAccessoriesWithinOrder(items);
         order.setItemDetails(items);
         order.setAdditionalNote(extractUtil.extractAfter(orderText, "Do the green thing"));
 
@@ -507,6 +513,9 @@ public class PdfExtractorService {
 
         // 7. 将提取的属性应用到mainItemDetail
         applyProductAttribute(mainItemDetail, productAttribute, personalization);
+
+        // 7b. 可选：大模型抽取设计风格 / 字体 / 刻录内容（写入 llm* 字段，供 Excel 合并）
+        personalizationIntentLlmService.enrichMainItemIfApplicable(mainItemDetail);
 
         // 8. 组装附属产品列表（TieClip、Box 等）
         List<ItemDetail> combineItemDetailList = assembleItemDetailListForVoro(

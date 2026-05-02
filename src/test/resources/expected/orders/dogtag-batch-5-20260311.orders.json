@@ -77,6 +77,60 @@
       "productSize" : "S",
       "productColor" : "WHITE",
       "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "S",
+      "productColor" : "BLACK",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "S",
+      "productColor" : "BLUE",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG",
+      "productName" : "DOG_TAG_SILICONE_MATTE_SILENT",
+      "listingId" : "silicone_matte_size_holder",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "DOG_TAG_HOLDER",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 2,
+      "mainProductFlg" : false,
+      "productSize" : "S",
+      "productColor" : "RED",
+      "productVariable" : "UNKNOWN"
     } ]
   }, {
     "orderNumber" : "3997225040",
@@ -175,7 +229,7 @@
       "listingId" : "nylon_matte_color_font",
       "itemQuantity" : 1,
       "mainProductFlg" : true,
-      "productSize" : "S",
+      "productSize" : "SM",
       "productColor" : "SILVER",
       "productVariable" : "UNKNOWN"
     } ]

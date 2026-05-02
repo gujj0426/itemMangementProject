@@ -1,5 +1,6 @@
 package com.pdfconverter.service.export;
 
+import com.pdfconverter.config.PersonalizationLlmProperties;
 import com.pdfconverter.constant.OrderType;
 import com.pdfconverter.model.ExcelData;
 import com.pdfconverter.model.PdfOrderData;
@@ -10,7 +11,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +39,9 @@ public class ExcelWriterService {
     
     @Resource
     private ProductListService productListService;
+
+    @Resource
+    private PersonalizationLlmProperties personalizationLlmProperties;
 
     @Value("${app.excel.output-folder}")
     private String outputFolder;
@@ -186,13 +189,17 @@ public class ExcelWriterService {
                                 // 订购完全信息：直接使用 dynamicAttributes（原始动态属性+Personalization）
                                 data.setInformation(detail.getDynamicAttributes());
                                 data.setOrderType(detail.getOrderType());
-                                // 附属商品行不输出 Font 和 Style
+                                // 附属商品行不输出 Font / Style / LLM 刻录列
                                 if (isMainProduct) {
-                                    data.setFont(detail.getFont());
-                                    data.setStyle(detail.getStyle());
+                                    data.setFont(effectiveFontForExcel(detail));
+                                    data.setStyle(effectiveDesignStyleForExcel(detail));
+                                    data.setEngravingContent(effectiveEngravingForExcel(detail));
+                                    data.setIcon(effectiveIconForExcel(detail));
                                 } else {
                                     data.setFont(null);
                                     data.setStyle(null);
+                                    data.setEngravingContent("");
+                                    data.setIcon("");
                                 }
                                 // 型号列：输出 L/S 等sizeCode
                                 data.setProductSize(sizeCode);
@@ -247,12 +254,13 @@ public class ExcelWriterService {
         row.createCell(PRODUCT_VARIABLE_INDEX).setCellValue(data.getDynamicAttributes() != null ? data.getDynamicAttributes() : "");
         // 7: 设计风格 = style（从Personalization中提取的设计风格）
         row.createCell(DESIGN_STYLE_INDEX).setCellValue(convertStyle(data.getStyle()));
-        // 8: 刻录信息 = 空
-        row.createCell(ENGRAVING_INFO_INDEX).setCellValue("");
+        // 8: 刻录信息（可由 LLM 填充）
+        row.createCell(ENGRAVING_INFO_INDEX).setCellValue(
+                data.getEngravingContent() != null ? data.getEngravingContent() : "");
         // 9: 字体 = font（从Personalization中提取的字体）
         row.createCell(FONT_INDEX).setCellValue(convertFont(data.getFont()));
-        // 10: icon = 空
-        row.createCell(ICON_INDEX).setCellValue("");
+        // 10: icon（LLM 标准化 icon #1 … icon #90）
+        row.createCell(ICON_INDEX).setCellValue(data.getIcon() != null ? data.getIcon() : "");
         // 11: 是否派单 = 空
         row.createCell(IS_ASSIGNED_INDEX).setCellValue("");
         // 12: 设计师 - 空
@@ -268,6 +276,47 @@ public class ExcelWriterService {
         // 17: 商品标题 - 保留原有逻辑
         row.createCell(ITEM_TITLE_INDEX).setCellValue(data.getItemTitle() != null ? data.getItemTitle() : "");
 
+    }
+
+    private String effectiveDesignStyleForExcel(PdfOrderData.ItemDetail detail) {
+        String rule = detail.getStyle() != null ? detail.getStyle() : "";
+        String llm = detail.getLlmDesignStyle() != null ? detail.getLlmDesignStyle() : "";
+        if (!personalizationLlmProperties.isEnabled() || llm.isEmpty()) {
+            return rule;
+        }
+        if (personalizationLlmProperties.getMergePolicy() == PersonalizationLlmProperties.MergePolicy.OVERLAY) {
+            return llm;
+        }
+        return rule.isEmpty() ? llm : rule;
+    }
+
+    private String effectiveFontForExcel(PdfOrderData.ItemDetail detail) {
+        String rule = detail.getFont() != null ? detail.getFont() : "";
+        String llm = detail.getLlmFont() != null ? detail.getLlmFont() : "";
+        if (!personalizationLlmProperties.isEnabled() || llm.isEmpty()) {
+            return rule;
+        }
+        if (personalizationLlmProperties.getMergePolicy() == PersonalizationLlmProperties.MergePolicy.OVERLAY) {
+            return llm;
+        }
+        return rule.isEmpty() ? llm : rule;
+    }
+
+    private String effectiveEngravingForExcel(PdfOrderData.ItemDetail detail) {
+        if (!personalizationLlmProperties.isEnabled()) {
+            return "";
+        }
+        String eng = detail.getLlmEngravingContent();
+        return eng != null ? eng : "";
+    }
+
+    /** Icon 仅来自 LLM，无规则引擎兜底 */
+    private String effectiveIconForExcel(PdfOrderData.ItemDetail detail) {
+        if (!personalizationLlmProperties.isEnabled()) {
+            return "";
+        }
+        String ic = detail.getLlmIcon();
+        return ic != null ? ic : "";
     }
 
     private String convertFont(String font) {

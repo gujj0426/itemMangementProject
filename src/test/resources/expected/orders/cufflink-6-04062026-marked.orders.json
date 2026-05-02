@@ -24,14 +24,113 @@
       "productColor" : "SILVER",
       "productVariable" : "UNKNOWN"
     }, {
-      "orderType" : "BOX",
-      "productName" : "UNKNOWN",
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
       "listingId" : null,
       "itemQuantity" : 1,
       "mainProductFlg" : false,
-      "productSize" : "UNKNOWN",
-      "productColor" : "UNKNOWN",
-      "productVariable" : "BOX_LARGE_SQUARE"
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "S",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "L",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
     }, {
       "orderType" : "CUFFLINK",
       "productName" : "CUFFLINK",
@@ -54,29 +153,11 @@
       "orderType" : "BOX",
       "productName" : "UNKNOWN",
       "listingId" : null,
-      "itemQuantity" : 1,
+      "itemQuantity" : 7,
       "mainProductFlg" : false,
       "productSize" : "UNKNOWN",
       "productColor" : "UNKNOWN",
       "productVariable" : "BOX_LARGE_SQUARE"
-    }, {
-      "orderType" : "CUFFLINK",
-      "productName" : "CUFFLINK",
-      "listingId" : "cuff_item_list_1",
-      "itemQuantity" : 1,
-      "mainProductFlg" : true,
-      "productSize" : "S",
-      "productColor" : "SILVER",
-      "productVariable" : "UNKNOWN"
-    }, {
-      "orderType" : "TIE_CLIP",
-      "productName" : "TIE_CLIP_DUCK_BILL",
-      "listingId" : null,
-      "itemQuantity" : 1,
-      "mainProductFlg" : false,
-      "productSize" : "L",
-      "productColor" : "SILVER",
-      "productVariable" : "UNKNOWN"
     }, {
       "orderType" : "BOX",
       "productName" : "UNKNOWN",
@@ -85,34 +166,7 @@
       "mainProductFlg" : false,
       "productSize" : "UNKNOWN",
       "productColor" : "UNKNOWN",
-      "productVariable" : "BOX_LARGE_SQUARE"
-    }, {
-      "orderType" : "CUFFLINK",
-      "productName" : "CUFFLINK",
-      "listingId" : "cuff_item_list_1",
-      "itemQuantity" : 1,
-      "mainProductFlg" : true,
-      "productSize" : "S",
-      "productColor" : "SILVER",
-      "productVariable" : "UNKNOWN"
-    }, {
-      "orderType" : "TIE_CLIP",
-      "productName" : "TIE_CLIP_DUCK_BILL",
-      "listingId" : null,
-      "itemQuantity" : 1,
-      "mainProductFlg" : false,
-      "productSize" : "L",
-      "productColor" : "SILVER",
-      "productVariable" : "UNKNOWN"
-    }, {
-      "orderType" : "BOX",
-      "productName" : "UNKNOWN",
-      "listingId" : null,
-      "itemQuantity" : 1,
-      "mainProductFlg" : false,
-      "productSize" : "UNKNOWN",
-      "productColor" : "UNKNOWN",
-      "productVariable" : "BOX_LARGE_SQUARE"
+      "productVariable" : "WOOD_BOX_RECTANGLE_WOOD"
     } ]
   }, {
     "orderNumber" : "4021002448",

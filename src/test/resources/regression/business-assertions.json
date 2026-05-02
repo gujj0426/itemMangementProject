@@ -49,6 +49,30 @@
           "requiredColumns": { "颜色": "金色", "产品变量": "全链", "数量": "1" } },
         { "type": "excel_order_row_count_min", "orderNumber": "4032032630", "expectedInt": 2 }
       ]
+    },
+    {
+      "groupId": "G-CUFFLINK-SAME-ORDER-BOX-MERGE",
+      "caseId": "cufflink-6-04062026-marked",
+      "pdfClasspathPath": "/samples/pdf/cufflink-6-04062026-marked.pdf",
+      "assertions": [
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "包装盒",
+          "productVariable": "大方形礼盒",
+          "expectedInt": 1,
+          "requiredColumns": { "数量": "7" }
+        },
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "包装盒",
+          "productVariable": "Box-长方形木盒",
+          "expectedInt": 1,
+          "requiredColumns": { "数量": "1" }
+        },
+        { "type": "excel_order_row_count", "orderNumber": "4024016441", "expectedInt": 18 }
+      ]
     }
   ]
 }

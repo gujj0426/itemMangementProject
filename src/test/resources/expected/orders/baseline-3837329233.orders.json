@@ -24,14 +24,23 @@
       "productColor" : "GOLD",
       "productVariable" : "UNKNOWN"
     }, {
-      "orderType" : "BOX",
-      "productName" : "UNKNOWN",
+      "orderType" : "CUFFLINK",
+      "productName" : "CUFFLINK",
+      "listingId" : "cuff_item_list_1",
+      "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "L",
+      "productColor" : "GOLD",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DUCK_BILL",
       "listingId" : null,
       "itemQuantity" : 1,
       "mainProductFlg" : false,
-      "productSize" : "UNKNOWN",
-      "productColor" : "UNKNOWN",
-      "productVariable" : "WOOD_BOX_RECTANGLE_WOOD"
+      "productSize" : "L",
+      "productColor" : "GOLD",
+      "productVariable" : "UNKNOWN"
     }, {
       "orderType" : "CUFFLINK",
       "productName" : "CUFFLINK",
@@ -51,15 +60,6 @@
       "productColor" : "GOLD",
       "productVariable" : "UNKNOWN"
     }, {
-      "orderType" : "BOX",
-      "productName" : "UNKNOWN",
-      "listingId" : null,
-      "itemQuantity" : 1,
-      "mainProductFlg" : false,
-      "productSize" : "UNKNOWN",
-      "productColor" : "UNKNOWN",
-      "productVariable" : "WOOD_BOX_RECTANGLE_WOOD"
-    }, {
       "orderType" : "CUFFLINK",
       "productName" : "CUFFLINK",
       "listingId" : "cuff_item_list_1",
@@ -78,32 +78,23 @@
       "productColor" : "GOLD",
       "productVariable" : "UNKNOWN"
     }, {
-      "orderType" : "BOX",
-      "productName" : "UNKNOWN",
-      "listingId" : null,
-      "itemQuantity" : 1,
-      "mainProductFlg" : false,
-      "productSize" : "UNKNOWN",
-      "productColor" : "UNKNOWN",
-      "productVariable" : "WOOD_BOX_RECTANGLE_WOOD"
-    }, {
       "orderType" : "CUFFLINK",
       "productName" : "CUFFLINK",
       "listingId" : "cuff_item_list_1",
       "itemQuantity" : 1,
       "mainProductFlg" : true,
-      "productSize" : "L",
+      "productSize" : "S",
       "productColor" : "GOLD",
       "productVariable" : "UNKNOWN"
     }, {
-      "orderType" : "TIE_CLIP",
-      "productName" : "TIE_CLIP_DUCK_BILL",
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
       "listingId" : null,
-      "itemQuantity" : 1,
+      "itemQuantity" : 4,
       "mainProductFlg" : false,
-      "productSize" : "L",
-      "productColor" : "GOLD",
-      "productVariable" : "UNKNOWN"
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "WOOD_BOX_RECTANGLE_WOOD"
     }, {
       "orderType" : "BOX",
       "productName" : "UNKNOWN",
@@ -112,7 +103,7 @@
       "mainProductFlg" : false,
       "productSize" : "UNKNOWN",
       "productColor" : "UNKNOWN",
-      "productVariable" : "WOOD_BOX_RECTANGLE_WOOD"
+      "productVariable" : "WOOD_BOX_OVAL_WINDOW"
     } ]
   } ]
 }

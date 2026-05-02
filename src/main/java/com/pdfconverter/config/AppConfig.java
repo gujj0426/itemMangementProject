@@ -60,11 +60,15 @@ public class AppConfig implements CommandLineRunner {
         }
 
         log.info("========================================");
-        log.info("配置完成");
-        log.info("输入目录: {}", System.getProperty("app.pdf.input-folder"));
-        log.info("备份目录: {}", System.getProperty("app.pdf.bak-folder"));
-        log.info("输出目录: {}", System.getProperty("app.excel.output-folder"));
-        log.info("初始序号: {}", System.getProperty("app.excel.initial-index"));
+        log.info("配置完成（以下为 Spring 已解析路径；也可用 JVM 参数 -DinputPath/-DbakPath/-DoutputPath 或命令行 --inputPath= 等覆盖）");
+        log.info("输入目录: {}", blankToDash(inputFolder));
+        log.info("备份目录: {}", blankToDash(bakFolder));
+        log.info("输出目录: {}", blankToDash(outputFolder));
+        log.info("初始序号: {}", blankToDash(initialIndex));
         log.info("========================================");
+    }
+
+    private static String blankToDash(String s) {
+        return (s == null || s.isBlank()) ? "—" : s;
     }
 }

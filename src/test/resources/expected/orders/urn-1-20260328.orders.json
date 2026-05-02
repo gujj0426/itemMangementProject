@@ -13,7 +13,16 @@
       "mainProductFlg" : true,
       "productSize" : "UNKNOWN",
       "productColor" : "SILVER",
-      "productVariable" : "UNKNOWN"
+      "productVariable" : "MATERIAL_STAINLESS_STEEL"
+    }, {
+      "orderType" : "BOX",
+      "productName" : "UNKNOWN",
+      "listingId" : null,
+      "itemQuantity" : 1,
+      "mainProductFlg" : false,
+      "productSize" : "UNKNOWN",
+      "productColor" : "UNKNOWN",
+      "productVariable" : "BOX_SMALL_SQUARE"
     } ]
   } ]
 }
