@@ -71,7 +71,104 @@
           "expectedInt": 1,
           "requiredColumns": { "数量": "1" }
         },
-        { "type": "excel_order_row_count", "orderNumber": "4024016441", "expectedInt": 18 }
+        { "type": "excel_order_row_count", "orderNumber": "4024016441", "expectedInt": 18 },
+
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "双抛袖扣",
+          "expectedInt": 1,
+          "filterColumns": {
+            "Personalization": "cufflink: Icon 40+ S15(BG)\ntie clip: S4(JB)"
+          },
+          "requiredColumns": {
+            "Personalization": "cufflink: Icon 40+ S15(BG)\ntie clip: S4(JB)"
+          }
+        },
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "双抛袖扣",
+          "expectedInt": 1,
+          "filterColumns": {
+            "Personalization": "cufflink: Icon70 + S15(JL)\ntie clip: S4(EJ)"
+          },
+          "requiredColumns": {
+            "Personalization": "cufflink: Icon70 + S15(JL)\ntie clip: S4(EJ)"
+          }
+        },
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "双抛袖扣",
+          "expectedInt": 1,
+          "filterColumns": {
+            "Personalization": "cufflink: Icon 63+  S48-font 38: Big Brother\ntie clip: S4(MJ)"
+          },
+          "requiredColumns": {
+            "Personalization": "cufflink: Icon 63+  S48-font 38: Big Brother\ntie clip: S4(MJ)"
+          }
+        },
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "双抛袖扣",
+          "expectedInt": 1,
+          "filterColumns": {
+            "Personalization": "cufflink: Icon 45 + S21 AT\ntie clip: S44- AT"
+          },
+          "requiredColumns": {
+            "Personalization": "cufflink: Icon 45 + S21 AT\ntie clip: S44- AT"
+          }
+        },
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "双抛袖扣",
+          "expectedInt": 1,
+          "filterColumns": {
+            "Personalization": "cufflink: Icon 62(antlers)+S32(father of the\ngroom)\ntie clip: custom text- Font 28: Dad, thank you for\neverything"
+          },
+          "requiredColumns": {
+            "Personalization": "cufflink: Icon 62(antlers)+S32(father of the\ngroom)\ntie clip: custom text- Font 28: Dad, thank you for\neverything"
+          }
+        },
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "双抛袖扣",
+          "expectedInt": 1,
+          "filterColumns": {
+            "Personalization": "cufflink: Icon 9(2hearts)+S35(father of the\nbride)\ntie clip: S39(forever your little girl)"
+          },
+          "requiredColumns": {
+            "Personalization": "cufflink: Icon 9(2hearts)+S35(father of the\nbride)\ntie clip: S39(forever your little girl)"
+          }
+        },
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "双抛袖扣",
+          "expectedInt": 1,
+          "filterColumns": {
+            "Personalization": "cufflink: Icon 62 +  S48-font 38: Big\nBrother\ntie clip: S4(HM)"
+          },
+          "requiredColumns": {
+            "Personalization": "cufflink: Icon 62 +  S48-font 38: Big\nBrother\ntie clip: S4(HM)"
+          }
+        },
+        {
+          "type": "excel_rows_match",
+          "orderNumber": "4024016441",
+          "productName": "双抛袖扣",
+          "expectedInt": 1,
+          "filterColumns": {
+            "Personalization": "cufflink: Icon 77 +  S48-font 38: Little\nBrother\ntie clip: S4(CD)"
+          },
+          "requiredColumns": {
+            "Personalization": "cufflink: Icon 77 +  S48-font 38: Little\nBrother\ntie clip: S4(CD)"
+          }
+        }
       ]
     }
   ]

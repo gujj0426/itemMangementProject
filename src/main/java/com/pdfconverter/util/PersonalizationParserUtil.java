@@ -61,4 +61,14 @@ public class PersonalizationParserUtil {
 
         return null;
     }
+
+    /**
+     * 客户是否明确要求「默认字体」（未单独写 Font n 时由上层结合 {@link #extractFont} 使用）。
+     */
+    public static boolean mentionsDefaultFont(String text) {
+        if (text == null || text.isBlank()) {
+            return false;
+        }
+        return Pattern.compile("(?iu)(默认字体|默認字體|default\\s+font)").matcher(text).find();
+    }
 }

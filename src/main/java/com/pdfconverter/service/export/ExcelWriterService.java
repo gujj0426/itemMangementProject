@@ -7,6 +7,8 @@ import com.pdfconverter.model.PdfOrderData;
 import com.pdfconverter.service.mapper.FontNameMappingService;
 import com.pdfconverter.service.mapper.StyleNameMappingService;
 import com.pdfconverter.service.ProductListService;
+import com.pdfconverter.util.EngravingFaceCountUtil;
+import com.pdfconverter.util.StyleEngravingDefaultFontUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -162,20 +164,29 @@ public class ExcelWriterService {
                             // 主商品：按 itemQuantity 拆行，每行数量为 1
                             // 附属商品（如box）：输出 1 行，数量为 itemQuantity
                             boolean isMainProduct = detail.getMainProductFlg() != null && detail.getMainProductFlg();
-                            int itemQty = detail.getItemQuantity() > 0 ? detail.getItemQuantity() : 1;
-                            // 多面刻录行数：1=单面（1行），2=双面（2行），最多5面（5行）
-                            int engravingRows = getEngravingRowCount(detail);
-                            
+                            int rawQty = detail.getItemQuantity();
+                            boolean fanOut = detail.isEngravingFanOutApplied();
+                            // 已刻录拆行的明细不再按「面数」倍增 Excel 行（每物理行一条 ItemDetail）
+                            int engravingRows = fanOut ? 1 : EngravingFaceCountUtil.countFaces(detail.getDynamicAttributes());
+
                             int rowCount;
-                            int quantityPerRow;
+                            int quantityPerRow = 1;
+                            boolean suppressQuantity = false;
                             if (isMainProduct) {
-                                // 主商品按数量拆行，每行数量1；多面刻录时每个商品再乘以面数
-                                rowCount = itemQty * engravingRows;
-                                quantityPerRow = 1;
+                                if (fanOut && rawQty <= 0) {
+                                    rowCount = 1;
+                                    suppressQuantity = true;
+                                } else {
+                                    int itemQty = rawQty > 0 ? rawQty : 1;
+                                    rowCount = itemQty * engravingRows;
+                                    quantityPerRow = 1;
+                                }
                             } else {
-                                // 附属商品只输出1行，数量为itemQuantity
                                 rowCount = 1;
-                                quantityPerRow = itemQty;
+                                quantityPerRow = rawQty > 0 ? rawQty : 1;
+                                if (fanOut && rawQty <= 0) {
+                                    suppressQuantity = true;
+                                }
                             }
                             
                             for (int row = 0; row < rowCount; row++) {
@@ -189,8 +200,14 @@ public class ExcelWriterService {
                                 // 订购完全信息：直接使用 dynamicAttributes（原始动态属性+Personalization）
                                 data.setInformation(detail.getDynamicAttributes());
                                 data.setOrderType(detail.getOrderType());
-                                // 附属商品行不输出 Font / Style / LLM 刻录列
-                                if (isMainProduct) {
+                                // 主商品输出刻录相关列；袖扣/领带夹作为组合附属且有 Personalization 时也输出（与主商品共用留言）
+                                boolean accessoryEngravedLine = !isMainProduct
+                                        && detail.getOrderType() != null
+                                        && (detail.getOrderType() == OrderType.TIE_CLIP
+                                            || detail.getOrderType() == OrderType.CUFFLINK)
+                                        && detail.getPersonalization() != null
+                                        && !detail.getPersonalization().isBlank();
+                                if (isMainProduct || accessoryEngravedLine) {
                                     data.setFont(effectiveFontForExcel(detail));
                                     data.setStyle(effectiveDesignStyleForExcel(detail));
                                     data.setEngravingContent(effectiveEngravingForExcel(detail));
@@ -206,8 +223,9 @@ public class ExcelWriterService {
                                 data.setProductColor(color != null ? color : "");
                                 data.setDynamicAttributes(variable != null ? variable : "");
                                 data.setDate(now.format(dateFormatter));
-                                // 多面刻录时，只有第一面（row % engravingRows == 0）写数量，其余面数量留空
-                                if (engravingRows > 1 && (row % engravingRows != 0)) {
+                                if (suppressQuantity) {
+                                    data.setQuantity("");
+                                } else if (isMainProduct && engravingRows > 1 && (row % engravingRows != 0)) {
                                     data.setQuantity("");
                                 } else {
                                     data.setQuantity(String.valueOf(quantityPerRow));
@@ -293,13 +311,20 @@ public class ExcelWriterService {
     private String effectiveFontForExcel(PdfOrderData.ItemDetail detail) {
         String rule = detail.getFont() != null ? detail.getFont() : "";
         String llm = detail.getLlmFont() != null ? detail.getLlmFont() : "";
+        String merged;
         if (!personalizationLlmProperties.isEnabled() || llm.isEmpty()) {
-            return rule;
+            merged = rule;
+        } else if (personalizationLlmProperties.getMergePolicy() == PersonalizationLlmProperties.MergePolicy.OVERLAY) {
+            merged = llm;
+        } else {
+            merged = rule.isEmpty() ? llm : rule;
         }
-        if (personalizationLlmProperties.getMergePolicy() == PersonalizationLlmProperties.MergePolicy.OVERLAY) {
-            return llm;
-        }
-        return rule.isEmpty() ? llm : rule;
+        merged = merged != null ? merged.trim() : "";
+        String style = effectiveDesignStyleForExcel(detail);
+        String eng = effectiveEngravingForExcel(detail);
+        return StyleEngravingDefaultFontUtil.applyIfEligible(merged, style, eng,
+                detail.getPersonalization(), detail.getDynamicAttributes(),
+                personalizationLlmProperties.isEnabled());
     }
 
     private String effectiveEngravingForExcel(PdfOrderData.ItemDetail detail) {
@@ -438,66 +463,4 @@ public class ExcelWriterService {
         return "";
     }
 
-    /**
-     * 返回刻录面数对应的拆行数（单面=1，双面=2，最多5面=5）
-     *
-     * <p>支持以下格式：
-     * 1. "Engraving Sides: Front & Back" / "Round Disc & Bar" → 2
-     * 2. "Engraving Sides: Front Only" / "Round Disc Only" → 1
-     * 3. "Size and Engraving Sides: Small & Double-Side" → 2
-     * 4. "Customization Option: xPet + N Side" → N
-     * 5. "Engraving: Front & Back" → 2
-     * 6. "Engraving Options: Lib & Body & Bottom" → 根据 & 数量：0→1，1→2，2→3
-     * </p>
-     */
-    private int getEngravingRowCount(PdfOrderData.ItemDetail detail) {
-        String info = detail.getDynamicAttributes();
-        if (info == null || info.isEmpty()) return 1;
-
-        String lower = info.toLowerCase();
-
-        // 格式4：Customization Option: {N}Pet + {M} Side → M 面
-        java.util.regex.Matcher petMatcher = java.util.regex.Pattern.compile(
-                "customization option[^\\n]*?(\\d+)\\s*side", java.util.regex.Pattern.CASE_INSENSITIVE)
-                .matcher(lower);
-        if (petMatcher.find()) {
-            int sides = Integer.parseInt(petMatcher.group(1));
-            return Math.min(sides, 5); // 最多5面
-        }
-
-        // 优先从 "Engraving Option(s): xxx" 这一行提取，避免被 Personalization 里的 '&' 干扰
-        java.util.regex.Matcher engravingOptionLine = java.util.regex.Pattern.compile(
-                "engraving\\s*options?\\s*:\\s*([^\\n\\r]+)", java.util.regex.Pattern.CASE_INSENSITIVE)
-                .matcher(info);
-        if (engravingOptionLine.find()) {
-            String optionValue = engravingOptionLine.group(1).trim().toLowerCase();
-            if ((optionValue.contains("front") && optionValue.contains("back"))
-                    || (optionValue.contains("round disc") && optionValue.contains("bar"))
-                    || optionValue.contains("double-side")
-                    || optionValue.contains("double side")
-                    || (optionValue.contains("lid") && optionValue.contains("body"))) {
-                return 2;
-            }
-            int ampersandCount = 0;
-            for (char c : optionValue.toCharArray()) {
-                if (c == '&') ampersandCount++;
-            }
-            return Math.min(ampersandCount + 1, 5);
-        }
-
-        // 格式1/2/3/5：Engraving Sides / Engraving Option / Engraving: 关键字判断
-        boolean hasEngravingSides = lower.contains("engraving sides")
-                || lower.contains("engraving option")
-                || lower.contains("engraving:");
-        boolean isFrontBack = lower.contains("front") && lower.contains("back");
-        boolean isRoundDiscBar = lower.contains("round disc") && lower.contains("bar");
-        boolean isDoubleSide = lower.contains("double-side") || lower.contains("double side");
-        boolean isLidBody = lower.contains("lid") && lower.contains("body");
-
-        if (hasEngravingSides && (isFrontBack || isRoundDiscBar || isDoubleSide || isLidBody)) {
-            return 2;
-        }
-
-        return 1; // 默认单面，不拆行
-    }
 }

@@ -98,7 +98,7 @@ class RegressionBusinessRulesTest {
             }
             case "excel_rows_match": {
                 List<List<String>> rows = filterRows(excelSnap, headerIndex, a.orderNumber, a.productName,
-                        a.productVariable);
+                        a.productVariable, a.filterColumns);
                 assertEquals(a.expectedInt, rows.size(), ctx + " product row count mismatch");
                 if (a.requiredColumns != null) {
                     for (List<String> row : rows) {
@@ -113,7 +113,7 @@ class RegressionBusinessRulesTest {
             }
             case "excel_quantity_distribution": {
                 List<List<String>> rows = filterRows(excelSnap, headerIndex, a.orderNumber, a.productName,
-                        a.productVariable);
+                        a.productVariable, a.filterColumns);
                 Integer qtyIdx = headerIndex.get("数量");
                 assertNotNull(qtyIdx, ctx + " missing 数量 header");
                 int filled = 0;
@@ -149,7 +149,8 @@ class RegressionBusinessRulesTest {
 
     private static List<List<String>> filterRows(ExcelGoldenSnapshot snap, Map<String, Integer> idx,
                                                  String orderNumber, String productName,
-                                                 String productVariableEquals) {
+                                                 String productVariableEquals,
+                                                 Map<String, String> filterColumns) {
         Integer orderIdx = idx.get("订单编号");
         Integer productIdx = idx.get("产品名称");
         Integer variableIdx = idx.get("产品变量");
@@ -159,9 +160,23 @@ class RegressionBusinessRulesTest {
             boolean okProduct = productIdx != null && Objects.equals(productName, row.get(productIdx));
             boolean okVar = productVariableEquals == null || productVariableEquals.isBlank()
                     || (variableIdx != null && Objects.equals(productVariableEquals, row.get(variableIdx)));
-            if (okOrder && okProduct && okVar) {
-                out.add(row);
+            if (!okOrder || !okProduct || !okVar) {
+                continue;
             }
+            if (filterColumns != null && !filterColumns.isEmpty()) {
+                boolean allMatch = true;
+                for (Map.Entry<String, String> e : filterColumns.entrySet()) {
+                    Integer cidx = idx.get(e.getKey());
+                    if (cidx == null || !Objects.equals(e.getValue(), row.get(cidx))) {
+                        allMatch = false;
+                        break;
+                    }
+                }
+                if (!allMatch) {
+                    continue;
+                }
+            }
+            out.add(row);
         }
         return out;
     }
@@ -234,6 +249,8 @@ class RegressionBusinessRulesTest {
         public String productName;
         /** 非空时仅保留「产品变量」列等于该值的行（用于区分同一订单多种包装盒） */
         public String productVariable;
+        /** Optional extra column filters (exact match), e.g. lock one row when 产品名称+设计风格 repeats. */
+        public Map<String, String> filterColumns;
         public Integer expectedInt;
         public Integer expectedFilledQtyRows;
         public Integer expectedEmptyQtyRows;

@@ -31,7 +31,8 @@ public class PersonalizationLlmProperties {
 
     private int timeoutMs = 60000;
 
-    private int maxTokens = 1024;
+    /** 抽取阶段输出 JSON；过小易导致刻录长句被模型截断，默认放宽 */
+    private int maxTokens = 2048;
 
     /**
      * 可选 JSON：非空则仅允许列表内取值；空数组或未配置则从字体/风格映射表取值域。
@@ -42,6 +43,28 @@ public class PersonalizationLlmProperties {
      * fill-empty-only：规则引擎已有值时不覆盖；overlay：LLM 非空时优先写 Excel。
      */
     private MergePolicy mergePolicy = MergePolicy.FILL_EMPTY_ONLY;
+
+    /**
+     * 开启后先做「路由」调用：从杂乱 Personalization 中筛出仅对应本导出行的买家表述，再调用原有四维抽取。
+     * 每条 eligible 行会增加一次 API 调用（成本约 doubling）。
+     */
+    private boolean routingEnabled = false;
+
+    /**
+     * 路由阶段使用的模型；留空则与 {@link #model} 相同。
+     */
+    private String routingModel = "";
+
+    /**
+     * 路由 JSON 通常很短，单独限制 token 以节省费用。
+     */
+    /** 路由阶段若仍需粘贴较长原文片段，需足够 completion budget */
+    private int routingMaxTokens = 1024;
+
+    /**
+     * Personalization 全文短于此字符数时不发起路由（直接走单阶段抽取）。
+     */
+    private int routingMinPersonalizationChars = 40;
 
     public enum MergePolicy {
         FILL_EMPTY_ONLY,
@@ -118,5 +141,37 @@ public class PersonalizationLlmProperties {
 
     public void setMergePolicy(MergePolicy mergePolicy) {
         this.mergePolicy = mergePolicy;
+    }
+
+    public boolean isRoutingEnabled() {
+        return routingEnabled;
+    }
+
+    public void setRoutingEnabled(boolean routingEnabled) {
+        this.routingEnabled = routingEnabled;
+    }
+
+    public String getRoutingModel() {
+        return routingModel;
+    }
+
+    public void setRoutingModel(String routingModel) {
+        this.routingModel = routingModel;
+    }
+
+    public int getRoutingMaxTokens() {
+        return routingMaxTokens;
+    }
+
+    public void setRoutingMaxTokens(int routingMaxTokens) {
+        this.routingMaxTokens = routingMaxTokens;
+    }
+
+    public int getRoutingMinPersonalizationChars() {
+        return routingMinPersonalizationChars;
+    }
+
+    public void setRoutingMinPersonalizationChars(int routingMinPersonalizationChars) {
+        this.routingMinPersonalizationChars = routingMinPersonalizationChars;
     }
 }

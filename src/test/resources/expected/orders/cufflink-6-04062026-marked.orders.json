@@ -205,6 +205,15 @@
       "productColor" : "SILVER",
       "productVariable" : "UNKNOWN"
     }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 0,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
       "orderType" : "BOX",
       "productName" : "PACKAGING_BOX",
       "listingId" : null,

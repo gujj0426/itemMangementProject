@@ -285,6 +285,12 @@ public class PdfOrderData {
         private String llmEngravingContent;
         /** LLM 校验后的 Icon（icon #1 … icon #90）；可选 */
         private String llmIcon;
+        /** true 表示刻录拆行/收窄已应用，Excel 不再按动态属性面数倍增 */
+        private boolean engravingFanOutApplied;
+        /** 传给 LLM 的 Personalization 片段；为 null 则用 {@link #personalization} 全文 */
+        private String personalizationTextForLlm;
+        /** 槽位说明（正反面 / 品类），写入 LLM user prompt */
+        private String llmSlotInstruction;
         // 无参构造器
         public ItemDetail() {
             this.mainProductFlg = false;
@@ -433,6 +439,30 @@ public class PdfOrderData {
 
         public void setLlmIcon(String llmIcon) {
             this.llmIcon = llmIcon;
+        }
+
+        public boolean isEngravingFanOutApplied() {
+            return engravingFanOutApplied;
+        }
+
+        public void setEngravingFanOutApplied(boolean engravingFanOutApplied) {
+            this.engravingFanOutApplied = engravingFanOutApplied;
+        }
+
+        public String getPersonalizationTextForLlm() {
+            return personalizationTextForLlm;
+        }
+
+        public void setPersonalizationTextForLlm(String personalizationTextForLlm) {
+            this.personalizationTextForLlm = personalizationTextForLlm;
+        }
+
+        public String getLlmSlotInstruction() {
+            return llmSlotInstruction;
+        }
+
+        public void setLlmSlotInstruction(String llmSlotInstruction) {
+            this.llmSlotInstruction = llmSlotInstruction;
         }
 
         public String getListingId() {

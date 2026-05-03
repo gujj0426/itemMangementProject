@@ -38,6 +38,15 @@
       "productColor" : "GOLD",
       "productVariable" : "UNKNOWN"
     }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_ROUND_DUCK_BILL",
+      "listingId" : "tc_round_photo",
+      "itemQuantity" : 0,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "GOLD",
+      "productVariable" : "UNKNOWN"
+    }, {
       "orderType" : "CUFFLINK",
       "productName" : "CUFFLINK",
       "listingId" : "cuff_with_box_options",
@@ -82,7 +91,25 @@
       "orderType" : "TIE_CLIP",
       "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
       "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 0,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
       "itemQuantity" : 1,
+      "mainProductFlg" : true,
+      "productSize" : "UNKNOWN",
+      "productColor" : "SILVER",
+      "productVariable" : "UNKNOWN"
+    }, {
+      "orderType" : "TIE_CLIP",
+      "productName" : "TIE_CLIP_DOUBLE_SIDED_SLIDE_IN",
+      "listingId" : "tc_slide_with_box",
+      "itemQuantity" : 0,
       "mainProductFlg" : true,
       "productSize" : "UNKNOWN",
       "productColor" : "SILVER",

@@ -18,6 +18,7 @@ final class RegressionPdfCases {
                 new PdfCase("dogtag-batch-5-20260311", "/samples/pdf/dogtag-batch-5-20260311.pdf"),
                 new PdfCase("urn-1-20260328", "/samples/pdf/urn-1-20260328.pdf"),
                 new PdfCase("urn-1-20260412", "/samples/pdf/urn-1-20260412.pdf"),
+                // Order 4024016441 (Tyler Sattelberg): 8 cufflink+tieclip listings; personalization per listing asserted in business-assertions.json.
                 new PdfCase("cufflink-6-04062026-marked", "/samples/pdf/cufflink-6-04062026-marked.pdf"),
                 new PdfCase("cufflink-9-03252026", "/samples/pdf/袖扣_订单_9单_03252026.pdf")
         );

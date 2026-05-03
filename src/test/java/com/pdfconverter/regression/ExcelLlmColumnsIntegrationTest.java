@@ -125,6 +125,44 @@ class ExcelLlmColumnsIntegrationTest {
         }
     }
 
+    @Test
+    void writeOrders_appliesDefaultFont3WhenStyleAndEngravingButNoFontSpecified() throws Exception {
+        PdfOrderData order = new PdfOrderData();
+        order.setUsername("测试用户");
+        order.setOrderNumber("LLM-EXCEL-DEFAULT-FONT");
+
+        PdfOrderData.ItemDetail item = new PdfOrderData.ItemDetail();
+        item.setMainProductFlg(true);
+        item.setOrderType(OrderType.CUFFLINK);
+        item.setProductName(ProductName.CUFFLINK);
+        item.setProductSize(ProductSize.S);
+        item.setProductColor(ProductColor.SILVER);
+        item.setProductVariable(ProductVariable.UNKNOWN);
+        item.setItemQuantity(1);
+        item.setPersonalization("cufflink: Icon 40+ S15(BG)\ntie clip: S4(JB)");
+        item.setItemTitle("Cufflinks listing");
+        item.setDynamicAttributes("Size and Color: Silver_S\nItem: TieClip+Cufflinks");
+        item.setStyle("Style 15");
+        item.setFont("");
+        item.setLlmDesignStyle("Style 15");
+        item.setLlmFont("");
+        item.setLlmIcon("icon #40");
+        item.setLlmEngravingContent("BG");
+
+        order.setItemDetails(Collections.singletonList(item));
+
+        excelWriterService.writeOrders(Collections.singletonList(order));
+
+        Path xlsx = findSingleExcelFile(excelOutputDir);
+        DataFormatter formatter = new DataFormatter();
+        try (var wb = WorkbookFactory.create(xlsx.toFile())) {
+            Sheet sheet = wb.getSheetAt(0);
+            Row row1 = sheet.getRow(1);
+            assertEquals("Font 3(no)", formatter.formatCellValue(row1.getCell(FONT_INDEX)),
+                    "无 Font 编号留言且 Style+刻录齐全时应默认 Font 3(no)");
+        }
+    }
+
     private static Path findSingleExcelFile(Path dir) throws IOException {
         List<Path> files;
         try (Stream<Path> stream = Files.list(dir)) {

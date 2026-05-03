@@ -10,6 +10,7 @@ import com.pdfconverter.model.ProductAttribute;
 import com.pdfconverter.model.ProductItem;
 import com.pdfconverter.util.ExtractUtil;
 import com.pdfconverter.util.ItemDetailAdditionalUtil;
+import com.pdfconverter.util.EngravingRowFanOutProcessor;
 import com.pdfconverter.util.OrderAccessoryMergeUtil;
 import com.pdfconverter.util.PersonalizationParserUtil;
 import com.pdfconverter.service.llm.PersonalizationIntentLlmService;
@@ -45,6 +46,8 @@ public class PdfExtractorService {
     private AccessoryItemFactory accessoryItemFactory;
     @Resource
     private PersonalizationIntentLlmService personalizationIntentLlmService;
+    @Resource
+    private EngravingRowFanOutProcessor engravingRowFanOutProcessor;
     /**
      * 解析单个pdf订单信息，同时收集需要 Style 6 标注的页码
      *
@@ -270,8 +273,14 @@ public class PdfExtractorService {
             System.out.println("Debug: No match found for item count."); // 调试输出
             throw new IllegalArgumentException("No valid item count found in text.");
         }
+        // 刻录意图拆行：双面领带夹 / 双意图袖扣 / 组合留言收窄（不改变 LLM 输出结构，逐行抽取）
+        items = engravingRowFanOutProcessor.expandOrderLines(items);
         // 同订单内相同盒型的附属包装盒合并为一行（数量累加）
         items = OrderAccessoryMergeUtil.mergeIdenticalBoxAccessoriesWithinOrder(items);
+        // LLM：严格顺序逐条处理，每条仅带入该行 Personalization / 属性；禁止批量合并同一订单下多件商品的留言
+        for (ItemDetail line : items) {
+            personalizationIntentLlmService.enrichMainItemIfApplicable(line);
+        }
         order.setItemDetails(items);
         order.setAdditionalNote(extractUtil.extractAfter(orderText, "Do the green thing"));
 
@@ -333,7 +342,7 @@ public class PdfExtractorService {
      * </p>
      */
     private int findItemBlockStart(String text, int quantityPos) {
-        int searchStart = Math.max(0, quantityPos - 1000);
+        int searchStart = Math.max(0, quantityPos - 20000);
         String window = text.substring(searchStart, quantityPos);
 
         // 策略1：找最后一个 "Shop\n" 独立行，商品标题从 Shop 后的第一行开始
@@ -432,6 +441,8 @@ public class PdfExtractorService {
      * 使用AttributeRuleEngine从配置中提取属性，替换硬编码逻辑
      */
     private List<ItemDetail> parseItemDetail(String block, String shopName) throws IOException {
+        ExtractUtil.ListingAnchors listingAnchors = extractUtil.findLastListingAnchors(block);
+
         // 1. 提取商品标题
         String itemTitle = extractUtil.getitemTitle(block);
         // 如果标题以 ShopName 开头（PDF 两列中 ShopName 与标题同行），截掉 ShopName 前缀
@@ -440,15 +451,23 @@ public class PdfExtractorService {
         } else if (shopName != null && !shopName.isEmpty() && itemTitle.startsWith(shopName)) {
             itemTitle = itemTitle.substring(shopName.length()).trim();
         }
-        // 2. 提取订购数量
-        int quantity = extractUtil.extractLineAfter(block, "Quantity:");
+        // 2. 提取订购数量（与最后一个 Personalization 配对的 Quantity，避免同一块内多套字段串台）
+        int quantity = listingAnchors != null
+                ? extractUtil.extractLineAfter(block.substring(listingAnchors.quantityLabelStart), "Quantity:")
+                : extractUtil.extractLineAfter(block, "Quantity:");
 
         // 3. 提取Personalization内容
         String personalization = extractUtil.getPersonalization(block);
 
         // 4. 提取动态属性（原始文本 + Map形式）
-        // 先尝试从 Quantity: 到 Personalization: 之间提取
-        String dynamicSection = extractUtil.extractBetween(block, "Quantity:", "Personalization:").trim();
+        // 先尝试从「本 listing」的 Quantity: 到 Personalization: 之间提取
+        String dynamicSection;
+        if (listingAnchors != null) {
+            int afterQtyKeyword = listingAnchors.quantityLabelStart + "Quantity:".length();
+            dynamicSection = block.substring(afterQtyKeyword, listingAnchors.personalizationLabelStart).trim();
+        } else {
+            dynamicSection = extractUtil.extractBetween(block, "Quantity:", "Personalization:").trim();
+        }
         // 若没有 Personalization: 行（如纯礼盒listing），则从 Quantity: 后截取剩余内容，并过滤噪音行
         if (dynamicSection.isEmpty()) {
             int qtyIdx = block.indexOf("Quantity:");
@@ -514,8 +533,7 @@ public class PdfExtractorService {
         // 7. 将提取的属性应用到mainItemDetail
         applyProductAttribute(mainItemDetail, productAttribute, personalization);
 
-        // 7b. 可选：大模型抽取设计风格 / 字体 / 刻录内容（写入 llm* 字段，供 Excel 合并）
-        personalizationIntentLlmService.enrichMainItemIfApplicable(mainItemDetail);
+        // 7b. LLM 抽取在订单级统一执行（刻录拆行之后逐行 enrich）
 
         // 8. 组装附属产品列表（TieClip、Box 等）
         List<ItemDetail> combineItemDetailList = assembleItemDetailListForVoro(

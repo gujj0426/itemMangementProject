@@ -11,14 +11,65 @@ import java.util.regex.Pattern;
 @Component
 public class ExtractUtil {
 
+    /**
+     * When a single extracted text block accidentally contains multiple listings, Etsy PDFs may repeat
+     * {@code Quantity:} / {@code Personalization:}. Pair the last personalization label
+     * with the last {@code Quantity:} that appears before it in the same block.
+     */
+    public static final class ListingAnchors {
+        public final int quantityLabelStart;
+        /** Start index of the {@code Personalization} line label (beginning of the matched {@code ^Personalization\\s*:}). */
+        public final int personalizationLabelStart;
+        /** Index immediately after the personalization label (start of the value text). */
+        public final int personalizationContentStart;
+
+        public ListingAnchors(int quantityLabelStart, int personalizationLabelStart, int personalizationContentStart) {
+            this.quantityLabelStart = quantityLabelStart;
+            this.personalizationLabelStart = personalizationLabelStart;
+            this.personalizationContentStart = personalizationContentStart;
+        }
+    }
+
+    private static final Pattern PERSONALIZATION_LABEL_LINE =
+            Pattern.compile("^Personalization\\s*:", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+
+    /**
+     * @return anchors for the last listing segment in {@code block}, or {@code null} if no {@code Personalization:} line matches
+     */
+    public ListingAnchors findLastListingAnchors(String block) {
+        if (block == null || block.isEmpty()) {
+            return null;
+        }
+        Matcher m = PERSONALIZATION_LABEL_LINE.matcher(block);
+        int lastLabelStart = -1;
+        int lastLabelEnd = -1;
+        while (m.find()) {
+            lastLabelStart = m.start();
+            lastLabelEnd = m.end();
+        }
+        if (lastLabelStart < 0) {
+            return null;
+        }
+        String prefix = block.substring(0, lastLabelStart);
+        int qtyIdx = prefix.lastIndexOf("Quantity:");
+        if (qtyIdx < 0) {
+            return null;
+        }
+        return new ListingAnchors(qtyIdx, lastLabelStart, lastLabelEnd);
+    }
+
     public String getitemTitle(String block) {
-        // 1. 提取商品标题：从块开头到 "Quantity:" 之前
-        int qtyIndex = block.indexOf("Quantity:");
+        // 1. 提取商品标题：从块开头到「本 listing」的 "Quantity:" 之前（优先与最后一个 Personalization 配对）
+        ListingAnchors anchors = findLastListingAnchors(block);
+        int qtyIndex = anchors != null ? anchors.quantityLabelStart : block.indexOf("Quantity:");
         if (qtyIndex == -1) {
             throw new IllegalArgumentException("Invalid block: missing 'Quantity:'");
         }
         String rawTitle = block.substring(0, qtyIndex).trim();
+        return buildItemTitleFromRawBlockPrefix(rawTitle);
+    }
 
+    private String buildItemTitleFromRawBlockPrefix(String rawTitle) {
         // 2. 过滤 PDF 订单头部和其他噪音行，收集商品标题行
         //
         // 策略：从后往前倒扫（从最接近 Quantity: 的行开始），
@@ -100,41 +151,54 @@ public class ExtractUtil {
      * </p>
      */
     public String getPersonalization(String block) {
-        String personalization = "";
-        int personalizationStart = block.indexOf("Personalization:");
-        if (personalizationStart != -1) {
-            personalizationStart += "Personalization:".length();
-            int nextItemStart = block.indexOf("Custom Engraved Initials", personalizationStart);
-            int end = (nextItemStart == -1) ? block.length() : nextItemStart;
-            personalization = block.substring(personalizationStart, end).trim();
-            
-            // 过滤噪音行，遇到左栏边界标记立即停止
-            StringBuilder sb = new StringBuilder();
-            for (String line : personalization.split("\n")) {
-                String trimmed = line.trim();
-                if (trimmed.isEmpty()) continue;
-                // 过滤 Engraving Fee / Additional Add-on Engraving
-                if (trimmed.matches("(?i).*[Ee]ngraving\\s+[Ff]ee.*")) continue;
-                if (trimmed.matches("(?i).*[Aa]dditional\\s+[Aa]dd-[Oo]n.*[Ee]ngraving.*")) continue;
-                // 过滤 Additional Engraving Options 行
-                if (trimmed.matches("(?i).*[Aa]dditional\\s+[Ee]ngraving\\s+[Oo]ptions.*")) continue;
-                // 过滤 Quantity 行（附加雕刻数量）
-                if (trimmed.matches("(?i)^Quantity:\\s*\\d+$")) continue;
-                // 遇到 PDF 左栏边界标记，停止（后续内容属于订单基本信息或下一商品标题）
-                if (trimmed.equals("Shop") || trimmed.startsWith("Order date") ||
-                    trimmed.startsWith("Payment method") || trimmed.startsWith("Shipping method") ||
-                    trimmed.startsWith("Packaging") || trimmed.startsWith("Tracking") ||
-                    trimmed.startsWith("Scheduled to ship by")) {
-                    break;
-                }
-                // 过滤 Do the green thing 及之后的内容
-                if (trimmed.contains("Do the green thing")) break;
-                if (sb.length() > 0) sb.append("\n");
-                sb.append(trimmed);
-            }
-            personalization = sb.toString();
+        if (block == null || block.isEmpty()) {
+            return "";
         }
-        return personalization;
+        ListingAnchors anchors = findLastListingAnchors(block);
+        int contentStart;
+        if (anchors != null) {
+            contentStart = anchors.personalizationContentStart;
+        } else {
+            int idx = block.indexOf("Personalization:");
+            if (idx == -1) {
+                return "";
+            }
+            contentStart = idx + "Personalization:".length();
+        }
+        return filterPersonalizationTail(block.substring(contentStart));
+    }
+
+    String filterPersonalizationTail(String personalizationTail) {
+        int nextItemStart = personalizationTail.indexOf("Custom Engraved Initials");
+        int end = (nextItemStart == -1) ? personalizationTail.length() : nextItemStart;
+        String personalization = personalizationTail.substring(0, end).trim();
+
+        StringBuilder sb = new StringBuilder();
+        for (String line : personalization.split("\n")) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty()) continue;
+            // 过滤 Engraving Fee / Additional Add-on Engraving
+            if (trimmed.matches("(?i).*[Ee]ngraving\\s+[Ff]ee.*")) continue;
+            if (trimmed.matches("(?i).*[Aa]dditional\\s+[Aa]dd-[Oo]n.*[Ee]ngraving.*")) continue;
+            // 过滤 Additional Engraving Options 行
+            if (trimmed.matches("(?i).*[Aa]dditional\\s+[Ee]ngraving\\s+[Oo]ptions.*")) continue;
+            // 过滤 Quantity 行（附加雕刻数量）
+            if (trimmed.matches("(?i)^Quantity:\\s*\\d+$")) continue;
+            // 同一文本块内误入的下一条 Personalization 标签行，停止
+            if (trimmed.matches("(?i)^Personalization\\s*:.*")) break;
+            // 遇到 PDF 左栏边界标记，停止（后续内容属于订单基本信息或下一商品标题）
+            if (trimmed.equals("Shop") || trimmed.startsWith("Order date") ||
+                trimmed.startsWith("Payment method") || trimmed.startsWith("Shipping method") ||
+                trimmed.startsWith("Packaging") || trimmed.startsWith("Tracking") ||
+                trimmed.startsWith("Scheduled to ship by")) {
+                break;
+            }
+            // 过滤 Do the green thing 及之后的内容
+            if (trimmed.contains("Do the green thing")) break;
+            if (sb.length() > 0) sb.append("\n");
+            sb.append(trimmed);
+        }
+        return sb.toString();
     }
 
     public String extractBetween(String text, String startRegex, String endRegex) {
