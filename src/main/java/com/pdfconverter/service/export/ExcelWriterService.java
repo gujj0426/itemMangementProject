@@ -7,6 +7,7 @@ import com.pdfconverter.model.PdfOrderData;
 import com.pdfconverter.service.mapper.FontNameMappingService;
 import com.pdfconverter.service.mapper.StyleNameMappingService;
 import com.pdfconverter.service.ProductListService;
+import com.pdfconverter.util.EngravingEnumeratedTokens;
 import com.pdfconverter.util.EngravingFaceCountUtil;
 import com.pdfconverter.util.StyleEngravingDefaultFontUtil;
 import org.apache.poi.ss.usermodel.*;
@@ -208,9 +209,10 @@ public class ExcelWriterService {
                                         && detail.getPersonalization() != null
                                         && !detail.getPersonalization().isBlank();
                                 if (isMainProduct || accessoryEngravedLine) {
-                                    data.setFont(effectiveFontForExcel(detail));
+                                    String engThisRow = effectiveEngravingForExcel(detail, row, rowCount);
+                                    data.setFont(effectiveFontForExcel(detail, engThisRow));
                                     data.setStyle(effectiveDesignStyleForExcel(detail));
-                                    data.setEngravingContent(effectiveEngravingForExcel(detail));
+                                    data.setEngravingContent(engThisRow);
                                     data.setIcon(effectiveIconForExcel(detail));
                                 } else {
                                     data.setFont(null);
@@ -308,7 +310,10 @@ public class ExcelWriterService {
         return rule.isEmpty() ? llm : rule;
     }
 
-    private String effectiveFontForExcel(PdfOrderData.ItemDetail detail) {
+    /**
+     * @param engravingForThisRow 本 Excel 行刻录列已解析后的正文（用于 Style+刻录→默认字体判断）
+     */
+    private String effectiveFontForExcel(PdfOrderData.ItemDetail detail, String engravingForThisRow) {
         String rule = detail.getFont() != null ? detail.getFont() : "";
         String llm = detail.getLlmFont() != null ? detail.getLlmFont() : "";
         String merged;
@@ -321,18 +326,24 @@ public class ExcelWriterService {
         }
         merged = merged != null ? merged.trim() : "";
         String style = effectiveDesignStyleForExcel(detail);
-        String eng = effectiveEngravingForExcel(detail);
+        String eng = engravingForThisRow != null ? engravingForThisRow : "";
         return StyleEngravingDefaultFontUtil.applyIfEligible(merged, style, eng,
                 detail.getPersonalization(), detail.getDynamicAttributes(),
                 personalizationLlmProperties.isEnabled());
     }
 
-    private String effectiveEngravingForExcel(PdfOrderData.ItemDetail detail) {
+    /**
+     * 多件导出：若 LLM 返回逗号/顿号分隔且段数等于本明细展开行数，则每行一段。
+     */
+    private String effectiveEngravingForExcel(PdfOrderData.ItemDetail detail, int pieceIndex0, int totalPieces) {
         if (!personalizationLlmProperties.isEnabled()) {
             return "";
         }
         String eng = detail.getLlmEngravingContent();
-        return eng != null ? eng : "";
+        if (eng == null || eng.isBlank()) {
+            return "";
+        }
+        return EngravingEnumeratedTokens.engravingForPiece(eng, pieceIndex0, totalPieces);
     }
 
     /** Icon 仅来自 LLM，无规则引擎兜底 */

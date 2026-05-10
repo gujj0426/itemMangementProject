@@ -11,10 +11,14 @@ import java.util.regex.Pattern;
  */
 public final class PersonalizationSlotSplitter {
 
+    /** Front / 正面（须在 Back 之前出现，避免仅凭正文里的 “…back:” 误拆） */
+    private static final Pattern PAT_FRONT_LABEL_START = Pattern.compile(
+            "(?is)(?:^|\\n)\\s*(?:front|正面|正\\s*面)\\s*[:：]");
+
     private static final Pattern PAT_FRONT = Pattern.compile(
-            "(?is)(?:^|\\n)\\s*(?:front|正面|正\\s*面)\\s*[:：]\\s*(.+?)(?=\\n\\s*(?:back|反面|反\\s*面)\\s*[:：]|\\z)");
+            "(?is)(?:^|\\n)\\s*(?:front|正面|正\\s*面)\\s*[:：]\\s*(.+?)(?=\\n\\s*(?:back|bar|反面|反\\s*面)\\s*[:：]|\\z)");
     private static final Pattern PAT_BACK_TAIL = Pattern.compile(
-            "(?is)\\n\\s*(?:back|反面|反\\s*面)\\s*[:：]\\s*(.+)\\z");
+            "(?is)\\n\\s*(?:back|bar|反面|反\\s*面)\\s*[:：]\\s*(.+)\\z");
 
     private static final Pattern PAT_CUFF_FIRST_SECOND = Pattern.compile(
             "(?i)(first|1st|left)\\s*cufflink|cufflink\\s*[:：]?\\s*(?:1|one|left)|袖扣\\s*[:：]?\\s*[12一二]");
@@ -75,14 +79,29 @@ public final class PersonalizationSlotSplitter {
     }
 
     /**
-     * 尝试拆成「正面 / 反面」两段；失败返回空列表。
+     * 尝试拆成「正面 / 反面（或 Bar 条）」两段；支持同行书写 {@code Front: A Back: B}；失败返回空列表。
+     * <p>
+     * 必须先识别 Front/正面（标签英文大小写不敏感），第二面为「换行后的标签」或「同行中的标签」；
+     * 同行时对 {@code hold back:} 等短语做保守过滤，避免误拆。
      */
     public static List<String> trySplitFrontBack(String personalization) {
         List<String> out = new ArrayList<>(2);
         if (personalization == null || personalization.isBlank()) {
             return out;
         }
-        Matcher mFront = PAT_FRONT.matcher(personalization);
+        String p = personalization.trim();
+
+        List<String> discBar = trySplitRoundDiscBar(p);
+        if (discBar.size() == 2) {
+            return discBar;
+        }
+
+        List<String> anchored = trySplitFrontBackAnchored(p);
+        if (anchored.size() == 2) {
+            return anchored;
+        }
+
+        Matcher mFront = PAT_FRONT.matcher(p);
         Matcher mBack = PAT_BACK_TAIL.matcher(personalization);
         String front = null;
         String back = null;
@@ -97,6 +116,90 @@ public final class PersonalizationSlotSplitter {
             out.add(back);
         }
         return out;
+    }
+
+    /**
+     * 圆片（Round Disc）与条形 Bar 分区：{@code Round Disc: … \\n Bar: …}，用于吊坠双面刻录。
+     */
+    private static List<String> trySplitRoundDiscBar(String p) {
+        Matcher mHead = Pattern.compile("(?is)(?:^|\\n)\\s*(?:round\\s*disc|圆片)\\s*[:：]\\s*").matcher(p);
+        if (!mHead.find()) {
+            return List.of();
+        }
+        int contentStart = mHead.end();
+        Matcher mBar = Pattern.compile("(?i)\\n\\s*\\bbar\\b\\s*[:：]").matcher(p);
+        if (!mBar.find(contentStart)) {
+            return List.of();
+        }
+        String discSeg = p.substring(contentStart, mBar.start()).trim();
+        String barSeg = p.substring(mBar.end()).trim();
+        if (discSeg.isEmpty() || barSeg.isEmpty()) {
+            return List.of();
+        }
+        return List.of(discSeg, barSeg);
+    }
+
+    /**
+     * Front 标签在前（{@link #PAT_FRONT_LABEL_START} 已 {@code (?is)}）；Back/Bar/反面为换行标签或同行标签（英文大小写不敏感）。
+     */
+    private static List<String> trySplitFrontBackAnchored(String p) {
+        Matcher mf = PAT_FRONT_LABEL_START.matcher(p);
+        if (!mf.find()) {
+            return List.of();
+        }
+        int valueStart = mf.end();
+        String tail = p.substring(valueStart);
+
+        Matcher mbNl = Pattern.compile("(?i)\\n\\s*(?:back|\\bbar\\b|反面)\\s*[:：]").matcher(tail);
+        int sepStart = -1;
+        int backValStart = -1;
+        if (mbNl.find()) {
+            sepStart = valueStart + mbNl.start();
+            backValStart = valueStart + mbNl.end();
+        } else {
+            Pattern mbInPat = Pattern.compile("(?i)\\s+(?:back|\\bbar\\b|反面|反\\s*面)\\s*[:：]");
+            Matcher mbIn = mbInPat.matcher(tail);
+            boolean foundOk = false;
+            while (mbIn.find()) {
+                String beforeLabel = tail.substring(0, mbIn.start()).trim();
+                if (looksLikePhrasalVerbBeforeBackLabel(beforeLabel)) {
+                    continue;
+                }
+                sepStart = valueStart + mbIn.start();
+                backValStart = valueStart + mbIn.end();
+                foundOk = true;
+                break;
+            }
+            if (!foundOk) {
+                return List.of();
+            }
+        }
+        String frontVal = p.substring(valueStart, sepStart).trim();
+        String backVal = p.substring(backValStart).trim();
+        if (frontVal.isEmpty() || backVal.isEmpty()) {
+            return List.of();
+        }
+        return List.of(frontVal, backVal);
+    }
+
+    /**
+     * 同行分割时，若「标签」前正文最后一个英文词是常见接 {@code back} 的动词，则视为短语（如 hold back:）而非第二面标签。
+     */
+    private static boolean looksLikePhrasalVerbBeforeBackLabel(String beforeLabel) {
+        if (beforeLabel == null || beforeLabel.isBlank()) {
+            return false;
+        }
+        String s = beforeLabel.trim();
+        int lastSpace = s.lastIndexOf(' ');
+        String lastTok = (lastSpace >= 0 ? s.substring(lastSpace + 1) : s).replaceAll("[^a-zA-Z]+$", "");
+        if (lastTok.isEmpty()) {
+            return false;
+        }
+        String w = lastTok.toLowerCase(Locale.ROOT);
+        return switch (w) {
+            case "hold", "give", "pay", "cut", "look", "push", "set", "keep", "bring", "feed", "call", "track", "go", "take" -> true;
+            default -> false;
+        };
     }
 
     /**

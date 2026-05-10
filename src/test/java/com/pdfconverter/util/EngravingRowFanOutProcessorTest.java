@@ -71,6 +71,26 @@ class EngravingRowFanOutProcessorTest {
     }
 
     @Test
+    void pendantRoundDiscAndBar_splitsTwoRows() {
+        ItemDetail item = new ItemDetail();
+        item.setOrderType(OrderType.PENDANT);
+        item.setMainProductFlg(true);
+        item.setItemQuantity(1);
+        item.setListingId("pendant_round_bar");
+        item.setPersonalization("Round Disc: Photo\nBar: Forever your little girl, Font 28");
+        item.setDynamicAttributes("Engraving Sides: Double-Side\n"
+                + "Personalization:\n"
+                + "Round Disc: Photo\nBar: Forever your little girl, Font 28");
+
+        List<ItemDetail> rows = processor.expandOrderLines(List.of(item));
+        assertEquals(2, rows.size());
+        assertTrue(rows.get(0).isEngravingFanOutApplied());
+        assertTrue(rows.get(1).isEngravingFanOutApplied());
+        assertEquals("Photo", rows.get(0).getPersonalizationTextForLlm().trim());
+        assertTrue(rows.get(1).getPersonalizationTextForLlm().contains("Forever your little girl"));
+    }
+
+    @Test
     void comboPers_skipsTieClipMultiFaceEvenWhenDynamicSaysFrontBack() {
         ItemDetail tie = new ItemDetail();
         tie.setOrderType(OrderType.TIE_CLIP);

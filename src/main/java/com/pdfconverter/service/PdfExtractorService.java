@@ -235,6 +235,7 @@ public class PdfExtractorService {
                 scanPos = remainingText.indexOf("Quantity:", scanPos + 1);
             }
 
+            int pdfSourceBlockSeq = 0;
             for (int i = 0; i < itemCount; i++) {
                 int currentQtyPos = (i < qtyPositions.size()) ? qtyPositions.get(i) : -1;
                 if (currentQtyPos == -1) break;
@@ -266,21 +267,19 @@ public class PdfExtractorService {
 
                 if (blockStart < blockEnd) {
                     itemBlocks[i] = remainingText.substring(blockStart, blockEnd).trim();
-                    items.addAll(parseItemDetail(itemBlocks[i], order.getShopName()));
+                    items.addAll(parseItemDetail(itemBlocks[i], order.getShopName(), pdfSourceBlockSeq++));
                 }
             }
         } else {
             System.out.println("Debug: No match found for item count."); // 调试输出
             throw new IllegalArgumentException("No valid item count found in text.");
         }
-        // 刻录意图拆行：双面领带夹 / 双意图袖扣 / 组合留言收窄（不改变 LLM 输出结构，逐行抽取）
+        // 刻录意图拆行：双面领带夹 / 双意图袖扣 / 组合留言收窄（各行携带 sourceBlockIndex）
         items = engravingRowFanOutProcessor.expandOrderLines(items);
+        // LLM：同一 Quantity 商品块（主+附属+附加）只调用一次路由+抽取，再写回块内所有明细
+        personalizationIntentLlmService.enrichOrderItemBlocksBySourceIndex(items);
         // 同订单内相同盒型的附属包装盒合并为一行（数量累加）
         items = OrderAccessoryMergeUtil.mergeIdenticalBoxAccessoriesWithinOrder(items);
-        // LLM：严格顺序逐条处理，每条仅带入该行 Personalization / 属性；禁止批量合并同一订单下多件商品的留言
-        for (ItemDetail line : items) {
-            personalizationIntentLlmService.enrichMainItemIfApplicable(line);
-        }
         order.setItemDetails(items);
         order.setAdditionalNote(extractUtil.extractAfter(orderText, "Do the green thing"));
 
@@ -440,7 +439,7 @@ public class PdfExtractorService {
      * 解析单个商品详情（重构后）
      * 使用AttributeRuleEngine从配置中提取属性，替换硬编码逻辑
      */
-    private List<ItemDetail> parseItemDetail(String block, String shopName) throws IOException {
+    private List<ItemDetail> parseItemDetail(String block, String shopName, int sourceBlockIndex) throws IOException {
         ExtractUtil.ListingAnchors listingAnchors = extractUtil.findLastListingAnchors(block);
 
         // 1. 提取商品标题
@@ -533,7 +532,7 @@ public class PdfExtractorService {
         // 7. 将提取的属性应用到mainItemDetail
         applyProductAttribute(mainItemDetail, productAttribute, personalization);
 
-        // 7b. LLM 抽取在订单级统一执行（刻录拆行之后逐行 enrich）
+        // 7b. LLM 在 parseOrder 中于刻录拆行之后按 sourceBlockIndex 分块调用（见 enrichOrderItemBlocksBySourceIndex）
 
         // 8. 组装附属产品列表（TieClip、Box 等）
         List<ItemDetail> combineItemDetailList = assembleItemDetailListForVoro(
@@ -547,8 +546,19 @@ public class PdfExtractorService {
         // 10. 根据规则生成附加商品（Add-ons）
         List<ItemDetail> addOnItemList = accessoryItemFactory.supplementAddOns(tempItemList);
 
-        // 11. 组装最终列表
-        return assembleItemDetailList(mainItemDetail, combineItemDetailList, null, addOnItemList);
+        // 11. 组装最终列表并打上「同一 PDF 商品块」序号，供订单级按块调用 LLM
+        List<ItemDetail> assembledLines = assembleItemDetailList(mainItemDetail, combineItemDetailList, null, addOnItemList);
+        assignPdfSourceBlockIndex(assembledLines, sourceBlockIndex);
+        return assembledLines;
+    }
+
+    private static void assignPdfSourceBlockIndex(List<ItemDetail> items, int sourceBlockIndex) {
+        if (items == null) {
+            return;
+        }
+        for (ItemDetail d : items) {
+            d.setSourceBlockIndex(sourceBlockIndex);
+        }
     }
 
     /**

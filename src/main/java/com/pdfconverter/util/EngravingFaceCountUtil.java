@@ -1,9 +1,13 @@
 package com.pdfconverter.util;
 
+import java.util.regex.Pattern;
+
 /**
  * 根据订购完全信息 / 动态属性文本推断刻录面数（与 Excel 导出逻辑保持一致）。
  */
 public final class EngravingFaceCountUtil {
+
+    private static final Pattern PAT_BAR_LABEL = Pattern.compile("(?i)\\bbar\\s*:");
 
     private EngravingFaceCountUtil() {
     }
@@ -19,6 +23,10 @@ public final class EngravingFaceCountUtil {
         }
 
         String lower = info.toLowerCase();
+        // 留言即含 Round Disc + Bar: 分区时视为双面，无需依赖「Engraving Sides」属性行
+        if (lower.contains("round disc") && PAT_BAR_LABEL.matcher(info).find()) {
+            return 2;
+        }
 
         java.util.regex.Matcher petMatcher = java.util.regex.Pattern.compile(
                         "customization option[^\\n]*?(\\d+)\\s*side", java.util.regex.Pattern.CASE_INSENSITIVE)

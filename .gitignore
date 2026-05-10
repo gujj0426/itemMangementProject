@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### listing-config-demo (Node) ###
+listing-config-demo/node_modules/

@@ -291,6 +291,11 @@ public class PdfOrderData {
         private String personalizationTextForLlm;
         /** 槽位说明（正反面 / 品类），写入 LLM user prompt */
         private String llmSlotInstruction;
+        /**
+         * 同一 PDF 订单内「Quantity 商品块」序号（主商品+附属+附加商品同属一块）。
+         * 用于 LLM 按块只调用一次接口后在块内分发 llm* 字段。
+         */
+        private Integer sourceBlockIndex;
         // 无参构造器
         public ItemDetail() {
             this.mainProductFlg = false;
@@ -463,6 +468,14 @@ public class PdfOrderData {
 
         public void setLlmSlotInstruction(String llmSlotInstruction) {
             this.llmSlotInstruction = llmSlotInstruction;
+        }
+
+        public Integer getSourceBlockIndex() {
+            return sourceBlockIndex;
+        }
+
+        public void setSourceBlockIndex(Integer sourceBlockIndex) {
+            this.sourceBlockIndex = sourceBlockIndex;
         }
 
         public String getListingId() {

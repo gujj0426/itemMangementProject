@@ -12,12 +12,13 @@ import java.util.List;
 
 /**
  * 将同一 PDF 商品行拆成多条 {@link ItemDetail}（每条对应一个刻录意图槽位），
- * 以便在不改变 LLM 扁平 JSON 的前提下逐行调用 {@link com.pdfconverter.service.llm.PersonalizationIntentLlmService}。
+ * 拆行后的各行携带相同 {@link ItemDetail#getSourceBlockIndex()}，供订单级按块调用一次 LLM 后写回 llm* 字段。
  *
  * <p>策略简述：</p>
  * <ul>
  *   <li>领带夹：动态属性判定多面刻录且数量为 1 时，按面拆行（优先 Front/Back 文案切段）。</li>
  *   <li>袖扣：启发式判定「两只内容不同」且数量为 1 时拆两行。</li>
+ *   <li>圆片吊坠：留言为 Round Disc + Bar 两面结构且订购信息判为双刻录面时，拆两行（与 Excel 双行一致）。</li>
  *   <li>组合（同一段 Personalization 既含袖扣又含领带夹）：对相应 OrderType 的行收窄片段并加槽位说明（可不增加行数）。</li>
  * </ul>
  */
@@ -50,6 +51,24 @@ public class EngravingRowFanOutProcessor {
         }
 
         OrderType ot = item.getOrderType();
+
+        if (ot == OrderType.PENDANT) {
+            int pq = Math.max(item.getItemQuantity(), 1);
+            String pdyn = item.getDynamicAttributes() != null ? item.getDynamicAttributes() : "";
+            int pfaces = EngravingFaceCountUtil.countFaces(pdyn);
+            if (pq > 1 && pfaces > 1) {
+                log.debug("跳过吊坠刻录拆行: qty={} faces={}", pq, pfaces);
+                return List.of(item);
+            }
+            if (pq == 1 && pfaces >= 2) {
+                List<String> seg = PersonalizationSlotSplitter.trySplitFrontBack(pers.trim());
+                if (seg.size() == 2) {
+                    return fanOutPendantDiscBar(item, seg);
+                }
+            }
+            return List.of(item);
+        }
+
         if (ot != OrderType.TIE_CLIP && ot != OrderType.CUFFLINK && ot != OrderType.CUFFLINK_AND_TIE_CLIP) {
             return List.of(item);
         }
@@ -150,6 +169,17 @@ public class EngravingRowFanOutProcessor {
         return List.of(row1, row2);
     }
 
+    private List<ItemDetail> fanOutPendantDiscBar(ItemDetail base, List<String> segments) {
+        ItemDetail row1 = copyForSlot(base, segments.get(0),
+                "本行对应圆片（Round Disc）刻录或附图说明；若为 Photo/附图可无镌刻正文。",
+                base.getItemQuantity());
+        ItemDetail row2 = copyForSlot(base, segments.get(1),
+                "本行对应条形（Bar）刻录正文；该行出现的 Font n 仅作用于 Bar。",
+                0);
+        log.info("吊坠圆片+Bar 拆行: listingId={}", base.getListingId());
+        return List.of(row1, row2);
+    }
+
     private ItemDetail withComboNarrowing(ItemDetail base, OrderType ot) {
         String pers = base.getPersonalization();
         String excerpt;
@@ -211,6 +241,7 @@ public class EngravingRowFanOutProcessor {
         d.setEngravingFanOutApplied(src.isEngravingFanOutApplied());
         d.setPersonalizationTextForLlm(src.getPersonalizationTextForLlm());
         d.setLlmSlotInstruction(src.getLlmSlotInstruction());
+        d.setSourceBlockIndex(src.getSourceBlockIndex());
         return d;
     }
 }

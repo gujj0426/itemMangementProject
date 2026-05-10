@@ -45,8 +45,8 @@ public class PersonalizationLlmProperties {
     private MergePolicy mergePolicy = MergePolicy.FILL_EMPTY_ONLY;
 
     /**
-     * 开启后先做「路由」调用：从杂乱 Personalization 中筛出仅对应本导出行的买家表述，再调用原有四维抽取。
-     * 每条 eligible 行会增加一次 API 调用（成本约 doubling）。
+     * 开启后先做「路由」调用：从杂乱 Personalization 中筛出买家表述，再调用四维抽取。
+     * 路由+抽取按「同一 PDF Quantity 商品块」各最多一次（块内多行导出共用结果），不再按行倍增。
      */
     private boolean routingEnabled = false;
 
