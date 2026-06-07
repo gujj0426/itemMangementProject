@@ -49,6 +49,7 @@ public class EngravingRowFanOutProcessor {
         if (pers == null || pers.isBlank()) {
             return List.of(item);
         }
+        pers = PersonalizationSlotSplitter.normalizePersonalizationLineBreaks(pers);
 
         OrderType ot = item.getOrderType();
 

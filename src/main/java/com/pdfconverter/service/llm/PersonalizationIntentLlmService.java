@@ -6,6 +6,7 @@ import com.pdfconverter.config.PersonalizationLlmProperties;
 import com.pdfconverter.constant.OrderType;
 import com.pdfconverter.model.PdfOrderData.ItemDetail;
 import com.pdfconverter.service.mapper.FontNameMappingService;
+import com.pdfconverter.util.ComboPersonalizationRuleUtil;
 import com.pdfconverter.util.PersonalizationParserUtil;
 import com.pdfconverter.util.PersonalizationSlotSplitter;
 import com.pdfconverter.util.StyleEngravingDefaultFontUtil;
@@ -102,6 +103,29 @@ public class PersonalizationIntentLlmService {
         if (!properties.isEnabled()) {
             return;
         }
+        if (needsPerLineComboExtraction(blockLines)) {
+            ItemDetail head = blockLines.get(0);
+            log.info("组合订单袖扣+领带夹分行调用 LLM {} blockLines={}",
+                    LlmCallContext.from(head, "combo-per-line").summary(), blockLines.size());
+            for (ItemDetail line : blockLines) {
+                if (!isComboEngravableExportLine(line)) {
+                    continue;
+                }
+                log.info("组合订单分行 LLM {} orderType={} excerpt=[{}]",
+                        LlmCallContext.from(line, "combo-per-line").summary(),
+                        line.getOrderType(),
+                        truncateForLog(line.getPersonalizationTextForLlm(), 80));
+                if (ComboPersonalizationRuleUtil.tryApplyRuleBasedIntent(line)) {
+                    log.info("组合订单规则解析已写入 {} orderType={} designStyle=[{}] font=[{}] engraving=[{}]",
+                            LlmCallContext.from(line, "combo-rule").summary(),
+                            line.getOrderType(),
+                            line.getLlmDesignStyle(), line.getLlmFont(), line.getLlmEngravingContent());
+                    continue;
+                }
+                enrichProductBlock(Collections.singletonList(line));
+            }
+            return;
+        }
         ItemDetail rep = pickRepresentativeForBlock(blockLines);
         LlmCallContext blockCtx = LlmCallContext.from(rep, "intent-extract");
         String fullPers = rep.getPersonalization() != null ? rep.getPersonalization().trim() : "";
@@ -136,11 +160,14 @@ public class PersonalizationIntentLlmService {
         // 已检出 Front/Back(Bar) 结构时不要用路由收窄正文，否则易丢掉背面（Back/Bar）段落
         String primaryForModel = fullPers;
         String routed = null;
-        if (fbParts.size() < 2) {
+        String ruleNarrowed = rep.getPersonalizationTextForLlm();
+        if (ruleNarrowed != null && !ruleNarrowed.isBlank() && rep.isEngravingFanOutApplied()) {
+            primaryForModel = ruleNarrowed.trim();
+        } else if (fbParts.size() < 2) {
             routed = personalizationRoutingLlmService.narrowBuyerMessageForLine(rep);
-        }
-        if (routed != null && !routed.isBlank()) {
-            primaryForModel = routed;
+            if (routed != null && !routed.isBlank()) {
+                primaryForModel = routed;
+            }
         }
         String userPrompt = buildUserPrompt(rep, primaryForModel, blockLines, fbParts.size() >= 2);
         if (log.isDebugEnabled() && routed != null && !routed.isBlank()) {
@@ -257,6 +284,47 @@ public class PersonalizationIntentLlmService {
         } catch (Exception e) {
             log.warn("解析模型 JSON 失败 {} 原始片段: {}", blockCtx.summary(), truncate(rawJson, 200), e);
         }
+    }
+
+    /**
+     * 同块内同时导出袖扣与领带夹且留言混写时，须按各行 {@link ItemDetail#getOrderType()} 分别抽取，避免整块共用一个 llm*。
+     */
+    private static boolean needsPerLineComboExtraction(List<ItemDetail> blockLines) {
+        String pers = blockLines.stream()
+                .map(ItemDetail::getPersonalization)
+                .filter(p -> p != null && !p.isBlank())
+                .findFirst()
+                .orElse("");
+        pers = PersonalizationSlotSplitter.normalizePersonalizationLineBreaks(pers);
+        if (!PersonalizationSlotSplitter.mentionsCufflinkAndTieClip(pers)) {
+            return false;
+        }
+        boolean hasCuff = false;
+        boolean hasTie = false;
+        for (ItemDetail d : blockLines) {
+            if (!isComboEngravableExportLine(d)) {
+                continue;
+            }
+            if (d.getOrderType() == OrderType.CUFFLINK) {
+                hasCuff = true;
+            } else if (d.getOrderType() == OrderType.TIE_CLIP) {
+                hasTie = true;
+            }
+        }
+        return hasCuff && hasTie;
+    }
+
+    private static boolean isComboEngravableExportLine(ItemDetail d) {
+        if (d == null) {
+            return false;
+        }
+        OrderType ot = d.getOrderType();
+        if (ot != OrderType.CUFFLINK && ot != OrderType.TIE_CLIP) {
+            return false;
+        }
+        String p = d.getPersonalization();
+        String ex = d.getPersonalizationTextForLlm();
+        return (p != null && !p.isBlank()) || (ex != null && !ex.isBlank());
     }
 
     /**
@@ -398,6 +466,13 @@ public class PersonalizationIntentLlmService {
             return "";
         }
         return s.length() <= max ? s : s.substring(0, max) + "...";
+    }
+
+    private static String truncateForLog(String s, int max) {
+        if (s == null || s.isBlank()) {
+            return "";
+        }
+        return truncate(s.replace('\n', ' '), max);
     }
 
     private static String textField(JsonNode node, String... names) {

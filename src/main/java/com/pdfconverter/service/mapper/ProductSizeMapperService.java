@@ -153,7 +153,7 @@ public class ProductSizeMapperService {
 
         // 按长度降序排序，优先匹配更长的字符串
         for (String key : sortedKeys) {
-            if (trimmedValue.contains(key.trim().toLowerCase())) {
+            if (matchesSizeKey(trimmedValue, key.trim().toLowerCase())) {
                 String enumName = sizeMap.get(key);
                 try {
                     return ProductSize.valueOf(enumName);
@@ -171,6 +171,28 @@ public class ProductSizeMapperService {
         }
 
         return ProductSize.UNKNOWN;
+    }
+
+    /**
+     * 单字母尺寸键（如 S/L）仅作为独立 token 匹配，避免 "Gold" 中的 l 被误判为 L 码。
+     */
+    private static boolean matchesSizeKey(String value, String key) {
+        if (key.length() != 1) {
+            return value.contains(key);
+        }
+        if (value.equals(key)) {
+            return true;
+        }
+        int underscore = value.lastIndexOf('_');
+        if (underscore >= 0 && value.substring(underscore + 1).equals(key)) {
+            return true;
+        }
+        int slash = value.lastIndexOf('/');
+        if (slash >= 0 && value.substring(slash + 1).equals(key)) {
+            return true;
+        }
+        int dash = value.lastIndexOf('-');
+        return dash >= 0 && value.substring(dash + 1).equals(key);
     }
 
     /**

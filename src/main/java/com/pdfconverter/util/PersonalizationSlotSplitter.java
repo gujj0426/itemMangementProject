@@ -28,7 +28,26 @@ public final class PersonalizationSlotSplitter {
     private static final Pattern PAT_TIE_CLIP = Pattern.compile(
             "(?i)tie\\s*clip|tieclip|领\\s*带\\s*夹|领带夹");
 
+    /** PDF 断行导致 {@code cufflinks} / {@code tie clip} 被拆成两行时的宽松匹配 */
+    private static final Pattern PAT_CUFFLINK_LOOSE = Pattern.compile(
+            "(?is)cufflinks?|袖扣|for\\s+cuff\\s*\\n?\\s*links|picture\\s+for\\s+cuff\\s*\\n?\\s*links");
+
     private PersonalizationSlotSplitter() {
+    }
+
+    /**
+     * 修复 Etsy PDF 提取时常见的英文单词断行（如 {@code cuff} + 换行 + {@code links}）。
+     */
+    public static String normalizePersonalizationLineBreaks(String text) {
+        if (text == null || text.isBlank()) {
+            return text;
+        }
+        String s = text;
+        s = s.replaceAll("(?i)cuff\\s*\\n\\s*links", "cufflinks");
+        s = s.replaceAll("(?i)cuff\\s*\\n\\s*link\\b", "cufflink");
+        s = s.replaceAll("(?i)tie\\s*\\n\\s*clips", "tie clips");
+        s = s.replaceAll("(?i)tie\\s*\\n\\s*clip", "tie clip");
+        return s;
     }
 
     /**
@@ -38,9 +57,11 @@ public final class PersonalizationSlotSplitter {
         if (personalization == null || personalization.isBlank()) {
             return false;
         }
-        String p = personalization.toLowerCase(Locale.ROOT);
-        boolean cuff = PAT_BOTH_PRODUCTS.matcher(p).find();
-        boolean tie = PAT_TIE_CLIP.matcher(personalization).find();
+        String normalized = normalizePersonalizationLineBreaks(personalization);
+        String p = normalized.toLowerCase(Locale.ROOT);
+        boolean cuff = PAT_BOTH_PRODUCTS.matcher(p).find()
+                || PAT_CUFFLINK_LOOSE.matcher(normalized).find();
+        boolean tie = PAT_TIE_CLIP.matcher(normalized).find();
         return cuff && tie;
     }
 
@@ -222,6 +243,11 @@ public final class PersonalizationSlotSplitter {
         return pair;
     }
 
+    private static final Pattern PAT_FOR_TIE_CLIP = Pattern.compile("(?i)for\\s+tie\\s*clip");
+    private static final Pattern PAT_FOR_CUFFLINK = Pattern.compile("(?i)for\\s+cufflinks?|for\\s+cuff\\s*\\n?\\s*links");
+    private static final Pattern PAT_FONT_STYLE_PREFIX = Pattern.compile(
+            "(?i)(?:#\\s*\\d+\\s*font|font\\s*#?\\s*\\d+|style\\s*#?\\s*\\d+|s\\s*\\d+)");
+
     /**
      * 从组合留言中提取更可能描述袖扣的片段。
      */
@@ -229,8 +255,13 @@ public final class PersonalizationSlotSplitter {
         if (personalization == null || personalization.isBlank()) {
             return "";
         }
+        personalization = normalizePersonalizationLineBreaks(personalization);
         if (!mentionsCufflinkAndTieClip(personalization)) {
             return personalization.trim();
+        }
+        String inline = extractComboExcerptByForPhrase(personalization, false);
+        if (inline != null && !inline.isBlank()) {
+            return inline;
         }
         return extractLinesPreferringKeywords(personalization,
                 "(?i)cufflink|cufflinks|袖扣");
@@ -243,11 +274,76 @@ public final class PersonalizationSlotSplitter {
         if (personalization == null || personalization.isBlank()) {
             return "";
         }
+        personalization = normalizePersonalizationLineBreaks(personalization);
         if (!mentionsCufflinkAndTieClip(personalization)) {
             return personalization.trim();
         }
+        String inline = extractComboExcerptByForPhrase(personalization, true);
+        if (inline != null && !inline.isBlank()) {
+            return inline;
+        }
         return extractLinesPreferringKeywords(personalization,
                 "(?i)tie\\s*clip|tieclip|领\\s*带\\s*夹|领带夹");
+    }
+
+    /**
+     * 单行组合留言：{@code #4 font, LM for tie clip, picture for cufflinks will follow} 按逗号子句 + for 品类切段。
+     */
+    static String extractComboExcerptByForPhrase(String personalization, boolean tieClip) {
+        if (personalization == null || personalization.isBlank()) {
+            return null;
+        }
+        Pattern anchor = tieClip ? PAT_FOR_TIE_CLIP : PAT_FOR_CUFFLINK;
+        Pattern labelAnchor = tieClip ? PAT_TIE_CLIP : PAT_BOTH_PRODUCTS;
+        List<String> segments = splitComboClauses(personalization.trim());
+        if (segments.isEmpty()) {
+            return null;
+        }
+        List<String> hits = new ArrayList<>();
+        for (int i = 0; i < segments.size(); i++) {
+            String seg = segments.get(i).trim();
+            if (seg.isEmpty()) {
+                continue;
+            }
+            boolean match = anchor.matcher(seg).find()
+                    || (tieClip && labelAnchor.matcher(seg).find() && !PAT_FOR_CUFFLINK.matcher(seg).find());
+            if (!match) {
+                continue;
+            }
+            if (i > 0 && isLikelyFontStylePrefixForCombo(segments.get(i - 1))) {
+                hits.add(segments.get(i - 1).trim());
+            }
+            hits.add(seg);
+        }
+        if (hits.isEmpty()) {
+            return null;
+        }
+        return String.join(", ", hits).trim();
+    }
+
+    private static List<String> splitComboClauses(String text) {
+        List<String> out = new ArrayList<>();
+        for (String part : text.split("\\s*,\\s*")) {
+            String t = part.trim();
+            if (!t.isEmpty()) {
+                out.add(t);
+            }
+        }
+        return out;
+    }
+
+    private static boolean isLikelyFontStylePrefixForCombo(String segment) {
+        if (segment == null || segment.isBlank()) {
+            return false;
+        }
+        String s = segment.trim();
+        if (PAT_TIE_CLIP.matcher(s).find() || PAT_BOTH_PRODUCTS.matcher(s).find()) {
+            return false;
+        }
+        if (PAT_FOR_TIE_CLIP.matcher(s).find() || PAT_FOR_CUFFLINK.matcher(s).find()) {
+            return false;
+        }
+        return PAT_FONT_STYLE_PREFIX.matcher(s).find();
     }
 
     private static String extractLinesPreferringKeywords(String text, String keywordRegex) {

@@ -156,21 +156,20 @@ public class PdfProcessingScheduler {
             }
         }
 
-        // 第三阶段：标注 PDF（通过 PdfMarkService 统一处理），然后移动到备份目录
+        // 第三阶段：先移到备份目录（pdf_input 内文件可能为只读），再在备份副本上标注
         for (File pdf : successFiles) {
             try {
-                Map<String, Set<Integer>> marksPages = marksByPdf.get(pdf);
-                if (marksPages != null && !marksPages.isEmpty()) {
-                    pdfMarkService.markAll(pdf.getAbsolutePath(), marksPages);
-                    log.info("✓ {} 已完成标注: {}", pdf.getName(), marksPages.keySet());
-                }
-
-                // 移动到备份目录
                 String bakPath = bakFolder + File.separator + pdf.getName();
                 fileService.moveToBackup(pdf.getAbsolutePath(), bakPath);
                 log.info("✓ 成功移动文件到备份: {}", pdf.getName());
+
+                Map<String, Set<Integer>> marksPages = marksByPdf.get(pdf);
+                if (marksPages != null && !marksPages.isEmpty()) {
+                    pdfMarkService.markAll(bakPath, marksPages);
+                    log.info("✓ {} 已完成标注: {}", pdf.getName(), marksPages.keySet());
+                }
             } catch (Exception e) {
-                log.error("✗ PDF标注或移动失败: {} - {}", pdf.getName(), e.getMessage(), e);
+                log.error("✗ PDF移动或标注失败: {} - {}", pdf.getName(), e.getMessage(), e);
             }
         }
 

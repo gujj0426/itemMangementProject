@@ -110,6 +110,51 @@ class EngravingRowFanOutProcessorTest {
     }
 
     @Test
+    void comboInlineForPhrase_narrowsCufflinkAndTieClipRowsSeparately() {
+        String pers = "#4 font, LM for tie clip, picture for cufflinks will follow";
+
+        ItemDetail cuff = new ItemDetail();
+        cuff.setOrderType(OrderType.CUFFLINK);
+        cuff.setMainProductFlg(true);
+        cuff.setItemQuantity(1);
+        cuff.setPersonalization(pers);
+
+        ItemDetail tie = new ItemDetail();
+        tie.setOrderType(OrderType.TIE_CLIP);
+        tie.setMainProductFlg(false);
+        tie.setItemQuantity(1);
+        tie.setPersonalization(pers);
+
+        ItemDetail cuffRow = processor.expandOrderLines(List.of(cuff)).get(0);
+        ItemDetail tieRow = processor.expandOrderLines(List.of(tie)).get(0);
+
+        assertEquals("picture for cufflinks will follow", cuffRow.getPersonalizationTextForLlm().trim());
+        assertEquals("#4 font, LM for tie clip", tieRow.getPersonalizationTextForLlm().trim());
+    }
+
+    @Test
+    void comboInlineWithPdfLineBreak_narrowsRowsSeparately() {
+        String pers = "#4 font, LM for tie clip, picture for cuff\nlinks will follow";
+
+        ItemDetail cuff = new ItemDetail();
+        cuff.setOrderType(OrderType.CUFFLINK);
+        cuff.setMainProductFlg(true);
+        cuff.setItemQuantity(1);
+        cuff.setPersonalization(pers);
+
+        ItemDetail tie = new ItemDetail();
+        tie.setOrderType(OrderType.TIE_CLIP);
+        tie.setMainProductFlg(false);
+        tie.setItemQuantity(1);
+        tie.setPersonalization(pers);
+
+        assertEquals("picture for cufflinks will follow",
+                processor.expandOrderLines(List.of(cuff)).get(0).getPersonalizationTextForLlm().trim());
+        assertEquals("#4 font, LM for tie clip",
+                processor.expandOrderLines(List.of(tie)).get(0).getPersonalizationTextForLlm().trim());
+    }
+
+    @Test
     void comboPers_skipsTieClipMultiFaceEvenWhenDynamicSaysFrontBack() {
         ItemDetail tie = new ItemDetail();
         tie.setOrderType(OrderType.TIE_CLIP);

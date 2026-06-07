@@ -17,6 +17,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -184,7 +186,38 @@ public class PdfMarkService {
                 }
             }
 
-            document.save(pdfPath);
+            saveDocumentSafely(document, pdfPath);
+        }
+    }
+
+    /**
+     * 先写入同目录临时文件再替换目标，避免只读 PDF（如 {@code -r--r--r--}）原地 save 报 Permission denied。
+     */
+    private void saveDocumentSafely(PDDocument document, String pdfPath) throws IOException {
+        File target = new File(pdfPath);
+        File parent = target.getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            throw new IOException("无法创建 PDF 目录: " + parent.getAbsolutePath());
+        }
+        File temp = File.createTempFile("pdf-mark-", ".pdf", parent != null ? parent : target.getAbsoluteFile().getParentFile());
+        try {
+            document.save(temp);
+            if (target.exists()) {
+                if (!target.canWrite() && !target.setWritable(true)) {
+                    Files.delete(target.toPath());
+                }
+            }
+            Files.move(temp.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            log.info("PDF 标注已保存: {}", pdfPath);
+        } catch (IOException e) {
+            if (temp.exists() && !temp.delete()) {
+                log.warn("清理临时 PDF 失败: {}", temp.getAbsolutePath());
+            }
+            throw e;
+        } finally {
+            if (temp.exists()) {
+                temp.delete();
+            }
         }
     }
 

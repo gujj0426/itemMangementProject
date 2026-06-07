@@ -253,10 +253,20 @@ public class AttributeRuleEngine {
                 log.debug("findLabelConfig 命中：PDF标签=[{}] -> 配置标签=[{}]，类型={}", labelName, label.labelName, label.attributeType);
                 return label;
             }
+            // Etsy 同一 listing 可能交替出现 "Color and Size" / "Size and Color"
+            if (isColorAndSizeLabel(normalizedInput) && isColorAndSizeLabel(normalizedConfig)) {
+                log.debug("findLabelConfig 命中（Color/Size 词序容错）：PDF标签=[{}] -> 配置标签=[{}]，类型={}",
+                        labelName, label.labelName, label.attributeType);
+                return label;
+            }
         }
         log.debug("findLabelConfig 未命中：PDF标签=[{}]，当前配置标签列表={}", labelName,
                 labels.stream().map(l -> l.labelName).toArray());
         return null;
+    }
+
+    private static boolean isColorAndSizeLabel(String normalizedLabel) {
+        return normalizedLabel.contains("color") && normalizedLabel.contains("size");
     }
     
     /**
@@ -442,8 +452,11 @@ public class AttributeRuleEngine {
                                 }
                                 break;
                             case "SIZE":
-                                ProductSize size = sizeMapper.mapSize(groupValue);
-                                if (size != null) {
+                                ProductSize size = sizeMapper.mapSizeExact(groupValue);
+                                if (size == null || size == ProductSize.UNKNOWN) {
+                                    size = sizeMapper.mapSize(groupValue);
+                                }
+                                if (size != null && size != ProductSize.UNKNOWN) {
                                     attribute.setSize(size);
                                 }
                                 break;

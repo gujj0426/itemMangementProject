@@ -188,7 +188,8 @@ public class ExtractUtil {
         if (anchors == null) {
             return "";
         }
-        return filterPersonalizationTail(block.substring(anchors.personalizationContentStart));
+        String raw = filterPersonalizationTail(block.substring(anchors.personalizationContentStart));
+        return PersonalizationSlotSplitter.normalizePersonalizationLineBreaks(raw);
     }
 
     String filterPersonalizationTail(String personalizationTail) {
