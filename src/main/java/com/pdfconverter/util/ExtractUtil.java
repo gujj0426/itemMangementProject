@@ -1,9 +1,13 @@
 package com.pdfconverter.util;
 
+import com.pdfconverter.config.BuyerMessageAnchorConfig;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,22 +34,48 @@ public class ExtractUtil {
         }
     }
 
-    private static final Pattern PERSONALIZATION_LABEL_LINE =
-            Pattern.compile("^Personalization\\s*:", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    @Resource
+    private BuyerMessageAnchorConfig buyerMessageAnchorConfig;
+
+    private List<Pattern> buyerMessageAnchorPatterns = BuyerMessageAnchorConfig.compilePatterns(
+            BuyerMessageAnchorConfig.defaultLabels(),
+            BuyerMessageAnchorConfig.defaultExcludePrefixes());
+
+    private static final Pattern ENTER_CUSTOM_DETAILS_PLACEHOLDER =
+            Pattern.compile("(?i)^Enter custom details below:\\s*(.*)$");
+
+    @PostConstruct
+    void bindBuyerMessageAnchorsFromConfig() {
+        if (buyerMessageAnchorConfig != null) {
+            buyerMessageAnchorPatterns = buyerMessageAnchorConfig.getAnchorPatterns();
+        }
+    }
+
+    /** 单元测试：无 Spring 容器时使用内置默认锚点标签。 */
+    public void useDefaultAnchorsForTest() {
+        buyerMessageAnchorPatterns = BuyerMessageAnchorConfig.compilePatterns(
+                BuyerMessageAnchorConfig.defaultLabels(),
+                BuyerMessageAnchorConfig.defaultExcludePrefixes());
+        buyerMessageAnchorConfig = null;
+    }
 
     /**
-     * @return anchors for the last listing segment in {@code block}, or {@code null} if no {@code Personalization:} line matches
+     * @return anchors for the last listing segment in {@code block}, or {@code null} if无买家留言锚点
      */
     public ListingAnchors findLastListingAnchors(String block) {
         if (block == null || block.isEmpty()) {
             return null;
         }
-        Matcher m = PERSONALIZATION_LABEL_LINE.matcher(block);
         int lastLabelStart = -1;
         int lastLabelEnd = -1;
-        while (m.find()) {
-            lastLabelStart = m.start();
-            lastLabelEnd = m.end();
+        for (Pattern pattern : buyerMessageAnchorPatterns) {
+            Matcher m = pattern.matcher(block);
+            while (m.find()) {
+                if (m.start() >= lastLabelStart) {
+                    lastLabelStart = m.start();
+                    lastLabelEnd = m.end();
+                }
+            }
         }
         if (lastLabelStart < 0) {
             return null;
@@ -155,17 +185,10 @@ public class ExtractUtil {
             return "";
         }
         ListingAnchors anchors = findLastListingAnchors(block);
-        int contentStart;
-        if (anchors != null) {
-            contentStart = anchors.personalizationContentStart;
-        } else {
-            int idx = block.indexOf("Personalization:");
-            if (idx == -1) {
-                return "";
-            }
-            contentStart = idx + "Personalization:".length();
+        if (anchors == null) {
+            return "";
         }
-        return filterPersonalizationTail(block.substring(contentStart));
+        return filterPersonalizationTail(block.substring(anchors.personalizationContentStart));
     }
 
     String filterPersonalizationTail(String personalizationTail) {
@@ -177,6 +200,13 @@ public class ExtractUtil {
         for (String line : personalization.split("\n")) {
             String trimmed = line.trim();
             if (trimmed.isEmpty()) continue;
+            Matcher placeholder = ENTER_CUSTOM_DETAILS_PLACEHOLDER.matcher(trimmed);
+            if (placeholder.matches()) {
+                trimmed = placeholder.group(1).trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+            }
             // 过滤 Engraving Fee / Additional Add-on Engraving
             if (trimmed.matches("(?i).*[Ee]ngraving\\s+[Ff]ee.*")) continue;
             if (trimmed.matches("(?i).*[Aa]dditional\\s+[Aa]dd-[Oo]n.*[Ee]ngraving.*")) continue;
@@ -184,8 +214,10 @@ public class ExtractUtil {
             if (trimmed.matches("(?i).*[Aa]dditional\\s+[Ee]ngraving\\s+[Oo]ptions.*")) continue;
             // 过滤 Quantity 行（附加雕刻数量）
             if (trimmed.matches("(?i)^Quantity:\\s*\\d+$")) continue;
-            // 同一文本块内误入的下一条 Personalization 标签行，停止
-            if (trimmed.matches("(?i)^Personalization\\s*:.*")) break;
+            // 同一文本块内误入的下一条买家留言锚点，停止
+            if (lineStartsWithConfiguredAnchor(trimmed)) {
+                break;
+            }
             // 遇到 PDF 左栏边界标记，停止（后续内容属于订单基本信息或下一商品标题）
             if (trimmed.equals("Shop") || trimmed.startsWith("Order date") ||
                 trimmed.startsWith("Payment method") || trimmed.startsWith("Shipping method") ||
@@ -199,6 +231,18 @@ public class ExtractUtil {
             sb.append(trimmed);
         }
         return sb.toString();
+    }
+
+    private boolean lineStartsWithConfiguredAnchor(String trimmedLine) {
+        if (buyerMessageAnchorConfig != null) {
+            return buyerMessageAnchorConfig.lineStartsWithAnchorLabel(trimmedLine);
+        }
+        for (String label : BuyerMessageAnchorConfig.defaultLabels()) {
+            if (BuyerMessageAnchorConfig.lineStartsWithLabel(trimmedLine, label)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String extractBetween(String text, String startRegex, String endRegex) {

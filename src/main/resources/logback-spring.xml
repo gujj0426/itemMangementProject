@@ -23,6 +23,12 @@
         <appender-ref ref="FILE"/>
     </logger>
 
+    <!-- DeepSeek：DEBUG 打印完整 system/user 入参与响应；生产可改为 INFO 仅保留订单号摘要 -->
+    <logger name="com.pdfconverter.service.llm" level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
     <logger name="org.springframework" level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>

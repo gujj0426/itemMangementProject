@@ -40,17 +40,20 @@ public class DeepSeekPersonalizationClient {
     /**
      * @return message.content 原文；失败或空返回 null
      */
-    public String chatCompletionJson(String systemPrompt, String userPrompt) {
-        return chatCompletionJson(systemPrompt, userPrompt, properties.getMaxTokens(), null);
+    public String chatCompletionJson(LlmCallContext ctx, String systemPrompt, String userPrompt) {
+        return chatCompletionJson(ctx, systemPrompt, userPrompt, properties.getMaxTokens(), null);
     }
 
     /**
      * @param maxTokens        本次请求的 max_tokens
      * @param modelOverride    非空则覆盖默认 {@link PersonalizationLlmProperties#getModel()}（用于路由等小调用）
      */
-    public String chatCompletionJson(String systemPrompt, String userPrompt, int maxTokens, String modelOverride) {
+    public String chatCompletionJson(LlmCallContext ctx, String systemPrompt, String userPrompt,
+                                     int maxTokens, String modelOverride) {
+        LlmCallContext callCtx = ctx != null ? ctx : LlmCallContext.from(null, "unknown");
         if (properties.getApiKey() == null || properties.getApiKey().isBlank()) {
-            log.warn("未配置 app.llm.personalization.api-key / DEEPSEEK_API_KEY，跳过 DeepSeek 调用");
+            log.warn("未配置 app.llm.personalization.api-key / DEEPSEEK_API_KEY，跳过 DeepSeek 调用 ({})",
+                    callCtx.summary());
             return null;
         }
         String url = trimTrailingSlash(properties.getBaseUrl()) + properties.getChatPath();
@@ -64,38 +67,44 @@ public class DeepSeekPersonalizationClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(properties.getApiKey().trim());
 
-        log.info("DeepSeek API 调用开始 model={} max_tokens={} POST {}", model, maxTokens, url);
+        LlmCallLogUtil.logRequestDebug(log, callCtx, model, maxTokens, url, systemPrompt, userPrompt);
+        log.info("DeepSeek 调用开始 {} model={} max_tokens={}", callCtx.summary(), model, maxTokens);
         try {
             ResponseEntity<String> response =
                     restTemplate.postForEntity(url, new HttpEntity<>(body, headers), String.class);
             if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-                log.warn("DeepSeek HTTP 非预期: {}", response.getStatusCode());
-                return postWithoutThinking(url, headers, systemPrompt, userPrompt, maxTokens, model);
+                log.warn("DeepSeek HTTP 非预期 {} status={}", callCtx.summary(), response.getStatusCode());
+                return postWithoutThinking(url, headers, callCtx, systemPrompt, userPrompt, maxTokens, model);
             }
             String content = extractContent(response.getBody());
             if (content == null) {
-                log.info("DeepSeek API 响应无可用 content，将尝试不带 thinking 重试");
-                return postWithoutThinking(url, headers, systemPrompt, userPrompt, maxTokens, model);
+                log.info("DeepSeek 响应无可用 content，将重试 ({})", callCtx.summary());
+                return postWithoutThinking(url, headers, callCtx, systemPrompt, userPrompt, maxTokens, model);
             }
-            log.info("DeepSeek API 调用成功，返回 JSON 长度 {} 字符", content.length());
+            LlmCallLogUtil.logResponseDebug(log, callCtx, content, false);
+            log.info("DeepSeek 调用成功 {} 返回长度={}", callCtx.summary(), content.length());
             return content;
         } catch (RestClientException e) {
-            log.warn("DeepSeek 调用失败: {}", e.getMessage());
-            return postWithoutThinking(url, headers, systemPrompt, userPrompt, maxTokens, model);
+            log.warn("DeepSeek 调用失败 {}: {}", callCtx.summary(), e.getMessage());
+            return postWithoutThinking(url, headers, callCtx, systemPrompt, userPrompt, maxTokens, model);
         }
     }
 
-    private String postWithoutThinking(String url, HttpHeaders headers, String systemPrompt, String userPrompt,
+    private String postWithoutThinking(String url, HttpHeaders headers, LlmCallContext callCtx,
+                                       String systemPrompt, String userPrompt,
                                        int maxTokens, String model) {
-        log.info("DeepSeek API 重试（未带 thinking）POST {}", url);
+        log.info("DeepSeek 重试（未带 thinking）{}", callCtx.summary());
+        LlmCallLogUtil.logRequestDebug(log, callCtx, model, maxTokens, url + " (retry-no-thinking)",
+                systemPrompt, userPrompt);
         try {
             Map<String, Object> body = buildBody(systemPrompt, userPrompt, false, maxTokens, model);
             ResponseEntity<String> response =
                     restTemplate.postForEntity(url, new HttpEntity<>(body, headers), String.class);
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 String content = extractContent(response.getBody());
+                LlmCallLogUtil.logResponseDebug(log, callCtx, content, true);
                 if (content != null) {
-                    log.info("DeepSeek API 重试成功，返回 JSON 长度 {} 字符", content.length());
+                    log.info("DeepSeek 重试成功 {} 返回长度={}", callCtx.summary(), content.length());
                 }
                 return content;
             }

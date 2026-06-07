@@ -242,6 +242,7 @@ public class EngravingRowFanOutProcessor {
         d.setPersonalizationTextForLlm(src.getPersonalizationTextForLlm());
         d.setLlmSlotInstruction(src.getLlmSlotInstruction());
         d.setSourceBlockIndex(src.getSourceBlockIndex());
+        d.setOrderNumber(src.getOrderNumber());
         return d;
     }
 }

@@ -296,6 +296,8 @@ public class PdfOrderData {
          * 用于 LLM 按块只调用一次接口后在块内分发 llm* 字段。
          */
         private Integer sourceBlockIndex;
+        /** 所属 Etsy 订单号（Order #），便于日志与 DeepSeek 调用定位 */
+        private String orderNumber;
         // 无参构造器
         public ItemDetail() {
             this.mainProductFlg = false;
@@ -476,6 +478,14 @@ public class PdfOrderData {
 
         public void setSourceBlockIndex(Integer sourceBlockIndex) {
             this.sourceBlockIndex = sourceBlockIndex;
+        }
+
+        public String getOrderNumber() {
+            return orderNumber;
+        }
+
+        public void setOrderNumber(String orderNumber) {
+            this.orderNumber = orderNumber;
         }
 
         public String getListingId() {

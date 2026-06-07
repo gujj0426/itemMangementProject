@@ -1,0 +1,17 @@
+{
+  "comment": "PDF 订单块中标识「买家刻录留言」的行首标签（匹配行首 Label: ）。Etsy 新增字段时在此列表追加标签名，保存后重启应用即可，无需改程序。外部文件路径由 application.properties 的 app.llm.personalization.buyer-message-labels-file 指定，jar 同目录下的同名文件优先于 jar 内默认。",
+  "buyerMessageLabels": [
+    "Personalization",
+    "TieClip Engraving",
+    "Tie Clip Engraving",
+    "Cufflink Engraving",
+    "Cufflinks Engraving",
+    "Engraving"
+  ],
+  "excludePrefixes": [
+    "Engraving Sides",
+    "Engraving Fee",
+    "Engraving Options",
+    "Additional Engraving"
+  ]
+}

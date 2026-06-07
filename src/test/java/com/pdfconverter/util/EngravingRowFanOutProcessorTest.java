@@ -35,6 +35,25 @@ class EngravingRowFanOutProcessorTest {
     }
 
     @Test
+    void tieClipDoubleSide_splitsWhenPersonalizationFromTieClipEngravingLabel() {
+        ItemDetail item = new ItemDetail();
+        item.setOrderType(OrderType.TIE_CLIP);
+        item.setMainProductFlg(true);
+        item.setItemQuantity(1);
+        item.setProductName(ProductName.TIE_CLIP_DOUBLE_SIDED_SLIDE_IN);
+        item.setPersonalization("Front: JRS\nback: Brother of the Bride 07.11.26\nfont: (S35)");
+        item.setDynamicAttributes("Color Finish: Gold\nEngraving Sides: Front & Back\n"
+                + "Front: JRS\nback: Brother of the Bride 07.11.26\nfont: (S35)");
+
+        List<ItemDetail> rows = processor.expandOrderLines(List.of(item));
+        assertEquals(2, rows.size());
+        assertTrue(rows.get(0).isEngravingFanOutApplied());
+        assertTrue(rows.get(1).isEngravingFanOutApplied());
+        assertTrue(rows.get(0).getPersonalizationTextForLlm().contains("JRS"));
+        assertTrue(rows.get(1).getPersonalizationTextForLlm().toLowerCase().contains("brother"));
+    }
+
+    @Test
     void cufflinkDualIntent_splitsTwoRows() {
         ItemDetail item = new ItemDetail();
         item.setOrderType(OrderType.CUFFLINK);

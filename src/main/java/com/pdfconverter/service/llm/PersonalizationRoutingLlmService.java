@@ -55,18 +55,24 @@ public class PersonalizationRoutingLlmService {
             return null;
         }
 
+        LlmCallContext ctx = LlmCallContext.from(item, "personalization-routing");
         String user = buildRoutingUserPrompt(item);
+        if (log.isDebugEnabled()) {
+            log.debug("开始 Personalization 路由 {} personalizationLen={}",
+                    ctx.summary(), full != null ? full.length() : 0);
+        }
         String model = properties.getRoutingModel();
         if (model == null || model.isBlank()) {
             model = null;
         }
         String raw = deepSeekClient.chatCompletionJson(
+                ctx,
                 ROUTING_SYSTEM,
                 user,
                 properties.getRoutingMaxTokens(),
                 model);
         if (raw == null) {
-            log.info("Personalization 路由阶段未返回内容，将使用单阶段抽取");
+            log.info("Personalization 路由未返回内容，回落单阶段抽取 ({})", ctx.summary());
             return null;
         }
         try {
@@ -81,10 +87,13 @@ public class PersonalizationRoutingLlmService {
                 log.debug("路由阶段 buyerMessageForThisLineOnly 为空 confidence={}", conf);
                 return null;
             }
-            log.info("Personalization 路由阶段完成 confidence={} 收窄长度={}", conf, msg.length());
+            log.info("Personalization 路由完成 {} confidence={} 收窄长度={}", ctx.summary(), conf, msg.length());
+            if (log.isDebugEnabled()) {
+                log.debug("路由结果 {} buyerMessage=\n{}", ctx.summary(), msg.trim());
+            }
             return msg.trim();
         } catch (Exception e) {
-            log.warn("解析路由 JSON 失败: {}", truncate(raw, 180), e);
+            log.warn("解析路由 JSON 失败 {} 片段: {}", ctx.summary(), truncate(raw, 180), e);
             return null;
         }
     }

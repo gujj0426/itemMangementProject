@@ -84,6 +84,10 @@ public class PersonalizationIntentLlmService {
             enrichProductBlock(Collections.singletonList(d));
         }
         for (List<ItemDetail> block : grouped.values()) {
+            if (log.isDebugEnabled() && !block.isEmpty()) {
+                ItemDetail head = block.get(0);
+                log.debug("LLM 商品块分组 {} lines={}", LlmCallContext.from(head, "block-group").summary(), block.size());
+            }
             enrichProductBlock(block);
         }
     }
@@ -99,14 +103,20 @@ public class PersonalizationIntentLlmService {
             return;
         }
         ItemDetail rep = pickRepresentativeForBlock(blockLines);
+        LlmCallContext blockCtx = LlmCallContext.from(rep, "intent-extract");
         String fullPers = rep.getPersonalization() != null ? rep.getPersonalization().trim() : "";
         List<String> fbParts = PersonalizationSlotSplitter.trySplitFrontBack(fullPers);
+        if (log.isDebugEnabled()) {
+            log.debug("开始商品块 LLM 抽取 {} blockLines={} fbParts={} personalizationLen={}",
+                    blockCtx.summary(), blockLines.size(), fbParts.size(), fullPers.length());
+        }
         boolean hasText = blockLines.stream().anyMatch(d -> {
             String p = d.getPersonalization();
             String ex = d.getPersonalizationTextForLlm();
             return (p != null && !p.trim().isEmpty()) || (ex != null && !ex.trim().isEmpty());
         });
         if (!hasText) {
+            log.debug("跳过 LLM 意图抽取 {} 无 Personalization / personalizationTextForLlm 正文", blockCtx.summary());
             return;
         }
 
@@ -114,7 +124,7 @@ public class PersonalizationIntentLlmService {
         List<String> fonts = canonicalLibraryService.getFonts();
         List<String> icons = canonicalLibraryService.getIcons();
         if (styles.isEmpty() && fonts.isEmpty() && icons.isEmpty()) {
-            log.warn("设计风格、字体与 Icon 允许列表均为空，跳过 LLM");
+            log.warn("设计风格、字体与 Icon 允许列表均为空，跳过 LLM ({})", blockCtx.summary());
             return;
         }
 
@@ -133,10 +143,13 @@ public class PersonalizationIntentLlmService {
             primaryForModel = routed;
         }
         String userPrompt = buildUserPrompt(rep, primaryForModel, blockLines, fbParts.size() >= 2);
+        if (log.isDebugEnabled() && routed != null && !routed.isBlank()) {
+            log.debug("路由收窄已应用 {} routedLen={}", blockCtx.summary(), routed.length());
+        }
 
-        String rawJson = deepSeekClient.chatCompletionJson(systemPrompt, userPrompt);
+        String rawJson = deepSeekClient.chatCompletionJson(blockCtx, systemPrompt, userPrompt);
         if (rawJson == null) {
-            log.info("DeepSeek 未返回有效内容，商品块跳过意图抽取（块内 {} 行）", blockLines.size());
+            log.info("DeepSeek 未返回有效内容，跳过意图抽取 {} blockLines={}", blockCtx.summary(), blockLines.size());
             return;
         }
 
@@ -235,10 +248,14 @@ public class PersonalizationIntentLlmService {
                 item.setLlmIcon(ic);
                 item.setLlmEngravingContent(engFlat);
             }
-            log.info("Personalization DeepSeek 已写入商品块（{} 行，双面槽位={}）: designStyle=[{}] font=[{}] icon=[{}] engravingFlat 长度={}",
-                    blockLines.size(), dualFaceFilled, ds, ftGlobal, ic, engFlat.length());
+            log.info("Personalization DeepSeek 已写入商品块 {} lines={} dualFace={} designStyle=[{}] font=[{}] icon=[{}] engravingLen={}",
+                    blockCtx.summary(), blockLines.size(), dualFaceFilled, ds, ftGlobal, ic, engFlat.length());
+            if (log.isDebugEnabled()) {
+                log.debug("LLM 抽取结果 {} designStyle=[{}] font=[{}] icon=[{}] engFlat=[{}] fe=[{}] be=[{}]",
+                        blockCtx.summary(), ds, ftGlobal, ic, engFlat, feOpt, beOpt);
+            }
         } catch (Exception e) {
-            log.warn("解析模型 JSON 失败，原始片段: {}", truncate(rawJson, 200), e);
+            log.warn("解析模型 JSON 失败 {} 原始片段: {}", blockCtx.summary(), truncate(rawJson, 200), e);
         }
     }
 

@@ -5,6 +5,8 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+    <!-- 生产默认 INFO；调试 DeepSeek 时可改为 DEBUG 或单独开启 llm 包 -->
+    <logger name="com.pdfconverter.service.llm" level="INFO"/>
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>

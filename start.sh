@@ -35,7 +35,7 @@ done
 # 启动 Java 程序（添加UTF-8编码支持）
 java -Dfile.encoding=UTF-8 \
      -Dsun.jnu.encoding=UTF-8 \
-     -jar target/pdf-to-excel-cufflink-0.0.1-SNAPSHOT.jar \
+     -jar target/itemMangementProject.jar \
      --initialIndex="$INITIAL_INDEX" \
      --inputPath="$INPUT_PATH" \
      --outputPath="$OUTPUT_PATH" \

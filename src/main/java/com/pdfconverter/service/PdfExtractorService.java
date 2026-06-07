@@ -274,8 +274,11 @@ public class PdfExtractorService {
             System.out.println("Debug: No match found for item count."); // 调试输出
             throw new IllegalArgumentException("No valid item count found in text.");
         }
+        stampOrderNumberOnItems(items, order.getOrderNumber());
+        log.debug("订单 {} 解析商品行 {} 条，开始刻录拆行与 LLM", order.getOrderNumber(), items.size());
         // 刻录意图拆行：双面领带夹 / 双意图袖扣 / 组合留言收窄（各行携带 sourceBlockIndex）
         items = engravingRowFanOutProcessor.expandOrderLines(items);
+        stampOrderNumberOnItems(items, order.getOrderNumber());
         // LLM：同一 Quantity 商品块（主+附属+附加）只调用一次路由+抽取，再写回块内所有明细
         personalizationIntentLlmService.enrichOrderItemBlocksBySourceIndex(items);
         // 同订单内相同盒型的附属包装盒合并为一行（数量累加）
@@ -558,6 +561,15 @@ public class PdfExtractorService {
         }
         for (ItemDetail d : items) {
             d.setSourceBlockIndex(sourceBlockIndex);
+        }
+    }
+
+    private static void stampOrderNumberOnItems(List<ItemDetail> items, String orderNumber) {
+        if (items == null || orderNumber == null || orderNumber.isBlank()) {
+            return;
+        }
+        for (ItemDetail d : items) {
+            d.setOrderNumber(orderNumber);
         }
     }
 
